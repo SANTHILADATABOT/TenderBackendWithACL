@@ -235,4 +235,28 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
             ]);
         }
     }
+
+    public function communicationfileUpload(Request $request, $id,$bitid)
+    {
+
+
+
+
+
+        $file = $request->file('file');
+        $path = $request->file->getClientOriginalName();
+        $slipt = explode('.', $path);
+        $destinationPath = 'WorkOrderCommunicationFiles';
+        $new_file_name = 'communicationfile' . time() . '.' . $slipt[1];
+        $result = $file->move($destinationPath, $new_file_name);
+
+        return response()->json([
+            'status' => 404,
+            'message' => $new_file_name,
+        ]);
+
+
+
+    }
+
 }

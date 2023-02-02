@@ -45,6 +45,7 @@ use App\Http\Controllers\BidCreationTenderParticipationController;
 use App\Http\Controllers\BidCreationTenderFeeController;
 use App\Http\Controllers\BidCreationEMDController;
 use App\Http\Controllers\BidCreationBidSubmittedStatusController;
+use App\Http\Controllers\TenderStatusTechEvaluationController;
 
 use App\Http\Controllers\FileDownloadHandlingController;
 
@@ -165,7 +166,7 @@ Route::get('download/letterofacceptance/workorderimage/{woid}', [BidManagementWo
 Route::post('letteracceptance/creation/update/{id}', [BidManagementWorkOrderLetterOfAcceptenceController::class, 'update']);
 
 Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'store']);
-
+Route::post('/workorder/creation/communicationfileUpload/{id}/{bitid}', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
 Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'getComList']);
 
 
@@ -234,6 +235,7 @@ Route::resources([
     'bidcreation/bidsubmission/emdfee'=> BidCreationEMDController::class,
     'bidcreation/bidsubmission/bidsubmittedstatus' =>BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' =>BidManagementWorkOrderLetterOfAcceptenceController::class,
+    'tenderstatus/techevaluation'=>TenderStatusTechEvaluationController::class,
 ]);
 
 
