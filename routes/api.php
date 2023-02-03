@@ -38,6 +38,7 @@ use App\Http\Controllers\BidManagementWorkOrderCommunicationFilesController;
 use App\Http\Controllers\BidManagementWorkOrderLetterOfAcceptenceController;
 use App\Http\Controllers\BidManagementTenderStatusBiddersController; // replaced this by TenderStatusBiddersController
 use App\Http\Controllers\TenderStatusBiddersController;// currently used Controller
+use App\Http\Controllers\TenderStatusTechEvaluationController;
 use App\Http\Controllers\BidmanagementPreBidQueriesController;
 use App\Http\Controllers\BidmanagementCorrigendumPublishController;
 use App\Http\Controllers\BidCreationTenderParticipationController;
@@ -181,6 +182,8 @@ Route::post('/tendertrack/creation/tracklist',[TenderCreationController::class,'
 Route::get('tenderstatus/complist',[CompetitorProfileCreationController::class,'getListOfComp']);
 Route::get('bidmanagement/tenderstatus/acceptedbidders/{id}',[TenderStatusBiddersController::class,'getAcceptedBidders']);
 Route::post('tenderstatus/bidderstenderstatus/{id}',[TenderStatusBiddersController::class,'BiddersTenderStatus']);
+Route::get('technicalevalution/qualifiedlist',[TenderStatusTechEvaluationController::class,'getQualifiedList']);
+Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
 
 
 /*
