@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class BidManagementWorkOrderCommunicationFilesSub extends Model
 {
     use HasFactory;
-    protected $fillable = ['bidid','date','refrenceno','randomno','from','to','subject','medium','med_refrenceno','comfile','created_userid','updated_userid'];
+    protected $table = 'communication_files_subs';
+    protected $fillable = ['randomno', 'bidid', 'comfile', 'filetype', 'createdby_userid','updatedby_userid'];
 }

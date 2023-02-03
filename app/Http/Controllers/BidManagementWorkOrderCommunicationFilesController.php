@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\BidManagementWorkOrderCommunicationFiles;
+use App\Models\BidManagementWorkOrderCommunicationFilesSub;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
 
 class BidManagementWorkOrderCommunicationFilesController extends Controller
@@ -130,7 +132,6 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
         $request->request->add(['updatedby_userid' => $user['userid']]);
         if ($user['userid']) {
 
-
             $request->request->remove('tokenid');
             if ($request->hasFile('file')) {
 
@@ -236,12 +237,12 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
         }
     }
 
-    public function communicationfileUpload(Request $request, $id,$bitid)
+    public function communicationfileUpload(Request $request)
     {
 
 
 
-
+        $ffbid = $request->fbid;
 
         $file = $request->file('file');
         $path = $request->file->getClientOriginalName();
@@ -250,13 +251,89 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
         $new_file_name = 'communicationfile' . time() . '.' . $slipt[1];
         $result = $file->move($destinationPath, $new_file_name);
 
-        return response()->json([
-            'status' => 404,
-            'message' => $new_file_name,
-        ]);
+      
+
+        $user = Token::where('tokenid', $request->tokenid)->first();
+        // $userid = $user['userid'];
+        $request->request->remove('tokenid');
 
 
+        if ($user['userid']) {
 
+            $Find = BidManagementWorkOrderCommunicationFiles::where('randomno', '=', $request->sub_id)->get();
+            $count = $Find->count();
+if($count==0){
+
+    
+    $CommunicationFiles = new BidManagementWorkOrderCommunicationFiles;
+    $CommunicationFiles->bidid = $request->bidid;
+    $CommunicationFiles->date = $request->date;
+    $CommunicationFiles->refrenceno = $request->refrenceno;
+    $CommunicationFiles->from = $request->from;
+    $CommunicationFiles->to = $request->to;
+    $CommunicationFiles->randomno = $request->sub_id;
+    $CommunicationFiles->subject = $request->bidid;
+    $CommunicationFiles->medium = $request->medium;
+    $CommunicationFiles->med_refrenceno = $request->medrefrenceno;
+   
+    $CommunicationFiles->createdby_userid = $user['userid'];
+    //$CommunicationFiles -> updatedby_userid = 0 ;
+    $CommunicationFiles->save();
+    $get_id = BidManagementWorkOrderCommunicationFiles::orderBy('id','desc')
+    ->first('id');
+    $last_id=  $CommunicationFiles->id;
+               
+              
+                
+                $CommunicationFilesSub = new BidManagementWorkOrderCommunicationFilesSub;
+                $CommunicationFilesSub->randomno = $request->sub_id;
+                $CommunicationFilesSub->bidid = $request->bidid;
+                $CommunicationFilesSub->comfile = $new_file_name;
+                $CommunicationFilesSub->filetype = $slipt[1];
+                $CommunicationFilesSub->createdby_userid = $user['userid'];
+                $CommunicationFilesSub->save();
+             
+
+
+}
+else{
+
+    $CommunicationFilesSub = new BidManagementWorkOrderCommunicationFilesSub;
+    $CommunicationFilesSub->randomno = $request->sub_id;
+    $CommunicationFilesSub->bidid =$request->bidid;
+    $CommunicationFilesSub->comfile = $new_file_name;
+    $CommunicationFilesSub->filetype = $slipt[1];
+    $CommunicationFilesSub->createdby_userid = $user['userid'];
+    $CommunicationFilesSub->save();
+}
+
+
+          
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Uploaded Succcessfully',
+                
+            
+            ]);
+        }
+        else{
+            return response()->json([
+                'status' => 400,
+                'message' => 'Unable to save!'
+            ]);
+        }
+
+
+    }
+    public function communicationfileUploadlist(Request $request)
+    {
+        $imagelist = BidManagementWorkOrderCommunicationFilesSub::where('randomno', '=', $request->sub_id)->get();
+
+ return response()->json([
+                'status' => 200,
+                'list' => $imagelist
+            ]);
     }
 
 }
