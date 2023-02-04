@@ -16,5 +16,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-backend_withValidation.zip
-backend_23-01-2023 EOD.zip
+/public/uploads
+/public/WorkOrderCommunicationFiles
