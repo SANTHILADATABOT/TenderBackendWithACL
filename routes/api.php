@@ -46,7 +46,6 @@ use App\Http\Controllers\BidCreationTenderParticipationController;
 use App\Http\Controllers\BidCreationTenderFeeController;
 use App\Http\Controllers\BidCreationEMDController;
 use App\Http\Controllers\BidCreationBidSubmittedStatusController;
-use App\Http\Controllers\TenderStatusTechEvaluationController;
 
 use App\Http\Controllers\FileDownloadHandlingController;
 
@@ -169,6 +168,8 @@ Route::post('letteracceptance/creation/update/{id}', [BidManagementWorkOrderLett
 Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'store']);
 Route::post('/workorder/creation/communicationfileUpload/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
 Route::post('/workorder/creation/communicationfileUploadlist/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUploadlist']);
+Route::get('/workorder/creation/communicationfiledelete/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfiledelete']);
+
 
 Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'getComList']);
 

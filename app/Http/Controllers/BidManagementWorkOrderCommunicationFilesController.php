@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Token;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
-
+use File;
 class BidManagementWorkOrderCommunicationFilesController extends Controller
 {
     /**
@@ -242,7 +242,7 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
 
 
 
-        $ffbid = $request->fbid;
+        $last_id = $request->fbid;
 
         $file = $request->file('file');
         $path = $request->file->getClientOriginalName();
@@ -328,12 +328,49 @@ else{
     }
     public function communicationfileUploadlist(Request $request)
     {
-        $imagelist = BidManagementWorkOrderCommunicationFilesSub::where('randomno', '=', $request->sub_id)->get();
-
+        $imagelist = BidManagementWorkOrderCommunicationFilesSub::get();
+// where('randomno', '=', $request->sub_id)->
  return response()->json([
                 'status' => 200,
                 'list' => $imagelist
             ]);
     }
-
+    public function communicationfiledelete(Request $request, $id)
+    {
+  
+  
+      $list_files = BidManagementWorkOrderCommunicationFilesSub::where('id', '=', $id)
+        ->get('comfile');
+  
+  
+  
+      foreach ($list_files as $row) {
+        $image_name = $row->comfile;
+  
+      }
+      $destinationPath = 'WorkOrderCommunicationFiles';
+      $destinationPath1 = 'WorkOrderCommunicationFiles/' . $image_name;
+  
+      //echo file_exists($destinationPath);
+      if (file_exists($destinationPath)) {
+        File::delete($destinationPath, $image_name);
+        unlink($destinationPath1);
+        $list_files = BidManagementWorkOrderCommunicationFilesSub::where('id', '=', $id)
+          ->delete();
+      } else {
+        $list_files = BidManagementWorkOrderCommunicationFilesSub::where('id', '=', $id)
+          ->delete();
+      }
+  
+  
+  
+      return response()->json([
+        'status' => 200,
+  
+      ]);
+  
+  
+  
+    }
+    
 }

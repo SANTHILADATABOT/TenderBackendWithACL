@@ -8,7 +8,7 @@ use App\Models\TenderStatusTechEvaluationSub;
 use Illuminate\Http\Request;
 use App\Models\Token;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+
 
 class TenderStatusTechEvaluationController extends Controller
 {
@@ -137,8 +137,10 @@ class TenderStatusTechEvaluationController extends Controller
     {
         try {
             $user = Token::where("tokenid", $request->tokenid)->first();
-            if ($user['userid']) {
-                
+            // Have to get Existing Data from table to update using update Method
+            $getExistingData = TenderStatusTechEvaluation::find($mainId)->first(); 
+            if ($user['userid']) { 
+                $fileName="";
                 if ($request->hasFile('file')) {
                     $file = $request->file('file');
                     $filename_original = $file->getClientOriginalName();
@@ -152,50 +154,51 @@ class TenderStatusTechEvaluationController extends Controller
                     }
 
                 //to delete existin image    
-                $getExistingData = TenderStatusTechEvaluation::find("id", $mainId)->first();
-                $image_path = public_path('uploads/BidManagement/techevaluation') . '/' . $getExistingData[0]->document;
+                // $getExistingData = TenderStatusTechEvaluation::find($mainId)->first();
+
+                $image_path = public_path('uploads/BidManagement/techevaluation') . '/' . $getExistingData['document'];
                 $path = str_replace("\\", "/", $image_path);
                 unlink($path);
                     $file->storeAs('BidManagement/techevaluation', $fileName, 'public');
                 }
+                // $getExistingData = TenderStatusTechEvaluation::find($mainId); 
+                
+                $getExistingData->bidid = $request->bid_creation_mainid;
+                $getExistingData->evaluationDate = $request->date;
+                $getExistingData->document = $fileName;
+                $getExistingData->edited_userid = $user['userid'];
+                $getExistingData->save();
 
-                $techEval = new TenderStatusTechEvaluation;
-                $techEval->bidid = $request->bid_creation_mainid;
-                $techEval->evaluationDate = $request->date;
-                $techEval->document = $fileName;
-                $techEval->edited_userid = $user['userid'];
-                $techEval->save();
-
-                if ($techEval->id) {
+                if ($getExistingData->id) {
                     foreach ($request->input as $key => $value) {
-                        $insertsub = new TenderStatusTechEvaluationSub;
-                        $insertsub->techMainId = $techEval->id;
-                        $insertsub->edited_userid = $user['userid'];
-                        $insertsub->competitorId = $key;
+                        $updatesub =TenderStatusTechEvaluationSub::where("competitorId",$key)->where("techMainId",$mainId)->first();
+                        // $updatesub->techMainId = $getExistingData->id;
+                        $updatesub->edited_userid = $user['userid'];
+                        // $updatesub->competitorId = $key;
                         foreach ($request->input[$key] as $key1 => $value1) {
                             if ($key1 == "status") {
-                                $insertsub->qualifiedStatus = $value1;
+                                $updatesub->qualifiedStatus = $value1;
                             } else if ($key1 == "reason") {
-                                $insertsub->reason = $value1;
+                                $updatesub->reason = $value1;
                             }
                         }
-                        $insertsub->save();
+                        $updatesub->save();
                     }
                 }
 
 
-                if ($techEval && $insertsub) {
+                if ($getExistingData && $updatesub) {
                     return response()->json([
                         'status' => 200,
                         'message' => 'Technial Evaluation Status Added..!'
                     ]);
-                } else if ($techEval && !$insertsub) {
+                } else if ($getExistingData && !$updatesub) {
                     return response()->json([
                         'status' => 400,
                         'message' => 'Oops, Unable to Add..!',
                         'err' => 'not able to insert into sub table'
                     ]);
-                } else if (!$techEval && $insertsub) {
+                } else if (!$getExistingData && $updatesub) {
                     return response()->json([
                         'status' => 400,
                         'message' => 'Oops, Unable to Add..!',
@@ -254,13 +257,10 @@ class TenderStatusTechEvaluationController extends Controller
         $doc = TenderStatusTechEvaluation::where('bidid',$id)
         ->select("document")
         ->get();
-        // $query = str_replace(array('?'), array('\'%s\''), $doc->toSql());
-        // $query = vsprintf($query, $doc->getBindings());
-
         
         if ($doc) {
-            $file = public_path() . "/uploads/BidManagement/techevaluation/" . $doc[0]['document'];
-            return response()->download($file);
+            $file = public_path() . "/uploads/BidManagement/techevaluation/". $doc[0]['document'];
+            return response()->download($file,$doc[0]['document']);
         }
     }
 
