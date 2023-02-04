@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TenderStatusTechEvaluation;
+use Illuminate\Support\Facades\DB;
 use App\Models\TenderStatusTechEvaluationSub;
 use Illuminate\Http\Request;
 use App\Models\Token;
@@ -262,4 +263,26 @@ class TenderStatusTechEvaluationController extends Controller
             return response()->download($file);
         }
     }
+
+    public function getQualifiedList(){
+
+        $qualifiedList = DB::table('tender_status_tech_evaluations_subs')
+        ->join('competitor_profile_creations','tender_status_tech_evaluations_subs.competitorId','competitor_profile_creations.id')
+        ->where('tender_status_tech_evaluations_subs.qualifiedStatus', 'qualified')
+        ->select('tender_status_tech_evaluations_subs.id','tender_status_tech_evaluations_subs.techMainId','tender_status_tech_evaluations_subs.competitorId', 'tender_status_tech_evaluations_subs.qualifiedStatus', 'tender_status_tech_evaluations_subs.reason', 'competitor_profile_creations.compName') 
+        ->orderBy('tender_status_tech_evaluations_subs.id', 'asc')       
+        ->get();
+
+        if($qualifiedList){
+            return response()->json([
+                'qualifiedList' => $qualifiedList
+            ]);
+        }else{
+            return response()->json([
+                'qualifiedList' => []
+            ]);
+        }
+    
+    }
 }
+
