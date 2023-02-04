@@ -231,6 +231,7 @@ class TenderStatusTechEvaluationController extends Controller
 
     public function getTechEvaluationList($id)
     {
+        try{
         $fetchresult = DB::table('tender_status_tech_evaluations as main')
             ->where('main.bidid', $id)
             ->join('tender_status_tech_evaluations_subs as sub', "main.id", 'sub.techMainId')
@@ -250,6 +251,13 @@ class TenderStatusTechEvaluationController extends Controller
                 'message' => 'The provided credentials are incorrect.'
             ]);
         }
+    }
+    catch(\Exception $ex){
+        return response()->json([
+            'status' => 404,
+            'message' => 'The provided credentials are incorrect.'
+        ]);    
+    }
     }
 
     public function download($id)
