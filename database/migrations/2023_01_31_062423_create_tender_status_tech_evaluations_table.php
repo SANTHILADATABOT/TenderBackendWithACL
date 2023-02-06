@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('tender_status_tech_evaluations', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('bidderId')->unsigned();//bidderId - id of 'tender_status_bidders' table
-            $table->foreign('bidderId')->references('id')->on('tender_status_bidders')->onDelete("cascade")->onUpdate("NO ACTION");
+            $table->bigInteger('bidid')->unsigned();//bidderId - id of 'tender_status_bidders' table
+            $table->foreign('bidid')->references('bidid')->on('tender_status_bidders')->onDelete("cascade")->onUpdate("NO ACTION");
             // $table->foreign('bidid')->references('id')->on('bid_creation__creations')->onDelete("cascade")->onUpdate("NO ACTION");
             $table->date('evaluationDate');
             $table->string('document');

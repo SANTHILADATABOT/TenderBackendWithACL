@@ -74,9 +74,13 @@ class TenderCreationController extends Controller
 
         if ($tender){
 
-            $customer_name = CustomerCreationProfile::find($tender['customername']);
+            // $customer_name = CustomerCreationProfile::find($tender['customername']);
+            $customer_name = CustomerCreationProfile::where("id",$tender['customername'])
+            ->select('customer_name','state')->get();
+    
             if ($customer_name){
-                $tender['nameOfCustomer'] = $customer_name['customer_name'] ; 
+                $tender['nameOfCustomer'] = $customer_name[0]->customer_name; 
+                $tender['stateId'] = $customer_name[0]->state;
             }
 
             return response()->json([

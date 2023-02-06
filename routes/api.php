@@ -166,6 +166,10 @@ Route::get('download/letterofacceptance/workorderimage/{woid}', [BidManagementWo
 Route::post('letteracceptance/creation/update/{id}', [BidManagementWorkOrderLetterOfAcceptenceController::class, 'update']);
 
 Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'store']);
+Route::post('/workorder/creation/communicationfileUpload/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
+Route::post('/workorder/creation/communicationfileUploadlist/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUploadlist']);
+Route::get('/workorder/creation/communicationfiledelete/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfiledelete']);
+
 
 Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'getComList']);
 
@@ -183,6 +187,9 @@ Route::get('bidmanagement/tenderstatus/acceptedbidders/{id}',[TenderStatusBidder
 Route::post('tenderstatus/bidderstenderstatus/{id}',[TenderStatusBiddersController::class,'BiddersTenderStatus']);
 Route::get('technicalevalution/qualifiedlist',[TenderStatusTechEvaluationController::class,'getQualifiedList']);
 Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
+Route::get('tenderstatus/techevaluation/{id}',[TenderStatusTechEvaluationController::class,'getTechEvaluationList']);
+Route::get('/tenderstatus/techevaluation/download/{id}',[TenderStatusTechEvaluationController::class,'download']);
+Route::put('tenderstatus/techevaluation/{id}',[TenderStatusTechEvaluationController::class,'update']);
 
 
 /*
@@ -237,6 +244,8 @@ Route::resources([
     'bidcreation/bidsubmission/emdfee'=> BidCreationEMDController::class,
     'bidcreation/bidsubmission/bidsubmittedstatus' =>BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' =>BidManagementWorkOrderLetterOfAcceptenceController::class,
+    'tenderstatus/techevaluation'=>TenderStatusTechEvaluationController::class,
+    
 ]);
 
 

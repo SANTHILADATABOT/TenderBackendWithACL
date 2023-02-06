@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('bidid')->unsigned();
             $table->foreign('bidid')->references('id')->on('bid_creation__creations')->onDelete("cascade")->onUpdate("NO ACTION");
             $table->date("date")->nullable();
+            $table->string('randomno');
             $table->string("refrenceno")->default('');
             $table->string("med_refrenceno")->default('');
             $table->string("from")->defalt('');
