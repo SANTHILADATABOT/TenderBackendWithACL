@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TenderCreation;
 use App\Models\CustomerCreationProfile;
 use App\Models\TenderTypeMaster;
+use App\Models\StateMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Token;
@@ -77,10 +78,19 @@ class TenderCreationController extends Controller
             // $customer_name = CustomerCreationProfile::find($tender['customername']);
             $customer_name = CustomerCreationProfile::where("id",$tender['customername'])
             ->select('customer_name','state')->get();
+
+            
     
             if ($customer_name){
                 $tender['nameOfCustomer'] = $customer_name[0]->customer_name; 
-                $tender['stateId'] = $customer_name[0]->state;
+
+                $stateValue = null;
+                if($customer_name[0]->state){
+                    $state = StateMaster::find($customer_name[0]->state);
+                    $stateValue = ["value" => $state['id'], "label" =>  $state['state_name']];
+                }
+
+                $tender['stateId'] = $stateValue;
             }
 
             return response()->json([
