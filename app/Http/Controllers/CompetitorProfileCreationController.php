@@ -177,12 +177,21 @@ if ($validator->fails()) {
     public function getListOfComp(){
     
         $comps = CompetitorProfileCreation::where("delete_status", "=", "0")->get();
+        if($comps){
         $compList = [];
         foreach($comps as $comp){
             $compList[] = ["value" => $comp['id'], "label" =>  $comp['compName']] ;
         }
         return  response()->json([
+            'status' => 200,
             'compList' =>  $compList,
         ]);
+    }
+    else{
+        return  response()->json([
+            'status' => 404,
+            'message' => "Not found",
+        ]); 
+    }
     }
 }
