@@ -248,8 +248,8 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
 
                 $comfile = $row->comfile;
                 $del_id = $row->id;
-                $destinationPath = 'WorkOrderCommunicationFiles';
-                $destinationPath1 = 'WorkOrderCommunicationFiles/' . $comfile;
+                $destinationPath = 'uploads/BidManagement/WorkOrder/CommunicationFiles/';
+                $destinationPath1 = 'uploads/BidManagement/WorkOrder/CommunicationFiles/' . $comfile;
 
                 if (file_exists($destinationPath)) {
                     File::delete($destinationPath, $comfile);
@@ -312,7 +312,8 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
         $file = $request->file('file');
         $path = $request->file->getClientOriginalName();
         $slipt = explode('.', $path);
-        $destinationPath = 'WorkOrderCommunicationFiles';
+        // $destinationPath = 'WorkOrderCommunicationFiles';
+        $destinationPath = 'uploads/BidManagement/WorkOrder/CommunicationFiles/';
         $new_file_name = 'communicationfile' . time() . '.' . $slipt[1];
         $result = $file->move($destinationPath, $new_file_name);
 
@@ -404,20 +405,13 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
     }
     public function communicationfiledelete(Request $request, $id)
     {
-
-
         $list_files = BidManagementWorkOrderCommunicationFilesSub::where('id', '=', $id)
             ->get('comfile');
-
-
-
         foreach ($list_files as $row) {
             $image_name = $row->comfile;
-
         }
-        $destinationPath = 'WorkOrderCommunicationFiles';
-        $destinationPath1 = 'WorkOrderCommunicationFiles/' . $image_name;
-
+        $destinationPath = 'uploads/BidManagement/WorkOrder/CommunicationFiles/';
+        $destinationPath1 = 'uploads/BidManagement/WorkOrder/CommunicationFiles/' . $image_name;
         //echo file_exists($destinationPath);
         if (file_exists($destinationPath)) {
             File::delete($destinationPath, $image_name);
@@ -428,8 +422,6 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
             $list_files = BidManagementWorkOrderCommunicationFilesSub::where('id', '=', $id)
                 ->delete();
         }
-
-
 
         return response()->json([
             'status' => 200,

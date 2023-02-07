@@ -180,7 +180,7 @@ if ($validator->fails()) {
         if($comps){
         $compList = [];
         foreach($comps as $comp){
-            $compList[] = ["value" => $comp['id'], "label" =>  $comp['compName']] ;
+            $compList[] = ["value" => $comp['id'], "label" =>  $comp['compName'], "isdisabled" => false] ;
         }
         return  response()->json([
             'status' => 200,
