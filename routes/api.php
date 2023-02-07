@@ -3,7 +3,7 @@
 use App\Http\Controllers\UlbMasterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserControllerTemp; 
+use App\Http\Controllers\UserControllerTemp;
 use App\Http\Controllers\StateMasterController;
 use App\Http\Controllers\CountryMasterController;
 use App\Http\Controllers\UnitMasterController;
@@ -37,7 +37,7 @@ use App\Http\Controllers\BidManagementWorkOrderWorkOrderController;
 use App\Http\Controllers\BidManagementWorkOrderCommunicationFilesController;
 use App\Http\Controllers\BidManagementWorkOrderLetterOfAcceptenceController;
 use App\Http\Controllers\BidManagementTenderStatusBiddersController; // replaced this by TenderStatusBiddersController
-use App\Http\Controllers\TenderStatusBiddersController;// currently used Controller
+use App\Http\Controllers\TenderStatusBiddersController; // currently used Controller
 use App\Http\Controllers\TenderStatusTechEvaluationController;
 use App\Http\Controllers\BidmanagementPreBidQueriesController;
 use App\Http\Controllers\BidmanagementCorrigendumPublishController;
@@ -98,7 +98,7 @@ Route::get('district/list/{countryid}/{stateid}', [DistrictMasterController::cla
 Route::get('district/list/{countryid}/{stateid}/{saveddistrict}', [DistrictMasterController::class, 'getDistrictListofstate']);
 Route::get('city/list/{countryid}/{stateid}/{districtid}/{savedcity}', [CityMasterController::class, 'getCityList']);
 Route::get('ulb-list/{savedulb}', [CustomerCreationProfileController::class, 'getUlbs']);
-Route::post('customercreationmain/getmainid', [CustomerCreationMainController :: class, 'getMainid']);
+Route::post('customercreationmain/getmainid', [CustomerCreationMainController::class, 'getMainid']);
 Route::post('customercreation/profile', [CustomerCreationProfileController::class, 'getProfileFromData']);
 Route::get('customercreation/getcustno/{stateid}', [CustomerCreationProfileController::class, 'getCustNo']);
 Route::get('customercreation/profile/getFormNo', [CustomerCreationProfileController::class, 'getFormNo']);
@@ -127,27 +127,27 @@ Route::get('download/BidDocs/{fileName}', [BidCreationCreationDocsController::cl
 
 // Route::post('competitordetails/competitorqcertificate/updatewithimage', [CompetitorDetailsQualityCertificatesController::class, 'updateWithImage']);
 Route::get('competitordetails/wolist/{compid}', [CompetitorDetailsWorkOrderController::class, 'getWOList']);
-Route::post('bidcreation/creation/bidlist',[BidCreationCreationController::class,'getBidList']);
+Route::post('bidcreation/creation/bidlist', [BidCreationCreationController::class, 'getBidList']);
 
-Route::get('moilization/getMobList/{mobId}',[BidManagementWorkOrderMobilizationAdvanceController::class,'getMobList']);
-Route::get('ProjectDetails/getProList/{proid}',[BidManagementWorkOrderProjectDetailsController::class,'getProList']);
+Route::get('moilization/getMobList/{mobId}', [BidManagementWorkOrderMobilizationAdvanceController::class, 'getMobList']);
+Route::get('ProjectDetails/getProList/{proid}', [BidManagementWorkOrderProjectDetailsController::class, 'getProList']);
 
-Route::post('bidcreation/creation/bidlist',[BidCreationCreationController::class,'getBidList']);
+Route::post('bidcreation/creation/bidlist', [BidCreationCreationController::class, 'getBidList']);
 
 Route::post('bidcreation/prebidqueries/docupload/list', [BidmanagementPreBidQueriesController::class, 'getUplodedDocList']);
 Route::get('download/prebidqueriesdocs/{fileName}', [BidmanagementPreBidQueriesController::class, 'download']);
 Route::post('bidcreation/prebidqueries/docupload/{id}', [BidmanagementPreBidQueriesController::class, 'update']);
 
-Route::get('workorder/getComList/{comId}',[BidManagementWorkOrderCommunicationFilesController::class,'getComList']);  
-Route::get('tenderstatus/getbidder/{id}',[BidManagementTenderStatusBiddersController::class,'getBidders']);   
-Route::post('tenderstatus/updatestatus/{id}',[BidManagementTenderStatusBiddersController::class,'updateStatus']);   
+Route::get('workorder/getComList/{comId}', [BidManagementWorkOrderCommunicationFilesController::class, 'getComList']);
+Route::get('tenderstatus/getbidder/{id}', [BidManagementTenderStatusBiddersController::class, 'getBidders']);
+Route::post('tenderstatus/updatestatus/{id}', [BidManagementTenderStatusBiddersController::class, 'updateStatus']);
 
 Route::post('bidcreation/corrigendumpublish/docupload/list', [BidmanagementCorrigendumPublishController::class, 'getUplodedDocList']);
 Route::get('download/corrigendumpublishdocs/{fileName}', [BidmanagementCorrigendumPublishController::class, 'download']);
 Route::post('bidcreation/corrigendumpublish/docupload/{id}', [BidmanagementCorrigendumPublishController::class, 'update']);
 //brindha updated on 21-01-2023
-Route::get('bidcreation/creation/live_tenders',[BidCreationCreationController::class,'live_tender']);
-Route::get('bidcreation/creation/fresh_tenders',[BidCreationCreationController::class,'fresh_tender']);
+Route::get('bidcreation/creation/live_tenders', [BidCreationCreationController::class, 'live_tender']);
+Route::get('bidcreation/creation/fresh_tenders', [BidCreationCreationController::class, 'fresh_tender']);
 
 Route::get('download/tenderfeedocs/{id}', [BidCreationTenderFeeController::class, 'getdocs']);
 Route::get('download/emdfeedocs/{id}', [BidCreationEMDController::class, 'getdocs']);
@@ -165,51 +165,50 @@ Route::post('download/files', [FileDownloadHandlingController::class, 'download'
 Route::get('download/letterofacceptance/workorderimage/{woid}', [BidManagementWorkOrderLetterOfAcceptenceController::class, 'wodownload']);
 Route::post('letteracceptance/creation/update/{id}', [BidManagementWorkOrderLetterOfAcceptenceController::class, 'update']);
 
-Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'store']);
+Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'store']);
 Route::post('/workorder/creation/communicationfileUpload/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
 Route::post('/workorder/creation/communicationfileUploadlist/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUploadlist']);
 Route::get('/workorder/creation/communicationfiledelete/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfiledelete']);
 
 
-Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class,'getComList']);
+Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'getComList']);
 
 
-Route::get('/file-import',[ImportCustomerController::class,'importView'])->name('import-view');
+Route::get('/file-import', [ImportCustomerController::class, 'importView'])->name('import-view');
 
-Route::post('/legacystatement',[BidCreationCreationController::class,'getlegacylist']);
+Route::post('/legacystatement', [BidCreationCreationController::class, 'getlegacylist']);
 
-Route::get('/bidcreation/creation/getlastbidno/{id}', [ BidCreationCreationController::class,'getLastBidno']);
-Route::get('/customercreation/getstatecode/{id}', [ StateMasterController::class,'getStateCode']);
-Route::get('/tendertrack/list', [ TenderCreationController::class,'gettendertrack']);
-Route::post('/tendertrack/creation/tracklist',[TenderCreationController::class,'gettrackList']);
-Route::get('tenderstatus/complist',[CompetitorProfileCreationController::class,'getListOfComp']);
-Route::get('bidmanagement/tenderstatus/acceptedbidders/{id}',[TenderStatusBiddersController::class,'getAcceptedBidders']);
-Route::post('tenderstatus/bidderstenderstatus/{id}',[TenderStatusBiddersController::class,'BiddersTenderStatus']);
-Route::get('technicalevalution/qualifiedlist',[TenderStatusTechEvaluationController::class,'getQualifiedList']);
+Route::get('/bidcreation/creation/getlastbidno/{id}', [BidCreationCreationController::class, 'getLastBidno']);
+Route::get('/customercreation/getstatecode/{id}', [StateMasterController::class, 'getStateCode']);
+Route::get('/tendertrack/list', [TenderCreationController::class, 'gettendertrack']);
+Route::post('/tendertrack/creation/tracklist', [TenderCreationController::class, 'gettrackList']);
+Route::get('tenderstatus/complist', [CompetitorProfileCreationController::class, 'getListOfComp']);
+Route::get('bidmanagement/tenderstatus/acceptedbidders/{id}', [TenderStatusBiddersController::class, 'getAcceptedBidders']);
+Route::post('tenderstatus/bidderstenderstatus/{id}', [TenderStatusBiddersController::class, 'BiddersTenderStatus']);
+Route::get('technicalevalution/qualifiedlist', [TenderStatusTechEvaluationController::class, 'getQualifiedList']);
 Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
-Route::get('tenderstatus/techevaluation/{id}',[TenderStatusTechEvaluationController::class,'getTechEvaluationList']);
-Route::get('/tenderstatus/techevaluation/download/{id}',[TenderStatusTechEvaluationController::class,'download']);
-Route::put('tenderstatus/techevaluation/{id}',[TenderStatusTechEvaluationController::class,'update']);
+Route::get('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'getTechEvaluationList']);
+Route::get('/tenderstatus/techevaluation/download/{id}', [TenderStatusTechEvaluationController::class, 'download']);
+Route::put('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'update']);
 
 
 /*
 ## Resource Laravel Routes Example
-
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
 Route::get(['ulb/{id}',[UlbMasterController::class,'show']]);
 Route::get(['ulb/edit/{id}',[UlbMasterController::class,'edit']]);//
 Route::put/patch(['ulb/{id}',[UlbMasterController::class,'update']]);
-    ## put=>If the record exists then update else create a new record
-    ## Patch =>update/modify
+## put=>If the record exists then update else create a new record
+## Patch =>update/modify
 Route::delete(['ulb/{id}',[UlbMasterController::class,'destroy']]);
 */
 Route::resources([
     'ulb' => UlbMasterController::class,
     'state' => StateMasterController::class,
     'country' => CountryMasterController::class,
-    'tendertype'=> TenderTypeMasterController::class,
+    'tendertype' => TenderTypeMasterController::class,
     'unit' => UnitMasterController::class,
-    'tendercreation'=>TenderCreationController::class,
+    'tendercreation' => TenderCreationController::class,
     'city' => CityMasterController::class,
     'district' => DistrictMasterController::class,
     'customercreationmain' => CustomerCreationMainController::class,
@@ -224,28 +223,28 @@ Route::resources([
     'competitorproscons' => CompetitorDetailsProsConsController::class,
     'competitorqcertificate' => CompetitorDetailsQualityCertificatesController::class,
     'competitorworkorder' => CompetitorDetailsWorkOrderController::class,
-    'projecttype'=>ProjectTypeController::class,
-    'customersubcategory'=>CustomerSubCategoryController::class,
-    'projectstatus'=> ProjectStatusController::class,
-    'customercreationulbdetails'=> ULBDetailsController::class,
-    'customercreationbankdetails'=> CustomerCreationBankDetailsController::class,
-    'bidcreation/creation'=> BidCreationCreationController::class,
-    'bidcreation/creation/docupload'=> BidCreationCreationDocsController::class,
-    'tenderstatus'=>BidManagementTenderStatusBiddersController::class,
+    'projecttype' => ProjectTypeController::class,
+    'customersubcategory' => CustomerSubCategoryController::class,
+    'projectstatus' => ProjectStatusController::class,
+    'customercreationulbdetails' => ULBDetailsController::class,
+    'customercreationbankdetails' => CustomerCreationBankDetailsController::class,
+    'bidcreation/creation' => BidCreationCreationController::class,
+    'bidcreation/creation/docupload' => BidCreationCreationDocsController::class,
+    'tenderstatus' => BidManagementTenderStatusBiddersController::class,
     'workorder/creation/communicationfiles' => BidManagementWorkOrderCommunicationFilesController::class,
-    'communicationfiles/docupload'=> CommunicationDocController::class,
+    'communicationfiles/docupload' => CommunicationDocController::class,
     'mobilization/creation' => BidManagementWorkOrderMobilizationAdvanceController::class,
-    'ProjectDetails/Creation'=>BidManagementWorkOrderProjectDetailsController::class,
-    'workorder/creation/Workorder'=>BidManagementWorkOrderWorkOrderController::class,
-    'bidcreation/prebidqueries/docupload'=> BidmanagementPreBidQueriesController::class,
-    'bidcreation/corrigendumpublish/docupload'=> BidmanagementCorrigendumPublishController::class,
-    'bidcreation/tenderparticipation'=> BidCreationTenderParticipationController::class,
-    'bidcreation/bidsubmission/tenderfee'=> BidCreationTenderFeeController::class,
-    'bidcreation/bidsubmission/emdfee'=> BidCreationEMDController::class,
-    'bidcreation/bidsubmission/bidsubmittedstatus' =>BidCreationBidSubmittedStatusController::class,
-    'letteracceptance/creation' =>BidManagementWorkOrderLetterOfAcceptenceController::class,
-    'tenderstatus/techevaluation'=>TenderStatusTechEvaluationController::class,
-    
+    'ProjectDetails/Creation' => BidManagementWorkOrderProjectDetailsController::class,
+    'workorder/creation/Workorder' => BidManagementWorkOrderWorkOrderController::class,
+    'bidcreation/prebidqueries/docupload' => BidmanagementPreBidQueriesController::class,
+    'bidcreation/corrigendumpublish/docupload' => BidmanagementCorrigendumPublishController::class,
+    'bidcreation/tenderparticipation' => BidCreationTenderParticipationController::class,
+    'bidcreation/bidsubmission/tenderfee' => BidCreationTenderFeeController::class,
+    'bidcreation/bidsubmission/emdfee' => BidCreationEMDController::class,
+    'bidcreation/bidsubmission/bidsubmittedstatus' => BidCreationBidSubmittedStatusController::class,
+    'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
+    'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
+
 ]);
 
 
@@ -256,4 +255,3 @@ Route::resources([
 
 //Can create a new folder inside public/uploads path
 //$file->storeAs('competitor/qc', $fileName, 'public');  
-
