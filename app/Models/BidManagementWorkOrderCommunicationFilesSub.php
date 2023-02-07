@@ -9,5 +9,5 @@ class BidManagementWorkOrderCommunicationFilesSub extends Model
 {
     use HasFactory;
     protected $table = 'communication_files_subs';
-    protected $fillable = ['randomno', 'bidid', 'comfile', 'filetype', 'createdby_userid','updatedby_userid'];
+    protected $fillable = ['randomno', 'mainid', 'comfile', 'filetype', 'createdby_userid', 'updatedby_userid'];
 }
