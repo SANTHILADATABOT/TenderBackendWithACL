@@ -272,18 +272,29 @@ class TenderStatusTechEvaluationController extends Controller
         }
     }
 
-    public function getQualifiedList(){
+    public function getQualifiedList($id){
 
-        $qualifiedList = DB::table('tender_status_tech_evaluations_subs')
-        ->join('competitor_profile_creations','tender_status_tech_evaluations_subs.competitorId','competitor_profile_creations.id')
-        ->where('tender_status_tech_evaluations_subs.qualifiedStatus', 'qualified')
-        ->select('tender_status_tech_evaluations_subs.id','tender_status_tech_evaluations_subs.techMainId','tender_status_tech_evaluations_subs.competitorId', 'tender_status_tech_evaluations_subs.qualifiedStatus', 'tender_status_tech_evaluations_subs.reason', 'competitor_profile_creations.compName') 
-        ->orderBy('tender_status_tech_evaluations_subs.id', 'asc')       
+        $bidid = $id;
+
+        $getTechEvauationMainId = DB::table('tender_status_tech_evaluations')
+        ->where('bidid', $bidid)
         ->get();
+
+        if(sizeof($getTechEvauationMainId) > 0){
+            $qualifiedList = DB::table('tender_status_tech_evaluations_subs')
+            ->join('competitor_profile_creations','tender_status_tech_evaluations_subs.competitorId','competitor_profile_creations.id')
+            ->where('tender_status_tech_evaluations_subs.qualifiedStatus', 'qualified')
+            ->where('tender_status_tech_evaluations_subs.techMainId', $getTechEvauationMainId[0]->id)
+            ->select('tender_status_tech_evaluations_subs.id','tender_status_tech_evaluations_subs.techMainId','tender_status_tech_evaluations_subs.competitorId', 'tender_status_tech_evaluations_subs.qualifiedStatus', 'tender_status_tech_evaluations_subs.reason', 'competitor_profile_creations.compName') 
+            ->orderBy('tender_status_tech_evaluations_subs.id', 'asc')       
+            ->get();
+        }
+
 
         if($qualifiedList){
             return response()->json([
-                'qualifiedList' => $qualifiedList
+                'qualifiedList' => $qualifiedList,
+                'getTechEvauationMainId' => $getTechEvauationMainId
             ]);
         }else{
             return response()->json([

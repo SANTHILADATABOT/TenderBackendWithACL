@@ -15,18 +15,27 @@ return new class extends Migration
     {
         Schema::create('tender_status_financial_evaluations', function (Blueprint $table) {
             $table->id();
-            // $table->bigInteger('bidid')->unsigned();
-            // $table->foreign('bidid')->references('id')->on('bid_creation__creations')->onDelete("cascade")->onUpdate("NO ACTION");
-            $table->bigInteger('qualifiedId')->unsigned();//bidderId - id of 'tender_status_bidders' table
-            $table->foreign('qualifiedId')->references('id')->on('tender_status_tech_evaluations_subs')->onDelete("cascade")->onUpdate("NO ACTION");
+
+            $table->bigInteger('bidid')->unsigned();
+            $table->foreign('bidid')->references('id')->on('bid_creation__creations')->onDelete("cascade")->onUpdate("NO ACTION");
+
+
+            $table->bigInteger('techsubId')->unsigned();
+            $table->foreign('techsubId')->references('id')->on('tender_status_tech_evaluations_subs')->onDelete("cascade")->onUpdate("NO ACTION");
+
             $table->bigInteger('competitorId')->unsigned();
             $table->foreign('competitorId')->references('id')->on('competitor_profile_creations')->onDelete("Restrict")->onUpdate("NO ACTION");
-            $table->string('unitId');
-            $table->string('pricePerUnit');
-            $table->integer('created_userid');
-            $table->integer('edited_userid')->nullable()->default(null);
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+
+            $table->double('amt')->nullable();
+
+            $table->bigInteger('unit')->unsigned()->nullable();
+            $table->foreign('unit')->references('id')->on('unit_masters')->onDelete("Restrict")->onUpdate("NO ACTION");
+
+            $table->string('least')->nullable();
+
+            $table->integer('created_by');
+            $table->integer('edited_by')->nullable()->default(null);
+            $table->timestamps();
         });
     }
 
