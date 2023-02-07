@@ -48,6 +48,7 @@ use App\Http\Controllers\BidCreationEMDController;
 use App\Http\Controllers\BidCreationBidSubmittedStatusController;
 
 use App\Http\Controllers\FileDownloadHandlingController;
+use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -185,11 +186,13 @@ Route::post('/tendertrack/creation/tracklist', [TenderCreationController::class,
 Route::get('tenderstatus/complist', [CompetitorProfileCreationController::class, 'getListOfComp']);
 Route::get('bidmanagement/tenderstatus/acceptedbidders/{id}', [TenderStatusBiddersController::class, 'getAcceptedBidders']);
 Route::post('tenderstatus/bidderstenderstatus/{id}', [TenderStatusBiddersController::class, 'BiddersTenderStatus']);
-Route::get('technicalevalution/qualifiedlist', [TenderStatusTechEvaluationController::class, 'getQualifiedList']);
+Route::get('technicalevalution/qualifiedlist/{id}', [TenderStatusTechEvaluationController::class, 'getQualifiedList']);
 Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
 Route::get('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'getTechEvaluationList']);
 Route::get('/tenderstatus/techevaluation/download/{id}', [TenderStatusTechEvaluationController::class, 'download']);
 Route::put('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'update']);
+Route::get('financialevaluation/getstoreddata/{id}',[TenderStatusFinancialEvaluationsController::class,'getStoredFinEvalData']);
+
 
 
 /*
@@ -244,6 +247,7 @@ Route::resources([
     'bidcreation/bidsubmission/bidsubmittedstatus' => BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
+    'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
 
 ]);
 

@@ -22,12 +22,12 @@ return new class extends Migration
             $table->bigInteger('competitorId')->unsigned();
             $table->foreign('competitorId')->references('id')->on('competitor_profile_creations')->onDelete("Restrict")->onUpdate("NO ACTION");
 
-            $table->double('amt');
+            $table->double('amt')->nullable();
 
-            $table->bigInteger('unit')->unsigned();
+            $table->bigInteger('unit')->unsigned()->nullable();
             $table->foreign('unit')->references('id')->on('unit_masters')->onDelete("Restrict")->onUpdate("NO ACTION");
 
-            $table->string('least');
+            $table->string('least')->nullable();
 
             $table->integer('created_by');
             $table->integer('edited_by')->nullable()->default(null);
