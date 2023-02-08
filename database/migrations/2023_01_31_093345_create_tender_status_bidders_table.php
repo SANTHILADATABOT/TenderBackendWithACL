@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('competitorId')->unsigned();
             $table->foreign('competitorId')->references('id')->on('competitor_profile_creations')->onDelete("Restrict")->onUpdate("NO ACTION");
             $table->enum('acceptedStatus',["approved","rejected"])->default(null);
+            $table->string('reason')->nullable()->default(null);//reason for rejected
             $table->integer('created_userid');
             $table->integer('updated_userid')->nullable()->default(null);
             $table->timestamp('created_at')->useCurrent();

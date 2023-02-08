@@ -186,4 +186,18 @@ class TenderStatusFinancialEvaluationsController extends Controller
     {
         //
     }
+
+
+    public function getleastbidder($id)
+    {
+        $bidders = TenderStatusFinancialEvaluations::join('competitor_profile_creations','tender_status_financial_evaluations.competitorId','competitor_profile_creations.id')
+        ->select('tender_status_financial_evaluations.*','competitor_profile_creations.compName')  
+        -> where('bidid',$id)
+        ->get();
+        
+        return response()->json([
+            'status' => 200,
+            'bidders' => $bidders,
+        ]);
+    }
 }

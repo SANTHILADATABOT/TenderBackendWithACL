@@ -133,7 +133,7 @@ class TenderStatusTechEvaluationController extends Controller
      * @param  \App\Models\TenderStatusTechEvaluation  $tenderStatusTechEvaluation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$mainId)
+    public function update(Request $request, $mainId)
     {
         try {
             $user = Token::where("tokenid", $request->tokenid)->first();
@@ -172,9 +172,6 @@ class TenderStatusTechEvaluationController extends Controller
                 if ($getExistingData->id) {
                     foreach ($request->input as $key => $value) {
                         $updatesub =TenderStatusTechEvaluationSub::where("competitorId",$key)->where("techMainId",$mainId)->first();
-                        // $updatesub->techMainId = $getExistingData->id;
-                        $updatesub->edited_userid = $user['userid'];
-                        // $updatesub->competitorId = $key;
                         foreach ($request->input[$key] as $key1 => $value1) {
                             if ($key1 == "status") {
                                 $updatesub->qualifiedStatus = $value1;
@@ -182,6 +179,8 @@ class TenderStatusTechEvaluationController extends Controller
                                 $updatesub->reason = $value1;
                             }
                         }
+
+                        $updatesub->edited_userid = $user['userid'];
                         $updatesub->save();
                     }
                 }
@@ -271,7 +270,8 @@ class TenderStatusTechEvaluationController extends Controller
             return response()->download($file,$doc[0]['document']);
         }
     }
-
+   
+    
     public function getQualifiedList($id){
 
         $bidid = $id;

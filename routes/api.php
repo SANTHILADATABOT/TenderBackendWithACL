@@ -49,6 +49,7 @@ use App\Http\Controllers\BidCreationBidSubmittedStatusController;
 
 use App\Http\Controllers\FileDownloadHandlingController;
 use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
+use App\Http\Controllers\TenderStatusContractAwardedController;
 
 /*
 |--------------------------------------------------------------------------
@@ -190,10 +191,13 @@ Route::get('technicalevalution/qualifiedlist/{id}', [TenderStatusTechEvaluationC
 Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
 Route::get('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'getTechEvaluationList']);
 Route::get('/tenderstatus/techevaluation/download/{id}', [TenderStatusTechEvaluationController::class, 'download']);
+Route::get('/tenderstatus/financialevaluation/getleastbidder/{id}', [TenderStatusFinancialEvaluationsController::class, 'getleastbidder']);
 Route::put('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'update']);
 Route::get('financialevaluation/getstoreddata/{id}',[TenderStatusFinancialEvaluationsController::class,'getStoredFinEvalData']);
 
+Route::get('/tenderstatus/awardontract/download/{id}', [TenderStatusContractAwardedController::class, 'download']);
 
+Route::post('tenderstatus/awardontract', [TenderStatusContractAwardedController::class, 'store']);
 
 /*
 ## Resource Laravel Routes Example
@@ -248,7 +252,7 @@ Route::resources([
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
     'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
-
+    'tenderstatusbidders' => TenderStatusBiddersController::class,
 ]);
 
 

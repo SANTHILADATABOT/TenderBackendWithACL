@@ -35,7 +35,26 @@ class TenderStatusContractAwardedController extends Controller
      */
     public function store(Request $request)
     {
+        return $request;
         //
+          //get the user id 
+        //   $user = Token::where('tokenid', $request->tokenid)->first();   
+        //   $userid = $user['userid'];
+        //   $financialEvaluation = null;
+        //   $updatearray = [];
+        //   if($userid){
+
+
+              
+        //   }
+      
+          
+            //   return response()->json([
+            //       'status' => 'success',
+            //       'msg' => 'Submitted successfully',
+            //   ]);
+          
+        
     }
 
     /**
@@ -81,5 +100,16 @@ class TenderStatusContractAwardedController extends Controller
     public function destroy(TenderStatusContractAwarded $tenderStatusContractAwarded)
     {
         //
+    }
+    public function download($id)
+    {
+        $doc = TenderStatusContractAwarded::where('bidid',$id)
+        ->select("document")
+        ->get();
+        
+        if ($doc) {
+            $file = public_path() . "/uploads/BidManagement/techevaluation/". $doc[0]['document'];
+            return response()->download($file,$doc[0]['document']);
+        }
     }
 }
