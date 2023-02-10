@@ -50,6 +50,8 @@ use App\Http\Controllers\BidCreationBidSubmittedStatusController;
 use App\Http\Controllers\FileDownloadHandlingController;
 use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
 
+use App\Http\Controllers\BidManagementTenderOrBidStausController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -153,6 +155,7 @@ Route::get('bidcreation/creation/fresh_tenders', [BidCreationCreationController:
 Route::get('download/tenderfeedocs/{id}', [BidCreationTenderFeeController::class, 'getdocs']);
 Route::get('download/emdfeedocs/{id}', [BidCreationEMDController::class, 'getdocs']);
 Route::get('download/bidsubmittedstatusdocs/{id}', [BidCreationBidSubmittedStatusController::class, 'getdocs']);
+Route::get('download/BidManagementTenderOrBidStausDocs/{id}', [BidManagementTenderOrBidStausController::class, 'getdocs']);
 
 
 // Route::post('bidcreation/getWorkList/list', [BidmanagementCorrigendumPublishController::class, 'getWorkList']);
@@ -248,7 +251,7 @@ Route::resources([
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
     'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
-
+    'bigmanagement/tenderstatus/status' => BidManagementTenderOrBidStausController::class, 
 ]);
 
 
