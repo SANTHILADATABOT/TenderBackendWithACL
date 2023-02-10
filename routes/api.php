@@ -49,6 +49,7 @@ use App\Http\Controllers\BidCreationBidSubmittedStatusController;
 
 use App\Http\Controllers\FileDownloadHandlingController;
 use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
+use App\Http\Controllers\TenderStatusContractAwardedController;
 
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 
@@ -193,11 +194,14 @@ Route::get('technicalevalution/qualifiedlist/{id}', [TenderStatusTechEvaluationC
 Route::get('unitmasters/getUnitList', [UnitMasterController::class, 'getListofUnits']);
 Route::get('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'getTechEvaluationList']);
 Route::get('/tenderstatus/techevaluation/download/{id}', [TenderStatusTechEvaluationController::class, 'download']);
+Route::get('/tenderstatus/financialevaluation/getleastbidder/{id}', [TenderStatusFinancialEvaluationsController::class, 'getleastbidder']);
 Route::put('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationController::class, 'update']);
 Route::get('financialevaluation/getstoreddata/{id}',[TenderStatusFinancialEvaluationsController::class,'getStoredFinEvalData']);
 
-
-
+Route::get('/tenderstatus/awardontract/download/{id}', [TenderStatusContractAwardedController::class, 'download']);
+Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
+ Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
+ Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -250,8 +254,12 @@ Route::resources([
     'bidcreation/bidsubmission/bidsubmittedstatus' => BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
+
     'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
     'bigmanagement/tenderstatus/status' => BidManagementTenderOrBidStausController::class, 
+    'tenderstatusbidders' => TenderStatusBiddersController::class,
+    'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
+
 ]);
 
 

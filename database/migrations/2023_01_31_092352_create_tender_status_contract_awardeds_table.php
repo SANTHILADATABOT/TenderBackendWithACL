@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tender_status_contract_awardeds');
+        Schema::dropIfExists('tender_status_contract_awarded');
     }
 };

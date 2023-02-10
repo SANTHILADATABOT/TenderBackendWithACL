@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('bidid')->unsigned();
             $table->foreign('bidid')->references('id')->on('bid_creation__creations')->onDelete("cascade")->onUpdate("NO ACTION");
             $table->integer('no_of_bidders')->unsigned();
-            $table->enum('tenderstatus', ['Pending', 'Cancelled', 'Completed'])->default('Pending');
+            $table->enum('tenderstatus', ['Pending', 'Cancelled', 'Completed','Retender'])->default('Pending');
             $table->integer('created_userid');
             $table->integer('edited_userid')->nullable()->default(null);
             $table->timestamp('created_at')->useCurrent();
