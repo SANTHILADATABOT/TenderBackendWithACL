@@ -197,8 +197,8 @@ Route::get('financialevaluation/getstoreddata/{id}',[TenderStatusFinancialEvalua
 
 Route::get('/tenderstatus/awardontract/download/{id}', [TenderStatusContractAwardedController::class, 'download']);
 
-Route::post('tenderstatus/awardontract', [TenderStatusContractAwardedController::class, 'store']);
-
+ Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
+    
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -251,8 +251,11 @@ Route::resources([
     'bidcreation/bidsubmission/bidsubmittedstatus' => BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
+
     'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
     'tenderstatusbidders' => TenderStatusBiddersController::class,
+
+    'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
 ]);
 
 

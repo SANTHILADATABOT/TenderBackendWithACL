@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TenderStatusContractAwarded;
 use Illuminate\Http\Request;
-
+use App\Models\Token;
 class TenderStatusContractAwardedController extends Controller
 {
     /**
@@ -35,7 +35,68 @@ class TenderStatusContractAwardedController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        try {
+        $user = Token::where("tokenid", $request->tokenid)->first();
+        if ($user['userid']) {
+            $isBididExist = TenderStatusContractAwarded::where("bidid", $request->bid_creation_mainid)->first();
+            if (!$isBididExist) {
+
+                if ($request->hasFile('file')) {
+                    $file = $request->file('file');
+                    $filename_original = $file->getClientOriginalName();
+                    $fileName1 = intval(microtime(true) * 1000) . $filename_original;
+                    $ext =  $file->getClientOriginalExtension();
+                    $filenameSplited = explode(".", $fileName1);
+                    if ($filenameSplited[1] != $ext) {
+                        $fileName = $filenameSplited[0] . "." . $ext;
+                    } else {
+                        $fileName = $fileName1;
+                    }
+                    $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
+                }
+                $awarded = new TenderStatusContractAwarded;
+                $awarded->bidid = $request->bid_creation_mainid;
+                $awarded->competitorId  = $request->competitorId;
+                $awarded->contactAwardedDate = $request->date;
+                $awarded->document = $fileName;
+                $awarded->description =$request->description;
+                $awarded->created_userid = $user['userid'];
+                $awarded->save();
+    
+                if ($awarded) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'AWARD OF CONTRACT Added..!'
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Oops, Unable to Add..!',
+                        'err' => 'not able to insert into sub table'
+                    ]);
+                }
+            }}
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect!',
+                'error' => $error
+            ]);
+        }
+
+
+
+        }
+      
+        
+
+       
+        
+   
+    public function insert(Request $request)
+    {
+        echo "insert Function";
         //
           //get the user id 
         //   $user = Token::where('tokenid', $request->tokenid)->first();   

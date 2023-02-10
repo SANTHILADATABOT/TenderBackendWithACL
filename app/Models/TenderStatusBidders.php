@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class TenderStatusBidders extends Model
 {
     use HasFactory;
-    protected $fillable = ['bidid','competitorId','acceptedStatus','created_userid','updated_userid'];
+    protected $fillable = ['bidid','competitorId','acceptedStatus','reason','created_userid','updated_userid'];
 }

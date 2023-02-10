@@ -72,7 +72,7 @@ class TenderStatusBiddersController extends Controller
     public function show($id)
     {
         $bidders = TenderStatusBidders::where("bidid", $id)
-            ->select('bidid', 'competitorId', 'acceptedStatus', 'reason')
+            ->select('id','bidid', 'competitorId', 'acceptedStatus', 'reason')
             ->get();
         if ($bidders) {
             return response()->json([
@@ -97,54 +97,53 @@ class TenderStatusBiddersController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $user = Token::where("tokenid", $request->tokenId)->first();
-            // $request->request->add(['edited_userid' => $user['userid']]);
-            // $request->request->remove('tokenId');
-            // $request->request->add(['no_of_bidders' => $request->bidders]);
-            // $request->request->remove('bidders');
+        $user = Token::where("tokenid", $request->tokenId)->first();
+        
+        // $validator = Validator::make($request->all(), ['bidid' => 'required|integer','no_of_bidders' => 'required|integer','edited_userid'=>'required|integer']);
 
-            // $validator = Validator::make($request->all(), ['bidid' => 'required|integer','no_of_bidders' => 'required|integer','edited_userid'=>'required|integer']);
-
-            // if ($validator->fails()) {
-            //     return response()->json([
-            //         'status' => 404,
-            //         'errors' => $validator->messages(),
-            //     ]);
-            // }
-            
-            if ($user['userid']) {
-                foreach ($request->input as $key => $value) {
-                    foreach ($request->input[$key] as $key1 => $value1) {
-                        $bidders = TenderStatusBidders::where("competitorId", (int)$value1['value'])
-                        ->where("bidid",$request->bidid)->get();
-                        $bidders->bidid = $request->bidid;
-                        $bidders->updated_userid = $user['userid'];
-                        if ($key1 == "compId") {
-
-                            $bidders->competitorId = $value1['value'];
-                        } else if ($key1 == "status") {
-                            $bidders->acceptedStatus = $value1;
-                        } else if ($key1 == "reason") {
-                            $bidders->reason = $value1;
-                        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 404,
+        //         'errors' => $validator->messages(),
+        //     ]);
+        // }
+        if ($user['userid']) {
+            foreach ($request->input as $key => $value) {
+                foreach ($request->input[$key] as $key1 => $value1) {
+                    if ($key1 == "compId") 
+                        foreach ($value1 as $key3 => $objValue) {
+                            if ($key3 == "value") {
+                                $compId = $objValue;
+                            }
                     }
-                    $bidders->save();
+                    else if ($key1 == "status") {
+                                $status= $value1;
+                    } else if ($key1 == "reason") {
+                                $reason= $value1;
+                    }   
+                        
                 }
-
-
-                // $bidders = TenderStatusBidders::where("bidid",$id)->update($request->all());
-                if ($bidders)
-                    return response()->json([
-                        'status' => 200,
-                        'message' => "Updated Successfully!"
-                    ]);
-                else {
-                    return response()->json([
-                        'status' => 404,
-                        'message' => 'The provided credentials are incorrect.'
-                    ]);
-                }
+                $bidders = TenderStatusBidders::where("id", $key)
+                            ->where("bidid", $request->bidid)->get();
+                if ($bidders) {
+                $update = TenderStatusBidders::where("id",$key)
+                ->where("bidid", $request->bidid)->update(array("acceptedStatus"=> $status,'reason'=>$reason,'competitorId'=>$compId, 'updated_userid'=>$user['userid']));
+                // echo "save res".$update;
             }
+        }
+            // $bidders = TenderStatusBidders::where("bidid",$id)->update($request->all());
+            if ($update)
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Updated Successfully!"
+                ]);
+            else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'The provided credentials are incorrect.'
+                ]);
+            }
+        }
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return response()->json([

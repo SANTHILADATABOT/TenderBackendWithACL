@@ -190,11 +190,13 @@ class TenderStatusFinancialEvaluationsController extends Controller
 
     public function getleastbidder($id)
     {
-        $bidders = TenderStatusFinancialEvaluations::join('competitor_profile_creations','tender_status_financial_evaluations.competitorId','competitor_profile_creations.id')
-        ->select('tender_status_financial_evaluations.*','competitor_profile_creations.compName')  
-        -> where('bidid',$id)
+        $bidders = TenderStatusFinancialEvaluations::join('competitor_profile_creations', 'tender_status_financial_evaluations.competitorId', 'competitor_profile_creations.id')
+            ->select('tender_status_financial_evaluations.*', 'competitor_profile_creations.compName')
+            ->where('tender_status_financial_evaluations.bidid', $id)
         ->get();
-        
+        // $query = str_replace(array('?'), array('\'%s\''), $bidders->toSql());
+        // $query = vsprintf($query, $bidders->getBindings());
+        // echo $query;
         return response()->json([
             'status' => 200,
             'bidders' => $bidders,
