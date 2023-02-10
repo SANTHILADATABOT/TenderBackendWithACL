@@ -89,7 +89,38 @@ class TenderStatusContractAwardedController extends Controller
 
         }
       
-        
+        public function getAwardContractList($id)
+    {
+        try {
+       
+                $fetchresult = TenderStatusContractAwarded::where('bidid', $id)
+                ->get()->first();
+
+                if ($fetchresult){
+                    return response()->json([
+                        'status' => 200,
+                        'result' => $fetchresult,
+                        'date' => $fetchresult->contactAwardedDate,
+                        'competitorId' => $fetchresult->competitorId,
+                        'description' => $fetchresult->description,
+                        'mainId' => $fetchresult->id,
+                        'filename' => $fetchresult->document,
+                    ]);
+                }
+                else {
+                    return response()->json([
+                        'status' => 404,
+                        'message' => 'The provided credentials are incorrect.'
+                    ]);
+                }
+            }
+         catch (\Exception $ex) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
 
        
         
@@ -147,9 +178,76 @@ class TenderStatusContractAwardedController extends Controller
      * @param  \App\Models\TenderStatusContractAwarded  $tenderStatusContractAwarded
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TenderStatusContractAwarded $tenderStatusContractAwarded)
+    public function update(Request $request, $mainId)
     {
         //
+
+        
+        // try {
+            $user = Token::where("tokenid", $request->tokenid)->first();
+            // Have to get Existing Data from table to update using update Method
+            $getExistingData = TenderStatusContractAwarded::where("id", $mainId)->get()->first();
+    
+            if ($user['userid']) {
+                $fileName = "";
+                if ($request->hasFile('file')) {
+                    $file = $request->file('file');
+                    $filename_original = $file->getClientOriginalName();
+                    $fileName1 = intval(microtime(true) * 1000) . $filename_original;
+                    $ext =  $file->getClientOriginalExtension();
+                    $filenameSplited = explode(".", $fileName1);
+                    if ($filenameSplited[1] != $ext) {
+                        $fileName = $filenameSplited[0] . "." . $ext;
+                    } else {
+                        $fileName = $fileName1;
+                    }
+    
+                    //to delete existin image                    
+                    $image_path = public_path('uploads/BidManagement/tenderawarded') . '/' . $getExistingData['document'];
+                    $path = str_replace("\\", "/", $image_path);
+                    unlink($path);
+                    $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
+                }
+                
+    
+                $awarded = TenderStatusContractAwarded::where("id", $mainId)
+                ->update(
+        
+                  [
+                    'bidid' => $request->input('bid_creation_mainid'),
+                    'competitorId' => $request->input('competitorId'),
+                    'contactAwardedDate' => $request->input('date'),
+                    'document' => $fileName,
+                    'description' => $request->input('description'),
+                    'edited_userid' => $user['userid'],
+                  ]
+                );
+    
+    
+                if ($awarded) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Awarded Contract Status Updated..!'
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Oops, Unable to Add..!',
+                        'err' => 'not able to insert into main table'
+                    ]);
+                }
+            }
+    
+            //     }
+            //  catch (\Exception $e) {
+            //     $error = $e->getMessage();
+            //     return response()->json([
+            //         'status' => 404,
+            //         'message' => 'The provided credentials are incorrect!',
+            //         'error' => $error
+            //     ]);
+            // }
+
     }
 
     /**
@@ -169,7 +267,7 @@ class TenderStatusContractAwardedController extends Controller
         ->get();
         
         if ($doc) {
-            $file = public_path() . "/uploads/BidManagement/techevaluation/". $doc[0]['document'];
+            $file = public_path() . "/uploads/BidManagement/tenderawarded/". $doc[0]['document'];
             return response()->download($file,$doc[0]['document']);
         }
     }
