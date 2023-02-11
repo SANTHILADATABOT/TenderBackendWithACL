@@ -123,7 +123,7 @@ class TenderStatusBiddersController extends Controller
                         else if ($key1 == "status") {
                             $status = $value1;
                             if ($value1 == 'rejected') {
-                               $res = $this->removeRejectedEntry($compId, $request->bidid, $user['userid']);
+                                $res = $this->removeRejectedEntry($compId, $request->bidid, $user['userid']);
                             }
                         } else if ($key1 == "reason") {
                             $reason = $value1;
@@ -249,7 +249,7 @@ class TenderStatusBiddersController extends Controller
     //To remove Technical Evaluation sub Table Entry when Bidders status has updated as rejected if Exists
     public function removeRejectedEntry($compid, $bidid, $userId)
     {
-        
+
         try {
             if (!empty($compid) && !empty($bidid) && !empty($userId)) {
                 $techsubid = TenderStatusTechEvaluation::join('tender_status_tech_evaluations_subs as sub', 'tender_status_tech_evaluations.id', 'sub.techMainId')
@@ -259,38 +259,36 @@ class TenderStatusBiddersController extends Controller
                     ->first();
 
                 if ($techsubid) {
-                    echo "techsubid : $techsubid";
+
                     $techDestroyResult = TenderStatusTechEvaluationSub::destroy($techsubid['id']);
-                    
-                    // $toBeRemovedLeastValue = TenderStatusFinancialEvaluations::where('bidid', $bidid)
-                    //     ->select('least')
-                    //     ->get();
-                        
+
                     $techDestroyResult = TenderStatusFinancialEvaluations::where('techsubId', $techsubid['id'])->delete();
-                    
-                    
+
                     // //update least record order in tender_status_financial_evaluations, when deleting particular record
-                    // if ($toBeRemovedLeastValue) {
-                        $finValueBidId = TenderStatusFinancialEvaluations::where('bidid', $bidid)
-                            ->select('id', 'least')
-                            ->where('least', '!=', '')
-                            ->where('least', '!=', null)
-                            ->get();
-                        if ($finValueBidId)
-                            foreach ($finValueBidId as $key => $value) {
-                                $update = TenderStatusTechEvaluationSub::where("id", $key)
-                                    ->where("bidid", $bidid)->get();
-                                $update->least = null;
-                                $update->edited_userid = $userId;
-                                $update->save();
-                                return;
-                            }
-                    // }
+                }
+                $finValueBidId = TenderStatusFinancialEvaluations::where('bidid', $bidid)
+                    ->where('least', '!=', '')
+                    ->where('least', '!=', null)
+                    ->update(['least' => null, 'edited_by' => $userId]);
+
+
+
+                // if ($finValueBidId)
+                //     foreach ($finValueBidId as $key => $value) {
+                //         echo " --- Loop Key : $key";
+                //         $update = TenderStatusFinancialEvaluations::where("id", $key)
+                //             ->where("bidid", $bidid)->get();
+                //         $update->least = null;
+                //         $update->edited_userid = $userId;
+                //         $update->save();
+                //         echo "  ---- Update least in Fin res :".$update;
+                //         return;
+                // }
+                // }
             }
-        }
         } catch (\Exception $ex) {
             echo "Exception : $ex";
-            return ;
+            return;
         }
     }
 }

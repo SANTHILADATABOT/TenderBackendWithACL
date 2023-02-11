@@ -266,9 +266,14 @@ class TenderStatusContractAwardedController extends Controller
         ->select("document")
         ->get();
         
-        if ($doc) {
+        if (!empty($doc['document'])) {
             $file = public_path() . "/uploads/BidManagement/tenderawarded/". $doc[0]['document'];
             return response()->download($file,$doc[0]['document']);
+        }
+        else{
+            return response()->json([
+                'message' => 'File not Available in DB..!',
+            ],204);
         }
     }
 }
