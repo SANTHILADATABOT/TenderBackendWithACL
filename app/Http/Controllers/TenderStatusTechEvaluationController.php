@@ -16,91 +16,90 @@ class TenderStatusTechEvaluationController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $user = Token::where("tokenid", $request->tokenid)->first();
-            if ($user['userid']) {
-                $isBididExist = TenderStatusTechEvaluation::where("bidid", $request->bid_creation_mainid)->first();
-                if (!$isBididExist) {
-                    // $validator = Validator::make($request->all(), ['organisation' => 'required|string', 'customername' => 'required|integer',  'tendertype' => 'required|integer', 'nitdate'=>'required', 'cr_userid'=>'required']);
-                    // if ($validator->fails()) {
-                    //     return response()->json([
-                    //         'status' => 400,
-                    //         'errors' => $validator->messages(),
-                    //     ]);
-                    // }
+        // try {
+        $user = Token::where("tokenid", $request->tokenid)->first();
+        if ($user['userid']) {
+            $isBididExist = TenderStatusTechEvaluation::where("bidid", $request->bid_creation_mainid)->first();
+            if (!$isBididExist) {
+                // $validator = Validator::make($request->all(), ['organisation' => 'required|string', 'customername' => 'required|integer',  'tendertype' => 'required|integer', 'nitdate'=>'required', 'cr_userid'=>'required']);
+                // if ($validator->fails()) {
+                //     return response()->json([
+                //         'status' => 400,
+                //         'errors' => $validator->messages(),
+                //     ]);
+                // }
 
-                    if ($request->hasFile('file')) {
-                        $file = $request->file('file');
-                        $filename_original = $file->getClientOriginalName();
-                        $fileName1 = intval(microtime(true) * 1000) . $filename_original;
-                        $ext =  $file->getClientOriginalExtension();
-                        $filenameSplited = explode(".", $fileName1);
-                        if ($filenameSplited[1] != $ext) {
-                            $fileName = $filenameSplited[0] . "." . $ext;
-                        } else {
-                            $fileName = $fileName1;
-                        }
-                        $file->storeAs('BidManagement/techevaluation', $fileName, 'public');
+                if ($request->hasFile('file') && !empty($request->file)) {
+                    $file = $request->file('file');
+                    $filename_original = $file->getClientOriginalName();
+                    $fileName1 = intval(microtime(true) * 1000) . $filename_original;
+                    $ext =  $file->getClientOriginalExtension();
+                    $filenameSplited = explode(".", $fileName1);
+                    if ($filenameSplited[1] != $ext) {
+                        $fileName = $filenameSplited[0] . "." . $ext;
+                    } else {
+                        $fileName = $fileName1;
                     }
+                    $file->storeAs('BidManagement/techevaluation', $fileName, 'public');
+                }
+                $techEval = new TenderStatusTechEvaluation;
+                $techEval->bidid = $request->bid_creation_mainid;
+                $techEval->evaluationDate = $request->date;
+                $techEval->document = !empty($fileName) ? $fileName : "";
+                $techEval->created_userid = $user['userid'];
+                $techEval->save();
 
-                    $techEval = new TenderStatusTechEvaluation;
-                    $techEval->bidid = $request->bid_creation_mainid;
-                    $techEval->evaluationDate = $request->date;
-                    $techEval->document = $fileName;
-                    $techEval->created_userid = $user['userid'];
-                    $techEval->save();
-
-                    if ($techEval->id) {
-                        foreach ($request->input as $key => $value) {
-                            $insertsub = new TenderStatusTechEvaluationSub;
-                            $insertsub->techMainId = $techEval->id;
-                            $insertsub->created_userid = $user['userid'];
-                            $insertsub->competitorId = $key;
-                            foreach ($request->input[$key] as $key1 => $value1) {
-                                if ($key1 == "status") {
-                                    $insertsub->qualifiedStatus = $value1;
-                                } else if ($key1 == "reason") {
-                                    $insertsub->reason = $value1;
-                                }
+                if ($techEval->id) {
+                    foreach ($request->input as $key => $value) {
+                        $insertsub = new TenderStatusTechEvaluationSub;
+                        $insertsub->techMainId = $techEval->id;
+                        $insertsub->created_userid = $user['userid'];
+                        $insertsub->competitorId = $key;
+                        foreach ($request->input[$key] as $key1 => $value1) {
+                            if ($key1 == "status") {
+                                $insertsub->qualifiedStatus = $value1;
+                            } else if ($key1 == "reason") {
+                                $insertsub->reason = $value1;
                             }
-                            $insertsub->save();
                         }
+                        $insertsub->save();
                     }
+                }
 
 
-                    if ($techEval && $insertsub) {
-                        return response()->json([
-                            'status' => 200,
-                            'message' => 'Technial Evaluation Status Added..!'
-                        ]);
-                    } else if ($techEval && !$insertsub) {
-                        return response()->json([
-                            'status' => 400,
-                            'message' => 'Oops, Unable to Add..!',
-                            'err' => 'not able to insert into sub table'
-                        ]);
-                    } else if (!$techEval && $insertsub) {
-                        return response()->json([
-                            'status' => 400,
-                            'message' => 'Oops, Unable to Add..!',
-                            'err' => 'not able to insert into main table'
-                        ]);
-                    }
-                } else {
+                if ($techEval && $insertsub) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Technial Evaluation Status Added..!'
+                    ]);
+                } else if ($techEval && !$insertsub) {
                     return response()->json([
                         'status' => 400,
-                        'message' => 'Technical Evalution Details Already Exist For this Tender ..!',
+                        'message' => 'Oops, Unable to Add..!',
+                        'err' => 'not able to insert into sub table'
+                    ]);
+                } else if (!$techEval && $insertsub) {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Oops, Unable to Add..!',
+                        'err' => 'not able to insert into main table'
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Technical Evalution Details Already Exist For this Tender ..!',
+                ]);
             }
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-            return response()->json([
-                'status' => 404,
-                'message' => 'The provided credentials are incorrect!',
-                'error' => $error
-            ]);
         }
+        // } catch (\Exception $e) {
+        //     $error = $e->getMessage();
+        //     return response()->json([
+        //         'status' => 404,
+        //         'message' => 'The provided credentials are incorrect!',
+        //         'error' => $error
+        //     ]);
+        // }
     }
 
     /**
@@ -142,7 +141,7 @@ class TenderStatusTechEvaluationController extends Controller
 
             if ($user['userid']) {
                 $fileName = "";
-                if ($request->hasFile('file')) {
+                if ($request->hasFile('file') && !empty($request->file)) {
                     $file = $request->file('file');
                     $filename_original = $file->getClientOriginalName();
                     $fileName1 = intval(microtime(true) * 1000) . $filename_original;
@@ -153,18 +152,19 @@ class TenderStatusTechEvaluationController extends Controller
                     } else {
                         $fileName = $fileName1;
                     }
-
-                    //to delete existin image                    
-                    $image_path = public_path('uploads/BidManagement/techevaluation') . '/' . $getExistingData['document'];
-                    $path = str_replace("\\", "/", $image_path);
-                    unlink($path);
+                    if ($getExistingData['document']) {
+                        //to delete existin image                    
+                        $image_path = public_path('uploads/BidManagement/techevaluation') . '/' . $getExistingData['document'];
+                        $path = str_replace("\\", "/", $image_path);
+                        unlink($path);
+                    }
                     $file->storeAs('BidManagement/techevaluation', $fileName, 'public');
                 }
 
 
                 $getExistingData->bidid = $request->bid_creation_mainid;
                 $getExistingData->evaluationDate = $request->date;
-                $getExistingData->document = $fileName;
+                $getExistingData->document = !empty($fileName) ? $fileName : "";
                 $getExistingData->edited_userid = $user['userid'];
                 $getExistingData->save();
 

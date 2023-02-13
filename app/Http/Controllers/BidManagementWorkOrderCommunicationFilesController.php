@@ -72,7 +72,7 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
                 $CommunicationFiles->refrenceno = $request->refrenceno;
                 $CommunicationFiles->from = $request->from;
                 $CommunicationFiles->to = $request->to;
-                $CommunicationFiles->subject = $request->bidid;
+                $CommunicationFiles->subject = $request->subject;
                 $CommunicationFiles->medium = $request->medium;
                 $CommunicationFiles->med_refrenceno = $request->medrefrenceno;
                 $CommunicationFiles->randomno = $request->random;
@@ -338,7 +338,7 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
                 $CommunicationFiles->from = $request->from;
                 $CommunicationFiles->to = $request->to;
                 $CommunicationFiles->randomno = $request->sub_id;
-                $CommunicationFiles->subject = $request->bidid;
+                $CommunicationFiles->subject = $request->subject;
                 $CommunicationFiles->medium = $request->medium;
                 $CommunicationFiles->med_refrenceno = $request->medrefrenceno;
 
