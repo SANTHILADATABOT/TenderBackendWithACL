@@ -371,6 +371,7 @@ class BidCreationCreationController extends Controller
         $result = DB::table(DB::raw('(' . $queryBuilder->toSql() . ') as a'))
         ->mergeBindings($queryBuilder->getQuery())
         ->where('a.submissiondate', '<', $todaydate )
+        ->orWhere('a.status', '=', 'Cancel' )
 
         ->when($formdate, function($query) use ($formdate) {
             return $query->where('a.nitdate','>=',$formdate);
