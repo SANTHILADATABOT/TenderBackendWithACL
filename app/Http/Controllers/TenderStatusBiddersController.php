@@ -29,23 +29,25 @@ class TenderStatusBiddersController extends Controller
         if ($user['userid']) {
 
             foreach ($request->input as $key => $value) {
-                $bidders = new TenderStatusBidders;
-                $bidders->bidid = $request->bidid;
-                $bidders->created_userid = $user['userid'];
-                foreach ($request->input[$key] as $key1 => $value1) {
-                    if ($key1 == "compId") {
-                        if (!empty($value1['value'])) {
-                            $bidders->competitorId = $value1['value'];
-                        } else {
-                            continue;
+                if( $value['compId'] !== null){
+                    $bidders = new TenderStatusBidders;
+                    $bidders->bidid = $request->bidid;
+                    $bidders->created_userid = $user['userid'];
+                    foreach ($request->input[$key] as $key1 => $value1) {
+                        if ($key1 == "compId") {
+                            if (!empty($value1['value'])) {
+                                $bidders->competitorId = $value1['value'];
+                            } else {
+                                continue;
+                            }
+                        } else if ($key1 == "status") {
+                            $bidders->acceptedStatus = $value1;
+                        } else if ($key1 == "reason") {
+                            $bidders->reason = $value1;
                         }
-                    } else if ($key1 == "status") {
-                        $bidders->acceptedStatus = $value1;
-                    } else if ($key1 == "reason") {
-                        $bidders->reason = $value1;
                     }
+                    $bidders->save();
                 }
-                $bidders->save();
             }
 
 
@@ -116,29 +118,31 @@ class TenderStatusBiddersController extends Controller
             // }
             if ($user['userid']) {
                 foreach ($request->input as $key => $value) {
-                    $compId = "";
-                    foreach ($request->input[$key] as $key1 => $value1) {
-                        if ($key1 == "compId")
-                            foreach ($value1 as $key3 => $objValue) {
-                                if ($key3 == "value") {
-                                    $compId = $objValue;
+                    if( $value['compId'] !== null){
+                        $compId = "";
+                        foreach ($request->input[$key] as $key1 => $value1) {
+                            if ($key1 == "compId")
+                                foreach ($value1 as $key3 => $objValue) {
+                                    if ($key3 == "value") {
+                                        $compId = $objValue;
+                                    }
                                 }
+                            else if ($key1 == "status") {
+                                $status = $value1;
+                                if ($value1 == 'rejected') {
+                                    $res = $this->removeRejectedEntry($compId, $request->bidid, $user['userid']);
+                                }
+                            } else if ($key1 == "reason") {
+                                $reason = $value1;
                             }
-                        else if ($key1 == "status") {
-                            $status = $value1;
-                            if ($value1 == 'rejected') {
-                                $res = $this->removeRejectedEntry($compId, $request->bidid, $user['userid']);
-                            }
-                        } else if ($key1 == "reason") {
-                            $reason = $value1;
                         }
-                    }
-                    $bidders = TenderStatusBidders::where("id", $key)
-                        ->where("bidid", $request->bidid)->get();
-                    if ($bidders) {
-                        $update = TenderStatusBidders::where("id", $key)
-                            ->where("bidid", $request->bidid)->update(array("acceptedStatus" => $status, 'reason' => $reason, 'competitorId' => $compId, 'updated_userid' => $user['userid']));
-                        // echo "save res".$update;
+                        $bidders = TenderStatusBidders::where("id", $key)
+                            ->where("bidid", $request->bidid)->get();
+                        if ($bidders) {
+                            $update = TenderStatusBidders::where("id", $key)
+                                ->where("bidid", $request->bidid)->update(array("acceptedStatus" => $status, 'reason' => $reason, 'competitorId' => $compId, 'updated_userid' => $user['userid']));
+                            // echo "save res".$update;
+                        }
                     }
                 }
                 // $bidders = TenderStatusBidders::where("bidid",$id)->update($request->all());
