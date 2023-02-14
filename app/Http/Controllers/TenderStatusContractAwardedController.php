@@ -270,17 +270,15 @@ class TenderStatusContractAwardedController extends Controller
     {
         //
     }
-    public function download($id)
+    public function download($bidid)
     {
 
-        $doc = TenderStatusContractAwarded::where('bidid', $id)
+        $doc = TenderStatusContractAwarded::where('bidid', $bidid)
             ->select("document")
             ->get();
 
-        if (!empty($doc['document'])) {
-            $file = public_path() . "/uploads/BidManagement/tenderawarded/" . $doc[0]['document'];
-            echo  $file;
-
+        if (!empty($doc[0]->document)) {
+            $file = public_path() . "/uploads/BidManagement/tenderawarded/" . $doc[0]->document;
             return response()->download($file, $doc[0]['document']);
         } else {
             return response()->json([
