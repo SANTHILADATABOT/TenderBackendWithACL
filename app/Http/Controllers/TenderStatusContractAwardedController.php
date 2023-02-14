@@ -29,12 +29,7 @@ class TenderStatusContractAwardedController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
         try {
@@ -196,7 +191,7 @@ class TenderStatusContractAwardedController extends Controller
 
         if ($user['userid']) {
             $fileName = "";
-            // return ("Res ".$request->hasFile('file')  && !empty($request->file));
+           
             if ($request->hasFile('file')  && !empty($request->file)) {
                 $file = $request->file('file');
                 $filename_original = $file->getClientOriginalName();
@@ -221,6 +216,8 @@ class TenderStatusContractAwardedController extends Controller
                     
                 }
                 $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
+
+                // return ("Res ".$request->hasFile('file')  && !empty($request->file));
             }
             
             $awarded = TenderStatusContractAwarded::where("id", $mainId)
@@ -275,17 +272,21 @@ class TenderStatusContractAwardedController extends Controller
     }
     public function download($id)
     {
+
         $doc = TenderStatusContractAwarded::where('bidid', $id)
             ->select("document")
             ->get();
 
         if (!empty($doc['document'])) {
             $file = public_path() . "/uploads/BidManagement/tenderawarded/" . $doc[0]['document'];
+            echo  $file;
+
             return response()->download($file, $doc[0]['document']);
         } else {
             return response()->json([
                 'message' => 'File not Available in DB..!',
             ], 204);
         }
+        
     }
 }

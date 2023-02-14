@@ -16,51 +16,55 @@ class TenderStatusBiddersController extends Controller
     public function store(Request $request)
     {
         // try {
-            $user = Token::where("tokenid", $request->tokenId)->first();
+        $user = Token::where("tokenid", $request->tokenId)->first();
 
-            //  $validator = Validator::make($request->all(), ['bidid' => 'required|integer','bidders' => 'required|integer','created_userid'=>'required|integer']);
-            //  if ($validator->fails()) {
-            //      return response()->json([
-            //          'status' => 404,
-            //          // 'message' =>"Not able to Add Strength/Weakness details now..!",
-            //          'message' => $validator->messages(),
-            //      ]);
-            //  }
-            if ($user['userid']) {
+        //  $validator = Validator::make($request->all(), ['bidid' => 'required|integer','bidders' => 'required|integer','created_userid'=>'required|integer']);
+        //  if ($validator->fails()) {
+        //      return response()->json([
+        //          'status' => 404,
+        //          // 'message' =>"Not able to Add Strength/Weakness details now..!",
+        //          'message' => $validator->messages(),
+        //      ]);
+        //  }
+        if ($user['userid']) {
 
-                foreach ($request->input as $key => $value) {
-                    $bidders = new TenderStatusBidders;
-                    $bidders->bidid = $request->bidid;
-                    $bidders->created_userid = $user['userid'];
-                    foreach ($request->input[$key] as $key1 => $value1) {
-                        if ($key1 == "compId") {
+            foreach ($request->input as $key => $value) {
+                $bidders = new TenderStatusBidders;
+                $bidders->bidid = $request->bidid;
+                $bidders->created_userid = $user['userid'];
+                foreach ($request->input[$key] as $key1 => $value1) {
+                    if ($key1 == "compId") {
+                        if (!empty($value1['value'])) {
                             $bidders->competitorId = $value1['value'];
-                        } else if ($key1 == "status") {
-                            $bidders->acceptedStatus = $value1;
-                        } else if ($key1 == "reason") {
-                            $bidders->reason = $value1;
+                        } else {
+                            continue;
                         }
+                    } else if ($key1 == "status") {
+                        $bidders->acceptedStatus = $value1;
+                    } else if ($key1 == "reason") {
+                        $bidders->reason = $value1;
                     }
-                    $bidders->save();
                 }
-
-
-
-
-                //  $bidders =new TenderStatusBidders;
-                //  $bidders->bidid=$request->bidid;
-                // //  $bidders->no_of_bidders=$request->bidders;
-                // $bidders->input = 
-                //  $bidders->created_userid=$request->created_userid;
-                //  $bidders->save();
-                //  //$bidders = TenderStatusBidders::firstOrCreate($request->all());
-                if ($bidders) {
-                    return response()->json([
-                        'status' => 200,
-                        'message' => 'Added Succssfully!',
-                    ]);
-                }
+                $bidders->save();
             }
+
+
+
+
+            //  $bidders =new TenderStatusBidders;
+            //  $bidders->bidid=$request->bidid;
+            // //  $bidders->no_of_bidders=$request->bidders;
+            // $bidders->input = 
+            //  $bidders->created_userid=$request->created_userid;
+            //  $bidders->save();
+            //  //$bidders = TenderStatusBidders::firstOrCreate($request->all());
+            if ($bidders) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Added Succssfully!',
+                ]);
+            }
+        }
         // } catch (\Exception $e) {
         //     $error = $e->getMessage();
         //     return response()->json([
