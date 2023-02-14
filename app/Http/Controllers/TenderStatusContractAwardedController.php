@@ -42,7 +42,7 @@ class TenderStatusContractAwardedController extends Controller
             if ($user['userid']) {
                 $isBididExist = TenderStatusContractAwarded::where("bidid", $request->bid_creation_mainid)->first();
                 if (!$isBididExist) {
-                    return (empty($request->file));
+                    // return (empty($request->file));
                     if ($request->hasFile('file')  && !empty($request->file)) {
                         $file = $request->file('file');
                         $filename_original = $file->getClientOriginalName();
@@ -55,6 +55,9 @@ class TenderStatusContractAwardedController extends Controller
                             $fileName = $fileName1;
                         }
                         $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
+                    }
+                    else{
+                        $fileName='';
                     }
                     $awarded = new TenderStatusContractAwarded;
                     $awarded->bidid = $request->bid_creation_mainid;

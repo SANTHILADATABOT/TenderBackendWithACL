@@ -15,7 +15,7 @@ class TenderStatusBiddersController extends Controller
 {
     public function store(Request $request)
     {
-        try {
+        // try {
             $user = Token::where("tokenid", $request->tokenId)->first();
 
             //  $validator = Validator::make($request->all(), ['bidid' => 'required|integer','bidders' => 'required|integer','created_userid'=>'required|integer']);
@@ -61,14 +61,14 @@ class TenderStatusBiddersController extends Controller
                     ]);
                 }
             }
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-            return response()->json([
-                'status' => 404,
-                'message' => 'The provided credentials are incorrect!',
-                'error' => $error
-            ]);
-        }
+        // } catch (\Exception $e) {
+        //     $error = $e->getMessage();
+        //     return response()->json([
+        //         'status' => 404,
+        //         'message' => 'The provided credentials are incorrect!',
+        //         'error' => $error
+        //     ]);
+        // }
     }
 
     //Get and Retunr All the Bidders
@@ -163,7 +163,6 @@ class TenderStatusBiddersController extends Controller
 
     public function getBidders($id)
     {
-
         $bidders = TenderStatusBidders::where("bidid", $id)
             ->select("*")
             ->get()->first();
