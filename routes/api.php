@@ -152,6 +152,7 @@ Route::post('bidcreation/corrigendumpublish/docupload/{id}', [BidmanagementCorri
 //brindha updated on 21-01-2023
 Route::get('bidcreation/creation/live_tenders', [BidCreationCreationController::class, 'live_tender']);
 Route::get('bidcreation/creation/fresh_tenders', [BidCreationCreationController::class, 'fresh_tender']);
+Route::get('bidcreation/creation/awarded_tenders', [BidCreationCreationController::class, 'awarded_tenders']);
 
 Route::get('download/tenderfeedocs/{id}', [BidCreationTenderFeeController::class, 'getdocs']);
 Route::get('download/emdfeedocs/{id}', [BidCreationEMDController::class, 'getdocs']);

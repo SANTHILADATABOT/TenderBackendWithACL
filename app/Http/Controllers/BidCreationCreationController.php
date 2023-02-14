@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Token;
 use App\Models\StateMaster;
 use App\Models\CustomerCreationProfile;
+use App\Models\TenderStatusContractAwarded;
 use Illuminate\Support\Facades\File;
 
 
@@ -563,6 +564,24 @@ public function fresh_tender()
         }
     }
 
+
+    public function awarded_tenders()
+    {
+        $awarded_tender_count = TenderStatusContractAwarded::count();
+        // $live_tender = BidCreation_Creation::where('created_at', 'desc')->get();
+      
+        if ($awarded_tender_count)
+            return response()->json([
+                'status' => 200,
+                'awarded_tender_count' => $awarded_tender_count
+            ]);
+        else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
     
     public function getLastBidno($code){
 
