@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TenderStatusContractAwarded;
+use App\Models\BidManagementTenderOrBidStaus;
 use Illuminate\Http\Request;
 use App\Models\Token;
 use Illuminate\Support\Facades\File;
@@ -29,7 +30,7 @@ class TenderStatusContractAwardedController extends Controller
         //
     }
 
-    
+
     public function store(Request $request)
     {
         try {
@@ -50,9 +51,8 @@ class TenderStatusContractAwardedController extends Controller
                             $fileName = $fileName1;
                         }
                         $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
-                    }
-                    else{
-                        $fileName='';
+                    } else {
+                        $fileName = '';
                     }
                     $awarded = new TenderStatusContractAwarded;
                     $awarded->bidid = $request->bid_creation_mainid;
@@ -64,6 +64,16 @@ class TenderStatusContractAwardedController extends Controller
                     $awarded->save();
 
                     if ($awarded) {
+                        if ((BidManagementTenderOrBidStaus::where("bidid", $request->bid_creation_mainid)->exists())) {
+                            $updateStatus = BidManagementTenderOrBidStaus::where("bidid", $request->bid_creation_mainid)->update(['status'=> 'Completed']);
+                        }
+                        // else{
+                        //     $insertStatus= new BidManagementTenderOrBidStaus;
+                        //     $insertStatus->bidid = $request->bid_creation_mainid;
+                        //     $insertStatus->created_by = $user['userid'];
+                        //     $insertStatus->status="Completed";
+                        //     $insertStatus->save();
+                        // }
                         return response()->json([
                             'status' => 200,
                             'message' => 'Award OF Contract Added..!'
@@ -121,7 +131,7 @@ class TenderStatusContractAwardedController extends Controller
 
 
 
-   
+
 
     /**
      * Display the specified resource.
@@ -191,7 +201,7 @@ class TenderStatusContractAwardedController extends Controller
 
         if ($user['userid']) {
             $fileName = "";
-           
+
             if ($request->hasFile('file')  && !empty($request->file)) {
                 $file = $request->file('file');
                 $filename_original = $file->getClientOriginalName();
@@ -203,23 +213,21 @@ class TenderStatusContractAwardedController extends Controller
                 } else {
                     $fileName = $fileName1;
                 }
-                
-                if ($getExistingData['document'] ) {
+
+                if ($getExistingData['document']) {
                     //to delete existin image           
-                    
+
                     $image_path = public_path('uploads/BidManagement/tenderawarded') . '/' . $getExistingData['document'];
                     $path = str_replace("\\", "/", $image_path);
-                    if(File::exists($path))
-                    {
+                    if (File::exists($path)) {
                         unlink($path);
                     }
-                    
                 }
                 $file->storeAs('BidManagement/tenderawarded', $fileName, 'public');
 
                 // return ("Res ".$request->hasFile('file')  && !empty($request->file));
             }
-            
+
             $awarded = TenderStatusContractAwarded::where("id", $mainId)
                 ->update(
 
@@ -285,6 +293,5 @@ class TenderStatusContractAwardedController extends Controller
                 'message' => 'File not Available in DB..!',
             ], 204);
         }
-        
     }
 }
