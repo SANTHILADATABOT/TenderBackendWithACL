@@ -138,7 +138,10 @@ class TenderCreationController extends Controller
     public function gettendertrack()
     {
         $tendertracker = BidCreation_Creation::join('state_masters', 'bid_creation__creations.state', '=', 'state_masters.id')
-
+            ->whereNotIn('bid_creation__creations.id', function ($query) {
+                $query->select('bidid')->from('bid_management_tender_or_bid_stauses')
+                ->where('status','Cancel');
+            })
             ->select('bid_creation__creations.*', 'state_masters.state_code')
             ->orderBy('created_at', 'desc')
             ->get();
