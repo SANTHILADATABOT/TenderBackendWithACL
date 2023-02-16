@@ -136,8 +136,6 @@ Route::post('bidcreation/creation/bidlist', [BidCreationCreationController::clas
 Route::get('moilization/getMobList/{mobId}', [BidManagementWorkOrderMobilizationAdvanceController::class, 'getMobList']);
 Route::get('ProjectDetails/getProList/{proid}', [BidManagementWorkOrderProjectDetailsController::class, 'getProList']);
 
-Route::post('bidcreation/creation/bidlist', [BidCreationCreationController::class, 'getBidList']);
-
 Route::post('bidcreation/prebidqueries/docupload/list', [BidmanagementPreBidQueriesController::class, 'getUplodedDocList']);
 Route::get('download/prebidqueriesdocs/{fileName}', [BidmanagementPreBidQueriesController::class, 'download']);
 Route::post('bidcreation/prebidqueries/docupload/{id}', [BidmanagementPreBidQueriesController::class, 'update']);

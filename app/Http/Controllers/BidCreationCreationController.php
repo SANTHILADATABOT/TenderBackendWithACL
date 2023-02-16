@@ -273,27 +273,83 @@ class BidCreationCreationController extends Controller
     public function getBidList(Request $request){
 
            //
-          if($request->fromdate && $request->todate){
+          $formdate =  $request->fromdate;
+          $todate   =  $request->todate;
+        
+
             // $tenderCreation = DB::table('tender_creations')
-            // ->join('bid_creation__creations','tender_creations.id','bid_creation__creations.id')
-            // ->whereBetween('tender_creations.nitdate', [$request->fromdate, $request->todate])
-            // ->select('*')
-            // ->orderBy('NITdate', 'DESC')
+            // ->leftjoin('bid_creation__creations','tender_creations.id','bid_creation__creations.tendercreation')
+            // ->join('customer_creation_profiles','tender_creations.customername','customer_creation_profiles.id')
+
+            // ->when($formdate, function($query) use ($formdate) {
+            //     return $query->where('tender_creations.nitdate','>=',$formdate);
+            // })
+            // ->when($todate, function($query) use ($todate) {
+            //     return $query->where('tender_creations.nitdate','<=',$todate);
+            // })
+            // ->select('tender_creations.id AS tenderid', 'bid_creation__creations.id AS bidid', 'tender_creations.nitdate', 'tender_creations.customername', 'bid_creation__creations.quality', 'bid_creation__creations.unit', 'bid_creation__creations.submissiondate', 'customer_creation_profiles.customer_name')
+            // ->orderBy('tender_creations.nitdate', 'DESC')
             // ->get();
-
-            $tenderCreation = DB::table('tender_creations')
-            ->leftjoin('bid_creation__creations','tender_creations.id','bid_creation__creations.tendercreation')
+          
+            $queryBuilder = TenderCreation::leftjoin('bid_creation__creations','tender_creations.id','bid_creation__creations.tendercreation')
             ->join('customer_creation_profiles','tender_creations.customername','customer_creation_profiles.id')
-            ->whereBetween('tender_creations.nitdate', [$request->fromdate, $request->todate])
+            ->leftjoin('bid_management_tender_or_bid_stauses', 'bid_creation__creations.id', 'bid_management_tender_or_bid_stauses.bidid')
             ->select('tender_creations.id AS tenderid', 'bid_creation__creations.id AS bidid', 'tender_creations.nitdate', 'tender_creations.customername', 'bid_creation__creations.quality', 'bid_creation__creations.unit', 'bid_creation__creations.submissiondate', 'customer_creation_profiles.customer_name')
-            ->orderBy('tender_creations.nitdate', 'DESC')
-            ->get();
-          }
-
+            ->addselect(DB::raw("(CASE 
+            WHEN bid_management_tender_or_bid_stauses.status = 'Cancel' THEN 'Tender Cancel'
+            WHEN bid_management_tender_or_bid_stauses.status = 'Retender'  THEN 'Retender'
+            WHEN (SELECT COUNT(*) AS tender_status_bidders FROM `tender_status_bidders` WHERE
+                  bidid = bid_creation__creations.id) = 0 
+                  THEN 'To Be Opened' 
+            WHEN (
+                    (SELECT COUNT(*) AS tender_status_bidders FROM `tender_status_bidders` WHERE bidid = bid_creation__creations.id) > 0 AND 
+                    (SELECT COUNT(*) AS tech_evaluations FROM `tender_status_tech_evaluations` WHERE bidid = bid_creation__creations.id) = 0
+                ) 
+                  THEN 'Technical Evaluation in Progress'
+            WHEN (
+                    (SELECT COUNT(*) AS tender_status_bidders FROM `tender_status_bidders` WHERE bidid = bid_creation__creations.id) > 0 AND 
+                    (SELECT COUNT(*) AS tech_evaluations FROM `tender_status_tech_evaluations` WHERE bidid = bid_creation__creations.id) > 0 AND
+                    (SELECT COUNT(*) AS financial_evaluations FROM `tender_status_financial_evaluations` WHERE bidid = bid_creation__creations.id) = 0 
+                ) 
+                  THEN 'Financial Bid Opening in Progress'     
+            WHEN (
+                    (SELECT COUNT(*) AS tender_status_bidders FROM `tender_status_bidders` WHERE bidid = bid_creation__creations.id) > 0 AND 
+                    (SELECT COUNT(*) AS tech_evaluations FROM `tender_status_tech_evaluations` WHERE bidid = bid_creation__creations.id) > 0 AND
+                    (SELECT COUNT(*) AS financial_evaluations FROM `tender_status_financial_evaluations` WHERE bidid = bid_creation__creations.id) > 0 AND
+                    (SELECT COUNT(*) AS contract_awarded FROM `tender_status_contract_awarded` WHERE bidid = bid_creation__creations.id) = 0 
+                ) 
+                  THEN 'LoA yet to be awarded' 
+            WHEN (
+                    (SELECT COUNT(*) AS tender_status_bidders FROM `tender_status_bidders` WHERE bidid = bid_creation__creations.id) > 0 AND 
+                    (SELECT COUNT(*) AS tech_evaluations FROM `tender_status_tech_evaluations` WHERE bidid = bid_creation__creations.id) > 0 AND
+                    (SELECT COUNT(*) AS financial_evaluations FROM `tender_status_financial_evaluations` WHERE bidid = bid_creation__creations.id) > 0 AND
+                    (SELECT COUNT(*) AS contract_awarded FROM `tender_status_contract_awarded` WHERE bidid = bid_creation__creations.id) > 0 
+                ) 
+                  THEN 'Awarded'  
+            ELSE ''
+            END) as tenderStatus"));
           
 
+            DB::enableQueryLog(); 
+            $result = DB::table(DB::raw('(' . $queryBuilder->toSql() . ') as a'))
+            ->mergeBindings($queryBuilder->getQuery())
+            ->when($formdate, function($query) use ($formdate) {
+                return $query->where('a.nitdate','>=',$formdate);
+            })
+            ->when($todate, function($query) use ($todate) {
+                return $query->where('a.nitdate','<=',$todate);
+            })
+            ->orderBy('a.nitdate', 'DESC')
+            ->get();
+            $sqlquery = DB::getQueryLog();
+        
+            $SQL = str_replace(array('?'), array('\'%s\''),  $sqlquery[0]['query']);
+            $SQL = vsprintf($SQL, $sqlquery[0]['bindings']);
+    
+
           return response()->json([
-              'tenderCreationList' => $tenderCreation 
+              'tenderCreationList'  => $result,
+              'SqlQuery'            =>  $sqlquery,
           ]);
 
     }
