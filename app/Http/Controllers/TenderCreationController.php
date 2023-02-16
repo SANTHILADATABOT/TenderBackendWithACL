@@ -137,11 +137,14 @@ class TenderCreationController extends Controller
 
     public function gettendertrack()
     {
+        $today = date('Y-m-d'); 
+
         $tendertracker = BidCreation_Creation::join('state_masters', 'bid_creation__creations.state', '=', 'state_masters.id')
             ->whereNotIn('bid_creation__creations.id', function ($query) {
                 $query->select('bidid')->from('bid_management_tender_or_bid_stauses')
                 ->where('status','Cancel');
             })
+            ->where('bid_creation__creations.submissiondate','>=',$today)
             ->select('bid_creation__creations.*', 'state_masters.state_code')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -357,7 +360,9 @@ class TenderCreationController extends Controller
 
         $tenderList = array();
         foreach ($tenders as $tender) {
-            $tenderList[] = ["value" => $tender['id'], "label" =>  $tender['tendertype'], 'oragnization' => $oragnization['oragnization']];
+            $tenderList[] = ["value" => $tender['id'], "label" =>  $tender['tendertype'], 'oragnization' => 
+            $tender['oragnization']];
+            // $oragnization['oragnization']];
         }
 
         return  response()->json([

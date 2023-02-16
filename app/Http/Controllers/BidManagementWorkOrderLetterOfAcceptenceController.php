@@ -85,10 +85,10 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
         $letteracceptance -> bidid = $request->bidid;
         $letteracceptance -> date = $request->Date;
         $letteracceptance -> refrence_no = $request->refrenceNo;
-        $letteracceptance -> from = $request->from;
-        $letteracceptance -> medium = $request->medium;
-        $letteracceptance -> med_refrence_no = $request->medRefrenceNo;
-        $letteracceptance -> medium_select = $request->mediumSelect;
+        // $letteracceptance -> from = $request->from;
+        // $letteracceptance -> medium = $request->medium;
+        // $letteracceptance -> med_refrence_no = $request->medRefrenceNo;
+        // $letteracceptance -> medium_select = $request->mediumSelect;
         
         if(isset($wofile_fileName)){
             $letteracceptance -> wofile = $wofile_fileName;
@@ -155,6 +155,7 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
      */
     public function update(Request $request,$id)
     {
+        $wofile_fileName="";
         if($request->hasFile('wofile')){
             $data=(array) $request->all();   
 
@@ -182,6 +183,7 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
                 // if(File::delete($wofile_path)){
                     File::delete($wofile_path);
                // wofile update
+               $wofile_filename="";
             }
                $wofile = $request->file('wofile');
                $wofile_original = $wofile->getClientOriginalName();
@@ -192,7 +194,14 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
                $wofile_ext =  $wofile->extension();
                
             }
-    //     }
+        // else{
+
+        //     $image_path = public_path('uploads/BidManagement/tenderawarded') . '/' . $getExistingData['document'];
+        //             $path = str_replace("\\", "/", $image_path);
+        //             if (File::exists($path)) {
+        //                 unlink($path);
+        //             }
+        // }
     // }
                $user = Token::where('tokenid', $request->tokenid)->first();   
                $userid =$user['userid'];
@@ -203,13 +212,11 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
                 $letteracceptance -> bidid = $request->bidid;
                 $letteracceptance -> date = $request->Date;
                 $letteracceptance -> refrence_no = $request->refrenceNo;
-                $letteracceptance -> from = $request->from;
-                $letteracceptance -> medium = $request->medium;
-                $letteracceptance -> med_refrence_no = $request->medRefrenceNo;
-                $letteracceptance -> medium_select = $request->mediumSelect;
-                if(isset($wofile_fileName)){
-                    $letteracceptance -> wofile = $wofile_fileName;
-                }
+                // $letteracceptance -> from = $request->from;
+                // $letteracceptance -> medium = $request->medium;
+                // $letteracceptance -> med_refrence_no = $request->medRefrenceNo;
+                // $letteracceptance -> medium_select = $request->mediumSelect;
+                $letteracceptance -> wofile = $wofile_fileName;
                 $letteracceptance -> updatedby_userid = $userid;
                 $letteracceptance -> save();
                  }  
@@ -257,8 +264,8 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
             return response()->download($wofile);
         }else{
             return response()->json([
-                "status" => 404,
-            ]);
+                "wofile" => null,
+            ],204);
         }
     }
 }
