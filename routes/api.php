@@ -52,6 +52,7 @@ use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
 use App\Http\Controllers\TenderStatusContractAwardedController;
 
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
+use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 /*
@@ -200,6 +201,10 @@ Route::put('tenderstatus/techevaluation/{id}', [TenderStatusTechEvaluationContro
 Route::get('financialevaluation/getstoreddata/{id}',[TenderStatusFinancialEvaluationsController::class,'getStoredFinEvalData']);
 
 Route::get('/tenderstatus/awardontract/download/{id}', [TenderStatusContractAwardedController::class, 'download']);
+Route::post('communicationfilesmaster/list', [CommunicationfilesmasterController::class, 'docList']);
+Route::delete('communicationfilesmaster/deletedoc/{id}', [CommunicationfilesmasterController::class, 'deletefile']);
+Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
+
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
@@ -261,6 +266,7 @@ Route::resources([
     'tenderstatusbidders' => TenderStatusBiddersController::class,
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
 
+    'communicationfilesmaster' => CommunicationfilesmasterController::class,
 ]);
 
 
