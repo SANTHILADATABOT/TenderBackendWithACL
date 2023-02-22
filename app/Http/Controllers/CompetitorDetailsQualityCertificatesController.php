@@ -247,5 +247,21 @@ class CompetitorDetailsQualityCertificatesController extends Controller
         }
     }
 
+    public function download($id)
+    {
+        $doc = CompetitorDetailsQualityCertificates::where('id', $id)
+            ->select("filepath")
+            ->get();
+
+        if (!empty($doc[0]['filepath'])) {
+            $file = public_path() . "/uploads/competitor/qc/" . $doc[0]['filepath'];
+            return response()->download($file, $doc[0]['filepath']);
+        } else {
+            return response()->json([
+                'file' => 'File not found.'
+            ], 204);
+        }
+    }
+
   
 }

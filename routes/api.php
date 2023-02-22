@@ -52,6 +52,7 @@ use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
 use App\Http\Controllers\TenderStatusContractAwardedController;
 
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
+use App\Models\CompetitorDetailsWorkOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,7 +130,7 @@ Route::post('bidcreation/creation/docupload/{id}', [BidCreationCreationDocsContr
 Route::get('download/BidDocs/{fileName}', [BidCreationCreationDocsController::class, 'download']);
 
 
-// Route::post('competitordetails/competitorqcertificate/updatewithimage', [CompetitorDetailsQualityCertificatesController::class, 'updateWithImage']);
+// Route::post('competitordetails/competitorqcertificate/updatewithimage'
 Route::get('competitordetails/wolist/{compid}', [CompetitorDetailsWorkOrderController::class, 'getWOList']);
 Route::post('bidcreation/creation/bidlist', [BidCreationCreationController::class, 'getBidList']);
 
@@ -176,7 +177,8 @@ Route::get('/workorder/creation/communicationfiledelete/{id}', [BidManagementWor
 
 
 Route::get('/competitordetails/commFilesList/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'getComList']);
-
+Route::get('/download/competitorqcertificate/{id}', [CompetitorDetailsQualityCertificatesController::class, 'download']);
+Route::get('/download/competitorworkorder/{id}/{type}', [CompetitorDetailsWorkOrderController ::class, 'download']);
 
 Route::get('/file-import', [ImportCustomerController::class, 'importView'])->name('import-view');
 
