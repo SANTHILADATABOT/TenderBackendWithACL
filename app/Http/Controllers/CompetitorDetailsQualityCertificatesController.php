@@ -31,7 +31,8 @@ class CompetitorDetailsQualityCertificatesController extends Controller
             $fileExt = $file->getClientOriginalExtension();
             //received File extentions sometimes converted by browsers
             //Have to set orignal file extention before save
-            $fileName1=$file->hashName();
+            // $fileName1=$file->hashName();
+            $fileName1=$file->getClientOriginalName();
             $filenameSplited=explode(".",$fileName1);
             if($filenameSplited[1]!=$fileExt)
             {
@@ -92,7 +93,24 @@ class CompetitorDetailsQualityCertificatesController extends Controller
    
     public function show($id)
     {
-        //
+         $qc = CompetitorDetailsQualityCertificates::where('id',$id)
+        ->select('*')
+        ->get();
+        
+        
+        if ($qc)
+        {
+            return response()->json([
+                'status' => 200,
+                'qc' => $qc
+            ]);
+        }
+            else {  
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
     }
 
     public function edit($id)
@@ -106,7 +124,8 @@ class CompetitorDetailsQualityCertificatesController extends Controller
     if($request->hasFile('file')){
         $file = $request->file('file');
         $fileExt = $file->getClientOriginalExtension();
-        $fileName1=$file->hashName();
+        // $fileName1=$file->hashName();
+        $fileName1=$file->getClientOriginalName();
         //received File extentions sometimes converted by browsers
         //Have to set orignal file extention before save
         $filenameSplited=explode(".",$fileName1);
@@ -253,9 +272,17 @@ class CompetitorDetailsQualityCertificatesController extends Controller
             ->select("filepath")
             ->get();
 
+
         if (!empty($doc[0]['filepath'])) {
+            $header= [
+                `filename= $doc[0][filepath]`,
+            ];
+    
             $file = public_path() . "/uploads/competitor/qc/" . $doc[0]['filepath'];
-            return response()->download($file, $doc[0]['filepath']);
+            return response()->download($file, $doc[0]['filepath'], $header);
+
+            
+
         } else {
             return response()->json([
                 'file' => 'File not found.'
