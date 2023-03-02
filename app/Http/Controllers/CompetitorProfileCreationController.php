@@ -194,4 +194,28 @@ if ($validator->fails()) {
         ]); 
     }
     }
+
+    public function getLastCompno($stateid){
+
+        $lastcompno = CompetitorProfileCreation::where('state',$stateid)
+        ->select('compNo')
+        ->orderBy('id','desc')
+        ->first();
+        // ->get();
+            
+        if ($lastcompno)
+            return response()->json([
+                'status' => 200,
+                'lastcompno' => $lastcompno->compNo
+            ]);
+        else {
+            return response()->json([
+                'status' => 404,
+                'lastcompno' => $lastcompno,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
+
+
 }
