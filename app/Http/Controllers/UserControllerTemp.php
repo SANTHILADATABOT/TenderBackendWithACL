@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
-use App\Models\UserCreation;
+// use App\Models\UserCreation;
+use App\Models\User;
+
 use App\Models\Token;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserControllerTemp extends Controller
 {
@@ -12,29 +17,44 @@ class UserControllerTemp extends Controller
     {
         $milliseconds = floor(microtime(true) * 1000);
         $tokenId = bin2hex(random_bytes(16)).$milliseconds;
+        
+        $credentials = $req->only('name', 'password');
 
-
-        $user = UserCreation::where([['user_name', $req->user_id], ['password', $req->password]])->first();
-        if ($user) {
-            
-            $token = new Token;
-            $token -> tokenId = $tokenId;
-            $token -> userid = $user['user_id'];
-            $token -> isLoggedIn = 1;
-            $token->save();
-
-            return ([
-                "msg" => "Login Successfully",
-                "logStatus" => "success",
-                "tokenId" => $tokenId,
-                // 'userdetails'=> $user
-            ]);
-        } else {
+        // $user = UserCreation::where([['user_name', $req->user_id], ['password', $req->password]])->first();
+        // $user = User::where([['name', $req->user_id], ['password', $req->password]])->first();
+        if (!Auth::attempt($credentials)) {
             return ([
                 "msg" => "Invlaid User Name or Password",
                 "logStatus" => "error"
             ]);
         }
+
+            $user = Auth::user();
+
+            $token = new Token;
+            $token -> tokenId = $tokenId;
+            $token -> userid = $user['id'];
+            $token -> isLoggedIn = 1;
+            $token->save();
+
+            $user = auth()->user();
+            $roles= $user->roles->pluck('name');
+            $permission= $user->getPermissionsViaRoles()->pluck('name');
+
+            // $user['tokenId'] = $tokenId;
+            
+            // $user_resource = new UserResource(auth()->user());
+
+            // $user_resource['tokenId'] = 
+            return ([
+                "msg" => "Login Successfully",
+                "logStatus" => "success",
+                "tokenId" => $tokenId,
+                'role'=>$roles,
+                'permission'=>$permission
+                // 'userdetails'=> $user
+            ]);
+       
     }
 
     function logout(Request $req){
