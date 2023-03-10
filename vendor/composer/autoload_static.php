@@ -596,6 +596,7 @@ class ComposerStaticInit0656bec1eff9c87176498b3c3cb7cbc9
         'App\\Http\\Controllers\\ProjectTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProjectTypeController.php',
         'App\\Http\\Controllers\\RegistrationTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/RegistrationTypeController.php',
         'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
+        'App\\Http\\Controllers\\SmartCityMasterController' => __DIR__ . '/../..' . '/app/Http/Controllers/SmartCityMasterController.php',
         'App\\Http\\Controllers\\StateMasterController' => __DIR__ . '/../..' . '/app/Http/Controllers/StateMasterController.php',
         'App\\Http\\Controllers\\TenderCreationController' => __DIR__ . '/../..' . '/app/Http/Controllers/TenderCreationController.php',
         'App\\Http\\Controllers\\TenderStatusBiddersController' => __DIR__ . '/../..' . '/app/Http/Controllers/TenderStatusBiddersController.php',
