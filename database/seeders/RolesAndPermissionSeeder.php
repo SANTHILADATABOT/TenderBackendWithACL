@@ -51,9 +51,26 @@ class RolesAndPermissionSeeder extends Seeder
         //     'password' => bcrypt('123'),
         // ]);
 
-        USER::find(1)->assignRole("Field-Executive");
-        USER::find(2)->assignRole("Admin");
+        // USER::find(1)->assignRole("Field-Executive");
+        // USER::find(2)->assignRole("Admin");
 
+
+        // Retrieve the "Admin" role
+        $adminRole = Role::where('name', 'Admin')->first();
+
+        // Retrieve the permissions you want to assign to the "Admin" role
+        $listPermission = Permission::where('name', 'communicationFiles-list')->first();
+        $createPermission = Permission::where('name', 'communicationFiles-create')->first();
+        $editPermission = Permission::where('name', 'communicationFiles-edit')->first();
+        $deletePermission = Permission::where('name', 'communicationFiles-delete')->first();
+
+        // Assign the permissions to the "Admin" role
+        $adminRole->givePermissionTo([
+            $listPermission->id,
+            $createPermission->id,
+            $editPermission->id,
+            $deletePermission->id,
+        ]);
 
 
     }

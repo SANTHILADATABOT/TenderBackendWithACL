@@ -55,6 +55,7 @@ return array(
     'App\\Http\\Controllers\\ProjectTypeController' => $baseDir . '/app/Http/Controllers/ProjectTypeController.php',
     'App\\Http\\Controllers\\RegistrationTypeController' => $baseDir . '/app/Http/Controllers/RegistrationTypeController.php',
     'App\\Http\\Controllers\\RoleController' => $baseDir . '/app/Http/Controllers/RoleController.php',
+    'App\\Http\\Controllers\\SmartCityMasterController' => $baseDir . '/app/Http/Controllers/SmartCityMasterController.php',
     'App\\Http\\Controllers\\StateMasterController' => $baseDir . '/app/Http/Controllers/StateMasterController.php',
     'App\\Http\\Controllers\\TenderCreationController' => $baseDir . '/app/Http/Controllers/TenderCreationController.php',
     'App\\Http\\Controllers\\TenderStatusBiddersController' => $baseDir . '/app/Http/Controllers/TenderStatusBiddersController.php',
