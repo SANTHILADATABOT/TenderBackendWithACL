@@ -661,4 +661,40 @@ public function fresh_tender()
         }
     }
 
+//retunrs running & Completed project counts
+public function projectstatus()
+{
+    try {
+        $run_count = DB::table('bid_management_work_order_project_details')
+            ->where("commercialproduc", "!=", null)
+            ->where('produccompletion', '=', null)
+            ->count();
+
+        $completed_count = DB::table('bid_management_work_order_project_details')
+            // ->whereNotNull("commercialproduc")
+            ->whereNotNull('produccompletion')
+            ->count();
+
+        $awarded_tender_count = TenderStatusContractAwarded::count();  
+        $fresh_tender_count = BidCreation_Creation::whereDate('created_at', '=', now())->count();  
+        $live_tender_count = BidCreation_Creation::whereDate('submissiondate', '>=', now())->count();
+
+        return response()->json([
+            'status' => 200,
+            'running_tender_count' => $run_count,
+            'completed_tender_count' => $completed_count,
+            'awarded_tender_count' => $awarded_tender_count,
+            'fresh_tender_count' => $fresh_tender_count,
+            'live_tender_count' => $live_tender_count
+        ]);
+    } catch (\Exception $e) {
+        $error = $e->getMessage();
+        return response()->json([
+            'status' => 404,
+            'message' => 'The provided credentials are incorrect',
+            'error' => $error
+        ]);
+    }
+}
+
 }
