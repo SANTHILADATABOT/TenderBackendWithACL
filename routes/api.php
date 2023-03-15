@@ -206,6 +206,13 @@ Route::post('communicationfilesmaster/list', [CommunicationfilesmasterController
 Route::delete('communicationfilesmaster/deletedoc/{id}', [CommunicationfilesmasterController::class, 'deletefile']);
 Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
 
+
+Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbdashboarddetails']);//Dashborad contents based on ulbdetails
+Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
+Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails
+Route::get('bidcreation/creation/projectstatus', [BidCreationCreationController::class, 'projectstatus']);// returns running  & completed projects count for dashboard
+
+
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
