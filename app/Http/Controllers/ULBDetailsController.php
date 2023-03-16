@@ -464,4 +464,50 @@ class ULBDetailsController extends Controller
 
         
     }
+
+    public function getulbpopulationdetails()
+    {
+        $UlbDetails = DB::table('customer_creation_profiles as c')
+            ->join("state_masters as s", "s.id", "c.state")
+            ->join("u_l_b_details as u", "c.id", "u.cust_creation_mainid")
+            ->join("country_masters as co", "s.country_id", "co.id")
+            ->join("customer_sub_categories as csub", "c.customer_sub_category", "csub.id")
+            ->where("s.state_status", "Active")
+            // ->groupBy('s.id','s.country_id','csub.id', 's.state_name','s.category','s.state_code')
+            ->orderBy("s.id", "asc")
+            ->select(
+                's.id',
+                's.state_name',
+                's.category',
+                's.state_code',
+                's.country_id',
+                'co.country_name',
+                'c.customer_name',
+                'c.smart_city',
+                'csub.customersubcategory',
+                // DB::raw('COUNT(c.id) as count'),
+                 'u.population2011'
+            )
+            ->get();
+
+        //Query for customer count monthwise with year (excluted tender awarded status)
+        // $monthwise = DB::table('customer_creation_profiles')
+        // ->select(DB::raw('count(id) as `count`'),  DB::raw('YEAR(created_at) year, MONTH(created_at) month'))
+        // ->groupby('year', 'month')
+        // ->get();
+
+        if ($UlbDetails)
+            return response()->json([
+                'status' => 200,
+                'ulbdetails' => $UlbDetails, //statewise response ulb count, population count
+            ]);
+        else {
+            return response()->json([
+                'list' => "No content"
+            ], 204);
+        }
+    }
+
+
+
 }
