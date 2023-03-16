@@ -36,6 +36,10 @@ class RolesAndPermissionSeeder extends Seeder
         // $Perde =Permission::create(['name' => 'delete']);
         // $Ceate= Permission::create(['name' => 'create']);
         // $edit=Permission::create(['name' => 'edit']);
+        //  Permission::create(['name' => 'userType-list']);
+        //  Permission::create(['name' => 'userType-create']);
+        //  Permission::create(['name' => 'userType-edit']);
+        //  Permission::create(['name' => 'userType-delete']);
  
 
         // //  // create roles and assign created permissions
@@ -43,8 +47,8 @@ class RolesAndPermissionSeeder extends Seeder
         // //  // this can be done as separate statements
         //  $role = Role::create(['name' => 'Guest']);
         //  $role->givePermissionTo('view');
-         $role = Role::create(['name' => 'Test']);
-         $role->givePermissionTo(Permission::all());
+       
+        //  $role->givePermissionTo(Permission::all());
  
         // //  // or may be done by chaining
         //  $role = Role::create(['name' => 'Field-Executive'])
@@ -57,25 +61,26 @@ class RolesAndPermissionSeeder extends Seeder
 
         // USER::find(1)->assignRole("Field-Executive");
         // USER::find(2)->assignRole("Admin");
-        $user->assignRole($role );
+        // $user->assignRole($role );
         
 
         // Retrieve the "Admin" role
-        // $adminRole = Role::where('name', 'Admin')->first();
+        $adminRole = Role::where('name', 'testrole1')->first();
+        $user->assignRole($adminRole );
 
-        // // Retrieve the permissions you want to assign to the "Admin" role
-        // $listPermission = Permission::where('name', 'communicationFiles-list')->first();
-        // $createPermission = Permission::where('name', 'communicationFiles-create')->first();
-        // $editPermission = Permission::where('name', 'communicationFiles-edit')->first();
-        // $deletePermission = Permission::where('name', 'communicationFiles-delete')->first();
+        // // // // Retrieve the permissions you want to assign to the "Admin" role
+        $listPermission = Permission::where('name', 'userType-list')->first();
+        $createPermission = Permission::where('name', 'userType-create')->first();
+        $editPermission = Permission::where('name', 'userType-edit')->first();
+        $deletePermission = Permission::where('name', 'userType-delete')->first();
 
-        // // Assign the permissions to the "Admin" role
-        // $adminRole->givePermissionTo([
-        //     $listPermission->id,
-        //     $createPermission->id,
-        //     $editPermission->id,
-        //     $deletePermission->id,
-        // ]);
+        // // // // Assign the permissions to the "Admin" role
+        $adminRole->givePermissionTo([
+            $listPermission->id,
+            $createPermission->id,
+            $editPermission->id,
+            $deletePermission->id,
+        ]);
 
 
     }
