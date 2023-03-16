@@ -53,6 +53,7 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
+use App\Http\Controllers\UserTypeController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 /*
@@ -211,6 +212,12 @@ Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbdashboa
 Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails
 Route::get('bidcreation/creation/projectstatus', [BidCreationCreationController::class, 'projectstatus']);// returns running  & completed projects count for dashboard
+
+Route::post('usertype', [UserTypeController::class, 'store']);
+Route::get('usertype', [UserTypeController::class, 'index']);
+Route::get('usertype/{id}', [UserTypeController::class, 'show']);
+Route::put('usertype/{id}', [UserTypeController::class, 'update']);
+Route::delete('usertype/{id}', [UserTypeController::class, 'destroy']);
 
 
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
