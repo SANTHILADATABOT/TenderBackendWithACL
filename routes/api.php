@@ -212,6 +212,7 @@ Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbdashboa
 Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails
 Route::get('bidcreation/creation/projectstatus', [BidCreationCreationController::class, 'projectstatus']);// returns running  & completed projects count for dashboard
+Route::get('/dashboard/ulbpopdetails', [ULBDetailsController::class, 'getulbpopulationdetails']);//Dashborad contents based on ulbdetails
 
 Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
