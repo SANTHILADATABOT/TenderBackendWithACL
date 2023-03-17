@@ -19,11 +19,27 @@ class RolesAndPermissionSeeder extends Seeder
          // Reset cached roles and permissions
          app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+          //  User::create([
+        //     'name' => 'Prabakaran',
+        //     'email' => 'prabakaran@santhila.com',
+        //     'password' => bcrypt('123'),
+        // ]);
+
+       $user= User::create([
+            'name' => 'Test',
+            'email' => 'test@santhila.com',
+            'password' => bcrypt('123'),
+        ]);
+
         //  // create permissions
         // $viewPer= Permission::create(['name' => 'view']);
         // $Perde =Permission::create(['name' => 'delete']);
         // $Ceate= Permission::create(['name' => 'create']);
         // $edit=Permission::create(['name' => 'edit']);
+        //  Permission::create(['name' => 'userType-list']);
+        //  Permission::create(['name' => 'userType-create']);
+        //  Permission::create(['name' => 'userType-edit']);
+        //  Permission::create(['name' => 'userType-delete']);
  
 
         // //  // create roles and assign created permissions
@@ -31,6 +47,8 @@ class RolesAndPermissionSeeder extends Seeder
         // //  // this can be done as separate statements
         //  $role = Role::create(['name' => 'Guest']);
         //  $role->givePermissionTo('view');
+       
+        //  $role->givePermissionTo(Permission::all());
  
         // //  // or may be done by chaining
         //  $role = Role::create(['name' => 'Field-Executive'])
@@ -39,21 +57,30 @@ class RolesAndPermissionSeeder extends Seeder
         //  $role = Role::create(['name' => 'Admin']);
         //  $role->givePermissionTo(Permission::all());
 
-        //  User::create([
-        //     'name' => 'Prabakaran',
-        //     'email' => 'prabakaran@santhila.com',
-        //     'password' => bcrypt('123'),
-        // ]);
+      
 
-        // User::create([
-        //     'name' => 'Admin',
-        //     'email' => 'admin@santhila.com',
-        //     'password' => bcrypt('123'),
-        // ]);
+        // USER::find(1)->assignRole("Field-Executive");
+        // USER::find(2)->assignRole("Admin");
+        // $user->assignRole($role );
+        
 
-        USER::find(1)->assignRole("Field-Executive");
-        USER::find(2)->assignRole("Admin");
+        // Retrieve the "Admin" role
+        $adminRole = Role::where('name', 'testrole1')->first();
+        $user->assignRole($adminRole );
 
+        // // // // Retrieve the permissions you want to assign to the "Admin" role
+        $listPermission = Permission::where('name', 'userType-list')->first();
+        $createPermission = Permission::where('name', 'userType-create')->first();
+        $editPermission = Permission::where('name', 'userType-edit')->first();
+        $deletePermission = Permission::where('name', 'userType-delete')->first();
+
+        // // // // Assign the permissions to the "Admin" role
+        $adminRole->givePermissionTo([
+            $listPermission->id,
+            $createPermission->id,
+            $editPermission->id,
+            $deletePermission->id,
+        ]);
 
 
     }

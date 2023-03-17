@@ -54,6 +54,7 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\AttendanceTypeMasterController;
+use App\Http\Controllers\UserTypeController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 /*
@@ -73,6 +74,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login1', [UserControllerTemp::class, 'login1']);
 Route::post('validtetoken', [UserControllerTemp::class, 'validateToken']);
+Route::post('getrolesandpermision', [UserControllerTemp::class, 'getRolesAndPermissions']);
 
 Route::post('logout', [UserControllerTemp::class, 'logout']);
 Route::post('createState', [UserControllerTemp::class, 'login1']);
@@ -215,6 +217,20 @@ Route::delete('communicationfilesmaster/deletedoc/{id}', [Communicationfilesmast
 Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
 
 Route::post('updatedfile/{id}', [UserControllerTemp::class, 'updatedfile']);
+
+
+Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbdashboarddetails']);//Dashborad contents based on ulbdetails
+Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
+Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails
+Route::get('bidcreation/creation/projectstatus', [BidCreationCreationController::class, 'projectstatus']);// returns running  & completed projects count for dashboard
+Route::get('/dashboard/ulbpopdetails', [ULBDetailsController::class, 'getulbpopulationdetails']);//Dashborad contents based on ulbdetails
+
+Route::post('usertype', [UserTypeController::class, 'store']);
+Route::get('usertype', [UserTypeController::class, 'index']);
+Route::get('usertype/{id}', [UserTypeController::class, 'show']);
+Route::put('usertype/{id}', [UserTypeController::class, 'update']);
+Route::delete('usertype/{id}', [UserTypeController::class, 'destroy']);
+
 
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);

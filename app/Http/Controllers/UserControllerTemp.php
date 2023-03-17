@@ -338,6 +338,30 @@ class UserControllerTemp extends Controller
         }
     }
 
+
+    function getRolesAndPermissions(Request $request){
+        $token = Token::where('tokenid','=' ,$request->tokenid)->first();   
+      
+        $userid = $token->userid; 
+
+        $user = User::find($userid) ;
+
+        if($user){
+            $roles= $user->roles->pluck('name');
+            $permission= $user->getPermissionsViaRoles()->pluck('name');
+            return response()->json([
+                'role'=>$roles,
+                'permission'=>$permission
+            ]);
+        }else{
+            return response()->json([
+                'isValid' => false
+            ],401);
+        }
+
+    }
+
+    
 }
 
  
