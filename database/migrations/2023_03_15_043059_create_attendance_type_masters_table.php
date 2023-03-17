@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('smart_city_masters', function (Blueprint $table) {
+        Schema::create('attendance_type_masters', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_group')->nullable()->default(null);
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+            $table->string('attendance_type');
+            $table->string('description');
+            $table->enum('status', ['Active', 'Inactive']);
+            $table->integer('createdby');
+            $table->integer('updatedby')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('smart_city_masters');
+        Schema::dropIfExists('attendance_type_masters');
     }
 };

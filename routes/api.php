@@ -53,6 +53,7 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
+use App\Http\Controllers\AttendanceTypeMasterController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 /*
@@ -110,6 +111,14 @@ Route::get('customercreation/getcustno/{stateid}', [CustomerCreationProfileContr
 Route::get('customercreation/profile/getFormNo', [CustomerCreationProfileController::class, 'getFormNo']);
 Route::get('customer/list', [CustomerCreationProfileController::class, 'getList']);
 Route::get('tendercreation/list', [TenderTypeMasterController::class, 'getList']);
+
+// created by vigneshwaran date : 10/03/2023 for grouping data
+
+Route::get('customergroup', [CustomerCreationProfileController::class, 'customergroup']);
+
+// end
+
+Route::post('getcustomercategory/{customer_subcat_id}/{customer_state}',[CustomerCreationProfileController::class,'getcustomercategory']); 
 
 
 // Route::get('customercreation/contact/getFormNo', [CustomerCreationContactPersonController::class, 'getFormNo']);
@@ -205,6 +214,8 @@ Route::post('communicationfilesmaster/list', [CommunicationfilesmasterController
 Route::delete('communicationfilesmaster/deletedoc/{id}', [CommunicationfilesmasterController::class, 'deletefile']);
 Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
 
+Route::post('updatedfile/{id}', [UserControllerTemp::class, 'updatedfile']);
+
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
@@ -267,6 +278,9 @@ Route::resources([
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
 
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
+    'attendanceTypeMaster' => AttendanceTypeMasterController::class,
+    'UserControllerTemp' => UserControllerTemp::class,
+    
 ]);
 
 

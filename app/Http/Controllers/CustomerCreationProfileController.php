@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CustomerCreationProfile;
 use App\Models\CustomerCreationMain;
 use App\Models\StateMaster;
+use App\Models\Customer_group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
@@ -34,7 +35,7 @@ class CustomerCreationProfileController extends Controller
             'state_masters.state_name',
             'city_masters.city_name',
             'customer_creation_profiles.smart_city'
-        )
+        ) 
         ->get();
 
         return response()->json([
@@ -163,7 +164,7 @@ class CustomerCreationProfileController extends Controller
                 $updatedata['customer_no']  = $this->getCustNo1( $updatedata['state'], $updatedata['smart_city']);
             }
 
-            $CustomerCreation = CustomerCreationProfile::findOrFail($id)->update($updatedata);
+            $CustomerCreation = CustomerCreationProfile::findOrFail($id)->update($updatedata); 
         }
 
 
@@ -298,8 +299,8 @@ class CustomerCreationProfileController extends Controller
         if ($state){
            $statecode= $state[0]['state_code'];
 
-           if($smartcity=="yes") { $SC = "SC";}
-           if($smartcity=="no") { $SC = "NC";}
+           if($smartcity=="Smart City") { $SC = "SC";}
+           if($smartcity=="Non Smart City") { $SC = "NC";}
 
            return strtoupper($statecode."-".$SC."-".$no);
         //    return ( $state );
@@ -335,5 +336,97 @@ class CustomerCreationProfileController extends Controller
             'customerList' =>  $customerList,
 
         ]);
+    }
+
+
+    // created by vigneshwaran date : 10/03/2023 for grouping data
+
+    public function customergroup(){
+
+        
+
+        $tables = CustomerCreationProfile::select('state','smart_city','customer_sub_category')->groupby('state')->groupby('smart_city')->groupby('customer_sub_category')->get();
+
+        
+
+        $state = '';
+
+        $smart_city = '';
+
+        $customer_sub_category = '';
+
+        foreach($tables as $data => $val){
+
+            $t = json_decode($val);
+
+            foreach($t as $d =>$v){
+
+                if($d == "state"){
+
+                    $state = $v;
+
+                }
+                elseif($d == "smart_city"){
+
+                    $smart_city = $v;
+
+                    if($smart_city == "yes"){
+
+                        $smart_city = 'Smart City';
+                    }
+                    elseif($smart_city == "no"){
+
+                        $smart_city = 'Non Smart City';
+
+                    }
+
+                }
+                elseif($d == "customer_sub_category"){
+
+                    $customer_sub_category = $v;
+                }
+
+            }
+            
+            $table = new Customer_group;
+            $table->state = $state;
+            
+            $table->smart_city = $smart_city;
+
+            $table->customer_sub_category = $customer_sub_category;
+
+             $table->save();
+
+        }
+
+    }
+     //end
+    public function getcustomercategory($customer_subcat_id,$customer_state)
+    {
+
+
+        $getcustomer_groupdata = Customer_group::where("customer_sub_category", "=", $customer_subcat_id)->where("state","=",$customer_state)->get();
+
+
+
+        if($getcustomer_groupdata){
+
+            return response([
+
+                "status"=>200,
+                "getdetails"=>$getcustomer_groupdata
+            ]);
+    
+
+
+        }
+        
+
+        
+
+        
+
+
+
     }
 }
