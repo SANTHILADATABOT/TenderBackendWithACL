@@ -30,7 +30,7 @@ use App\Http\Controllers\TenderTypeMasterController;
 use App\Http\Controllers\CompetitorDetailsQualityCertificatesController;
 use App\Http\Controllers\TenderCreationController;
 use App\Http\Controllers\CompetitorDetailsWorkOrderController;
-
+use App\Http\Controllers\AttendanceTypeMasterController;
 use App\Http\Controllers\BidManagementWorkOrderMobilizationAdvanceController;
 use App\Http\Controllers\BidManagementWorkOrderProjectDetailsController;
 use App\Http\Controllers\BidManagementWorkOrderWorkOrderController;
@@ -281,7 +281,7 @@ Route::resources([
     'bigmanagement/tenderstatus/status' => BidManagementTenderOrBidStausController::class, 
     'tenderstatusbidders' => TenderStatusBiddersController::class,
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
-
+    'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
 ]);
 
