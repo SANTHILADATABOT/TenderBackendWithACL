@@ -16,3 +16,5 @@ yarn-error.log
 /.vscode
 /public/uploads
 /public/WorkOrderCommunicationFiles
+
+/app/Http/Controllers/CustomerCreationProfileController_modified_by_vigneshwaran
