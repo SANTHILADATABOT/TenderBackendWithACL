@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Spatie\Permission\Models\Role;
+
+// use Illuminate\Support\Facades\Hash;
 
 
 class UserControllerTemp extends Controller
@@ -109,7 +112,7 @@ class UserControllerTemp extends Controller
         ->get();
 
         return response()->json([
-            "attendanceTypelist" => $userlist
+            "userlist" => $userlist
         ]);
 
 
@@ -117,49 +120,67 @@ class UserControllerTemp extends Controller
     }
 
     public function store(Request $request){
-       
-        $user = Token::where('tokenid', $request->tokenid)->first();
+        //name in DB               --    Name in API payload
+        //name                     --    loginId
+        //userName                 --   userName
+        //userType                 --   userType
+        //password                 --   password
+        //confirmPassword                 --   confirmPassword
+        //filename(hased & stored here)                 --   file 
+        //email                 --   email
+
+
+
+        
+
+        $user = Token::where('tokenid', $request->tokenId)->first();
         $userid = $user['userid'];
 
         if($userid)
         {
 
             $validate = $request->validate([
-                'name' => ['required'],
-                'user_role' =>["required"],
-                'login_id' =>["required"],
+                'userName' => ['required'],
+                'userType' =>["required"],
+                'loginId' =>["required"],
                 'password' =>['required'],
-                'phone' => ['required','unique:users','regex:/[0-9]{10}/'],
-                'photo' => ['required']
-
+                'confirmPassword' =>['required'],
+                'mobile' => ['required','unique:users','regex:/[0-9]{10}/'],
+                'file' => ['required'],
+                'email' => ['required'],
             ]);
 
-            if($request ->hasFile('photo'))
+            if($request ->hasFile('file'))
             {
-                $file = $request->file('photo');
+                $file = $request->file('file');
                 $filename_original = $file->getClientOriginalName();
                 $fileName =intval(microtime(true) * 1000) . $filename_original;
                 $file->storeAs('UserProfile/userphotos', $fileName, 'public');
-                $mimeType =  $file->getMimeType();
+                // $mimeType =  $file->getMimeType();
                 $filesize = ($file->getSize())/1000;
                 $ext =  $file->extension();
             }
 
-           
-
-
             $userCreation = new User;
-            $userCreation->name = $request->name;
-            $userCreation->user_role = $request->user_role;
+            $userCreation->name = $request->loginId;  // to be a login id
+            $userCreation->userType = $request->userType;
+            $userCreation->userName = $request->userName;
             $userCreation->email = $request->email;
-            $userCreation->password = $request->password;
-            $userCreation->phone = $request->phone;
-            $userCreation->photo =$fileName;
+            $userCreation->password = bcrypt($request->password);
+            $userCreation->confirm_passsword = $request->password;
+            $userCreation->mobile = $request->mobile;
+            $userCreation->filename =$fileName;
+            $userCreation->original_filename = $filename_original;
+            $userCreation->filesize = $filesize;
+            $userCreation->fileext = $ext;
             $userCreation->createdby = $userid;
             $userCreation->save();
-
         }
         if($userCreation){
+
+            $role = Role::find($request->userType);
+            $userCreation->assignRole($role);
+
             return response()->json([
                 "status" => 200,
                 "data" => $userCreation->id

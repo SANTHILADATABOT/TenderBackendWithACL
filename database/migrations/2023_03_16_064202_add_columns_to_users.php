@@ -15,12 +15,19 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_role')->after('name');
-            $table->foreign('user_role')->references('id')->on('roles')->restrictOnDelete()->onUpdate("NO ACTION");
-            $table->bigInteger('phone')->unique()->after('email');
-            $table->string('photo')->after('phone');
+            $table->string('userName'); //to store Staff name for display purpose
+            $table->BigInteger('userType')->unsigned();
+            $table->foreign('userType')->references('id')->on('roles')->restrictOnDelete()->onUpdate("NO ACTION");
+            $table->bigInteger('mobile')->unique();
+            $table->string('photo');
+            $table->string('confirm_passsword');
+            $table->string('filename');
+            $table->string('original_filename');
+            $table->string('filesize');
+            $table->string('fileext');
             $table->integer('createdby');
             $table->integer('updatedby')->nullable(); 
+
         });
     }
 
