@@ -283,6 +283,7 @@ Route::resources([
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
     'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
+    'UserControllerTemp' => UserControllerTemp::class,
 ]);
 
 
