@@ -281,8 +281,9 @@ Route::resources([
     'bigmanagement/tenderstatus/status' => BidManagementTenderOrBidStausController::class, 
     'tenderstatusbidders' => TenderStatusBiddersController::class,
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
-    'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
+    'attendanceTypeMaster' => AttendanceTypeMasterController::class,
+    'UserControllerTemp' => UserControllerTemp::class,
 ]);
 
 
