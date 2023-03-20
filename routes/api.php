@@ -54,7 +54,7 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
-use App\Models\CompetitorDetailsWorkOrder;
+use App\Http\Controllers\CallTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -284,6 +284,7 @@ Route::resources([
     'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
+    'calltype' => CallTypeController::class,
 ]);
 
 
