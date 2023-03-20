@@ -158,6 +158,7 @@ Route::get('bidcreation/creation/awarded_tenders', [BidCreationCreationControlle
 
 Route::get('download/tenderfeedocs/{id}', [BidCreationTenderFeeController::class, 'getdocs']);
 Route::get('download/emdfeedocs/{id}', [BidCreationEMDController::class, 'getdocs']);
+Route::get('download/userfile/{id}', [UserControllerTemp::class, 'getdocs']);
 Route::get('download/bidsubmittedstatusdocs/{id}', [BidCreationBidSubmittedStatusController::class, 'getdocs']);
 Route::get('download/BidManagementTenderOrBidStausDocs/{id}', [BidManagementTenderOrBidStausController::class, 'getdocs']);
 
@@ -216,6 +217,7 @@ Route::get('/dashboard/ulbpopdetails', [ULBDetailsController::class, 'getulbpopu
 
 Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
+Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
 Route::get('usertype/{id}', [UserTypeController::class, 'show']);
 Route::put('usertype/{id}', [UserTypeController::class, 'update']);
 Route::delete('usertype/{id}', [UserTypeController::class, 'destroy']);

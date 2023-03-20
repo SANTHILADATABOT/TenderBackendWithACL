@@ -30,6 +30,24 @@ class UserTypeController extends Controller
         }
     }
 
+    public function getoptions()
+    {
+        //
+        $userType = Role::where('activeStatus', 'active')->orderBy('id', 'asc')->get();
+      
+    
+        if ($userType)
+            return response()->json([
+                'status' => 200,
+                'userType' => $userType
+            ]);
+        else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
     public function store(Request $request){
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
