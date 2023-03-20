@@ -549,6 +549,7 @@ class ComposerStaticInit0656bec1eff9c87176498b3c3cb7cbc9
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\AttendanceTypeMasterController' => __DIR__ . '/../..' . '/app/Http/Controllers/AttendanceTypeMasterController.php',
         'App\\Http\\Controllers\\BidCreationBidSubmittedStatusController' => __DIR__ . '/../..' . '/app/Http/Controllers/BidCreationBidSubmittedStatusController.php',
         'App\\Http\\Controllers\\BidCreationCreationController' => __DIR__ . '/../..' . '/app/Http/Controllers/BidCreationCreationController.php',
         'App\\Http\\Controllers\\BidCreationCreationDocsController' => __DIR__ . '/../..' . '/app/Http/Controllers/BidCreationCreationDocsController.php',
@@ -624,6 +625,7 @@ class ComposerStaticInit0656bec1eff9c87176498b3c3cb7cbc9
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\cors' => __DIR__ . '/../..' . '/app/Http/Middleware/cors.php',
         'App\\Http\\Resources\\UserResource' => __DIR__ . '/../..' . '/app/Http/Resources/UserResource.php',
+        'App\\Models\\AttendanceTypeMaster' => __DIR__ . '/../..' . '/app/Models/AttendanceTypeMaster.php',
         'App\\Models\\BidCreationBidSubmittedStatus' => __DIR__ . '/../..' . '/app/Models/BidCreationBidSubmittedStatus.php',
         'App\\Models\\BidCreationEMD' => __DIR__ . '/../..' . '/app/Models/BidCreationEMD.php',
         'App\\Models\\BidCreationTenderFee' => __DIR__ . '/../..' . '/app/Models/BidCreationTenderFee.php',

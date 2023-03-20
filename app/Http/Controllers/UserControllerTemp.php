@@ -136,10 +136,10 @@ class UserControllerTemp extends Controller
             $validate = $request->validate([
                 'userName' => ['required'],
                 'userType' => ["required"],
-                'loginId' => ["required"],
+                'loginId' => ["required",  'unique:users,name'],
                 'password' => ['required'],
                 'confirmPassword' => ['required'],
-                'mobile' => ['required', 'unique:users', 'regex:/[0-9]{10}/'],
+                'mobile' => ['required', 'unique:users,mobile', 'regex:/[0-9]{10}/'],
                 'file' => ['required'],
                 'email' => ['required'],
             ]);
@@ -162,6 +162,7 @@ class UserControllerTemp extends Controller
             $userCreation->password = bcrypt($request->password);
             $userCreation->confirm_passsword = $request->password;
             $userCreation->mobile = $request->mobile;
+            $userCreation->activeStatus = $request->activeStatus;
             $userCreation->filename = $fileName;
             $userCreation->original_filename = $filename_original;
             $userCreation->filesize = $filesize;
@@ -193,6 +194,14 @@ class UserControllerTemp extends Controller
 
         $userCreation = User::find($id);
         if ($userCreation) {
+
+            $userType = Role::find($userCreation->userType);
+
+            $userCreation['userType'] = [
+                'value' => $userType -> id,
+                'label' => $userType -> name
+            ];
+
             return response()->json([
                 'status' => 200,
                 'user' => $userCreation
@@ -205,9 +214,27 @@ class UserControllerTemp extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function getdocs($id){
+
+        $doc = User::find($id);
+
+        if($doc){
+            $filename = $doc['filename'];
+            $file = public_path()."/uploads/UserProfile/userphotos/".$filename;
+            if(File::exists($file)){
+                return response()->download($file);
+            }else{
+                return response()->json([
+                    'message' => 'file not found'
+                ],204);
+            }
+        }
+    }
+
+    public function update(Request $request,  $id)
     {
-        $user = Token::where('tokenid', $request->tokenid)->first();
+        
+        $user = Token::where('tokenid', $request->tokenId)->first();
         $userid = $user['userid'];
         try {
             if ($userid) {
@@ -224,10 +251,10 @@ class UserControllerTemp extends Controller
                 $validate = $request->validate([
                     'userName' => ['required'],
                     'userType' => ["required"],
-                    'loginId' => ["required"],
+                    'loginId' => ["required",  'unique:users,name,'.$id ],
                     'password' => ['required'],
                     'confirmPassword' => ['required'],
-                    'mobile' => ['required', 'unique:users', 'regex:/[0-9]{10}/'],
+                    'mobile' => ['required', 'unique:users,mobile,'.$id, 'regex:/[0-9]{10}/'],
                     'file' => ['required'],
                     'email' => ['required'],
                 ]);
@@ -236,34 +263,43 @@ class UserControllerTemp extends Controller
                 if ($request->hasFile('file')) {
 
                     $document = User::find($id);
-                    $filename = $document['file'];
+                    $filename = $document['filename'];
                     $file_path = public_path() . "/uploads/UserProfile/userphotos/" . $filename;
 
                     if (File::exists($file_path)) {
-
-                        if (File::delete($file_path)) {
-                            $file = $request->file('file');
-                            $filename_original = $file->getClientOriginalName();
-                            $fileName = intval(microtime(true) * 1000) . $filename_original;
-                            $file->storeAs('UserProfile/userphotos', $fileName, 'public');
-                            $mimeType =  $file->getMimeType();
-                            $filesize = ($file->getSize()) / 1000;
-                            $ext =  $file->extension();
-                        }
+                        File::delete($file_path);
                     }
+
+                    $file = $request->file('file');
+                    $filename_original = $file->getClientOriginalName();
+                    $fileName = intval(microtime(true) * 1000) . $filename_original;
+                    $file->storeAs('UserProfile/userphotos', $fileName, 'public');
+                    $mimeType =  $file->getMimeType();
+                    $filesize = ($file->getSize()) / 1000;
+                    $ext =  $file->extension();
                 }
 
                 $userCreation = User::findOrFail($id);
-                $userCreation->name = $request->name;
-                $userCreation->user_role = $request->user_role;
+
+                $userCreation->name = $request->loginId;  // to be a login id
+                $userCreation->userType = $request->userType;
+                $userCreation->userName = $request->userName;
                 $userCreation->email = $request->email;
-                $userCreation->password = $request->password;
-                $userCreation->phone = $request->phone;
-                $userCreation->photo = $fileName;
+                $userCreation->password = bcrypt($request->password);
+                $userCreation->confirm_passsword = $request->password;
+                $userCreation->mobile = $request->mobile;
+                $userCreation->activeStatus = $request->activeStatus;
+                $userCreation->filename = $fileName;
+                $userCreation->original_filename = $filename_original;
+                $userCreation->filesize = $filesize;
+                $userCreation->fileext = $ext;
                 $userCreation->updatedby = $userid;
                 $userCreation->save();
 
                 if ($userCreation) {
+
+                    $role = Role::find($request->userType);
+                    $userCreation->syncRoles($role);
 
                     return response()->json([
                         "status" => 200,
@@ -339,4 +375,6 @@ class UserControllerTemp extends Controller
             ], 401);
         }
     }
+
+    
 }
