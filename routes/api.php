@@ -56,6 +56,12 @@ use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
 use App\Models\CompetitorDetailsWorkOrder;
 
+
+use App\Http\Controllers\CallTypeController;
+use App\Http\Controllers\BusinessForecastController;
+use App\Http\Controllers\ProcurementTypeController;
+use App\Http\Controllers\StatusController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -284,6 +290,11 @@ Route::resources([
     'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
+    
+    'calltype' => CallTypeController::class,
+    'businessforecast' => BusinessForecastController::class,
+    'procurementtype' => ProcurementTypeController::class,
+    'status' => StatusController::class,
 ]);
 
 
