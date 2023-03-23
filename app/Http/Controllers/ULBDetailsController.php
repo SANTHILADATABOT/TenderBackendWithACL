@@ -232,7 +232,7 @@ class ULBDetailsController extends Controller
     }
 
 
-    
+
 
     //Dashborad contents based on ulbdetails
     public function getulbyearlydetails()
@@ -250,7 +250,7 @@ class ULBDetailsController extends Controller
                 DB::raw('COUNT(c.id) as count'),
                 DB::raw('YEAR(c.created_at) year'),
             )
-            ->groupBy('year','c.state','s.id','s.state_name')
+            ->groupBy('year', 'c.state', 's.id', 's.state_name')
             ->orderBy("s.id", "asc")
             ->get();
 
@@ -354,6 +354,39 @@ class ULBDetailsController extends Controller
                 'in_fin_eval' => $in_fin_eval,  // Financial Evaluation process is in pending
                 'cancelled' => $cancelled, // Cancelled Tenders
                 'retender' => $retender, // Retender Tenders 
+
+                // 'awarded' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //year,month, state wise awarded tenders details
+                // 'bid_submitted' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //year,month, state wise bid_submitted tenders details
+                // 'to_be_opened' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ),  //year,month, state wise bid_submitted tenders details
+                // 'bid_details' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //Totla bid count year,month, state wise bid_submitted tenders details
+                // 'in_tech_eval' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Technical Evaluation process is in pending
+                // 'in_fin_eval' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ),  // Financial Evaluation process is in pending
+                // 'cancelled' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Cancelled Tenders
+                // 'retender' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Retender Tenders 
             ]);
         } catch (\Exception $ex) {
             return response()->json([
@@ -385,33 +418,30 @@ class ULBDetailsController extends Controller
 
 
         $tender = DB::table('tender_creations as t')
-        ->select(
-        't.organisation',
-        't.customername',
-        'c.customer_no',
-        'c.customer_category',
-        'c.customer_name',
-        'c.smart_city',
-        'c.customer_sub_category',
-        DB::raw('(SELECT COUNT(bs.bidCreationMainId) FROM bid_creation_bid_submitted_statuses bs WHERE bs.bidSubmittedStatus = "Yes" AND bs.bidCreationMainId = b.id) AS bid_submited_count'),
-        'c.state'
-        )
-        ->join('customer_creation_profiles as c', 'c.id', '=', 't.customername')
-        ->join('bid_creation_creations as b', 'b.tendercreation', '=', 't.id')
-        ->groupBy('c.state', 't.organisation', 't.customername', 't.tendertype', 'c.customer_sub_category');
+            ->select(
+                't.organisation',
+                't.customername',
+                'c.customer_no',
+                'c.customer_category',
+                'c.customer_name',
+                'c.smart_city',
+                'c.customer_sub_category',
+                DB::raw('(SELECT COUNT(bs.bidCreationMainId) FROM bid_creation_bid_submitted_statuses bs WHERE bs.bidSubmittedStatus = "Yes" AND bs.bidCreationMainId = b.id) AS bid_submited_count'),
+                'c.state'
+            )
+            ->join('customer_creation_profiles as c', 'c.id', '=', 't.customername')
+            ->join('bid_creation_creations as b', 'b.tendercreation', '=', 't.id')
+            ->groupBy('c.state', 't.organisation', 't.customername', 't.tendertype', 'c.customer_sub_category');
         // ->get();
 
 
 
 
-            // $tend = ;
-            $query = str_replace(array('?'), array('\'%s\''), $tender->toSql());
-            $query = vsprintf($query, $tender->getBindings());
-            
-            echo $query ;
+        // $tend = ;
+        $query = str_replace(array('?'), array('\'%s\''), $tender->toSql());
+        $query = vsprintf($query, $tender->getBindings());
 
-
-        
+        echo $query;
     }
 
     public function getulbpopulationdetails()
@@ -435,7 +465,7 @@ class ULBDetailsController extends Controller
                 'c.smart_city',
                 'csub.customersubcategory',
                 // DB::raw('COUNT(c.id) as count'),
-                 'u.population2011'
+                'u.population2011'
             )
             ->get();
 
@@ -457,8 +487,8 @@ class ULBDetailsController extends Controller
         }
     }
 
-// public function getulbdashboarddetails()
-public function getulbdashboarddetails()
+    // public function getulbdashboarddetails()
+    public function getulbdashboarddetails()
     {
         //Return no of customers as in {id: stateid, year : tender_awarded_year, count : 'no_of_cusotmer's_contract_awarded', state_name: 'state Name'}
 
@@ -473,16 +503,16 @@ public function getulbdashboarddetails()
                 DB::raw('COUNT(c.id) as count'),
                 DB::raw('YEAR(c.created_at) year'),
             )
-            ->groupBy('year','c.state','s.id','s.state_name')
+            ->groupBy('year', 'c.state', 's.id', 's.state_name')
             ->orderBy("s.id", "asc")
             ->get();
 
 
-            // $query = str_replace(array('?'), array('\'%s\''), $UlbDetails->toSql());
-            // $query = vsprintf($query, $UlbDetails->getBindings());
-            // // dump($query);
-            
-            // return $query ;
+        // $query = str_replace(array('?'), array('\'%s\''), $UlbDetails->toSql());
+        // $query = vsprintf($query, $UlbDetails->getBindings());
+        // // dump($query);
+
+        // return $query ;
 
         //Query for customer count monthwise with year (excluted tender awarded status)
         // $monthwise = DB::table('customer_creation_profiles')
@@ -545,5 +575,4 @@ public function getulbdashboarddetails()
             ], 204);
         }
     }
-
 }
