@@ -54,7 +54,13 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
+
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PermissionController;
+use App\Models\CompetitorDetailsWorkOrder;
+
 use App\Http\Controllers\CallTypeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -218,11 +224,19 @@ Route::get('/dashboard/ulbpopdetails', [ULBDetailsController::class, 'getulbpopu
 Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
 Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
+
 Route::get('usertype/{id}', [UserTypeController::class, 'show']);
 Route::put('usertype/{id}', [UserTypeController::class, 'update']);
 Route::delete('usertype/{id}', [UserTypeController::class, 'destroy']);
 
+Route::get('menus', [MenuController::class, 'getMenus']);
+Route::get('menu/options', [MenuController::class, 'getoptions']);
+Route::get('rolehaspermission/{tokenid}', [UserControllerTemp::class, 'getRolehasPermission']);
 
+Route::post('setpermission', [PermissionController::class, 'store']);
+Route::get('userpermissions', [PermissionController::class, 'getPermissionList']);
+Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData']);
+Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
