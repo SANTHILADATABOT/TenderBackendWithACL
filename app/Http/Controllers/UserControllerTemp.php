@@ -12,6 +12,8 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
+use App\Models\role_has_permission;
+use App\Models\sub_module_menu;
 
 // use Illuminate\Support\Facades\Hash;
 
@@ -51,7 +53,8 @@ class UserControllerTemp extends Controller
 
         $user = auth()->user();
         $roles = $user->roles->pluck('name');
-        $permission = $user->getPermissionsViaRoles()->pluck('name');
+        // $permission = $user->getPermissionsViaRoles()->pluck('name');
+        $permission = $this->getAllPermissions($user['userType']);
 
         // $user['tokenId'] = $tokenId;
 
@@ -364,10 +367,21 @@ class UserControllerTemp extends Controller
 
         if ($user) {
             $roles = $user->roles->pluck('name');
-            $permission = $user->getPermissionsViaRoles()->pluck('name');
+
+            $userType = $user['userType'];
+            // $permissions = role_has_permission::where('role_id', $userType)->get();
+          
+
+            $p = $this->getAllPermissions($userType);
+
+
+            // $permission = $user->getPermissionsViaRoles()->pluck('name');
             return response()->json([
                 'role' => $roles,
-                'permission' => $permission
+                'permissions' => [] ,
+                'permission' => $p,
+                // 'userType' => $userType,
+                // 'p' =>$p
             ]);
         } else {
             return response()->json([
@@ -376,5 +390,55 @@ class UserControllerTemp extends Controller
         }
     }
 
+
+    public function getRolehasPermission($tokenid){
+        $token = Token::where('tokenid', '=', $tokenid)->first();
+
+        $userid = $token->userid;
+
+        $user = User::find($userid);
+        if ($user) {
+            $permission = role_has_permission::All();
+            return response()->json([
+                'permission' => $permission
+            ]);
+        } else {
+            return response()->json([
+                'isValid' => false
+            ], 401);
+        }
+
+    }
+
+    public function getAllPermissions($role){
+        $userType = $role;
+        // $permissions = role_has_permission::where('role_id', $userType)->get();
+        $permissions = sub_module_menu::with(['permissions' => function($q) use ($userType){
+            $q->where('role_id', $userType);
+        }])
+        ->select('id', 'name', 'aliasName')
+        ->get();
+
+        $p = [];
+        foreach($permissions as $permission){
+            if(count($permission['permissions'])){
+                $p[$permission['name']] = [
+                    'can_view' => $permission['permissions'][0]['can_view'],
+                    'can_add' => $permission['permissions'][0]['can_add'],
+                    'can_edit' => $permission['permissions'][0]['can_edit'],
+                    'can_delete' => $permission['permissions'][0]['can_delete'],
+                ];
+            }else{
+                $p[$permission['name']] = [
+                    'can_view' => 0,
+                    'can_add' => 0,
+                    'can_edit' => 0,
+                    'can_delete' => 0,
+                ];  
+            }
+        }
+
+        return $p;
+    }
     
 }
