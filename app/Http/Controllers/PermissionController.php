@@ -133,4 +133,32 @@ class PermissionController extends Controller
         }
 
     }
+
+    public function destroy($role_id)
+    {
+
+        try {
+            $permissions = role_has_permission::where('role_id',  $role_id)->delete();
+            if ($permissions) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Deleted Successfully!"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'The provided credentials are incorrect.',
+                    "errormessage" => "",
+                ]);
+            }
+        } catch (\Illuminate\Database\QueryException $ex) {
+            $error = $ex->getMessage();
+
+            return response()->json([
+                'status' => 404,
+                'message' => 'Unable to delete! This data is used in another file/form/table.',
+                "errormessage" => $error
+            ]);
+        }
+    }
 }
