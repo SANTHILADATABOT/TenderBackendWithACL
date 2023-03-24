@@ -232,83 +232,32 @@ class ULBDetailsController extends Controller
     }
 
 
+
+
     //Dashborad contents based on ulbdetails
-    public function getulbdashboarddetails()
+    public function getulbyearlydetails()
     {
+        //Return no of customers as in {id: stateid, year : tender_awarded_year, count : 'no_of_cusotmer's_contract_awarded', state_name: 'state Name'}
+
+        // Customer Means, Contract Awarded to zigma() and not been completed (in the form Bids Managemnet->Work Order - > Project Details ->Target Date For Completion field)
+
         $UlbDetails = DB::table('customer_creation_profiles as c')
             ->join("state_masters as s", "s.id", "c.state")
-            ->join("u_l_b_details as u", "c.id", "u.cust_creation_mainid")
-            ->join("country_masters as co", "s.country_id", "co.id")
-            ->where("s.id", "!=", "")
             ->where("s.state_status", "Active")
-            ->groupBy('s.id', 's.state_name', 's.category', 's.state_code', 's.country_id', 'co.country_name')
-            ->orderBy("s.id", "asc")
             ->select(
                 's.id',
                 's.state_name',
-                's.category',
-                's.state_code',
-                's.country_id',
-                'co.country_name',
                 DB::raw('COUNT(c.id) as count'),
-                DB::raw('SUM(u.population2011) as population2011')
+                DB::raw('YEAR(c.created_at) year'),
             )
-            ->get();
-
-        //Query for customer count monthwise with year (excluted tender awarded status)
-        // $monthwise = DB::table('customer_creation_profiles')
-        // ->select(DB::raw('count(id) as `count`'),  DB::raw('YEAR(created_at) year, MONTH(created_at) month'))
-        // ->groupby('year', 'month')
-        // ->get();
-
-        $awarded = DB::table('customer_creation_profiles as c')
-            ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
-            ->join('tender_status_contract_awarded as a', 'a.bidid', 'b.id')
-            ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
-            ->groupby('year', 'month', 'c.state')
-            ->get();
-
-        $participated = DB::table('customer_creation_profiles as c')
-            ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
-            ->join('bid_creation_tender_participations as p', 'p.bidCreationMainId', 'b.id')
-            ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
-            ->groupby('year', 'month', 'c.state')
-            ->where('p.tenderparticipation', 'participating')
-            ->get();
-
-        // $bid_submitted = DB::table('customer_creation_profiles as c')
-        //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
-        //     ->join('bid_creation_bid_submitted_statuses as s', 's.bidCreationMainId', 'b.id')
-        //     ->select(DB::raw('count(c.id) as `count`'), DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
-        //     ->groupby('year', 'month', 'c.state')
-        //     ->get();
-
-        $retender = DB::table('customer_creation_profiles as c')
-            ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
-            ->join('bid_management_tender_or_bid_stauses as a', 'a.bidid', 'b.id')
-            ->where('a.status', 'Retender')
-            ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
-            ->groupby('year', 'month', 'c.state')
-            ->get();
-
-        $cancelled = DB::table('customer_creation_profiles as c')
-            ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
-            ->join('bid_management_tender_or_bid_stauses as a', 'a.bidid', 'b.id')
-            ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
-            ->where('a.status', 'Cancel')
-            ->groupby('year', 'month', 'c.state')
+            ->groupBy('year', 'c.state', 's.id', 's.state_name')
+            ->orderBy("s.id", "asc")
             ->get();
 
         if ($UlbDetails)
             return response()->json([
                 'status' => 200,
                 'list' => $UlbDetails, //statewise response ulb count, population count
-                'awarded' => $awarded, //year,month, state wise awarded tenders details
-                // 'bid_submitted' => $bid_submitted, //year,month, state wise bid_submitted tenders details
-                'participating' => $participated,  //year,month, state wise Partisipating tenders details
-                'cancelled' => $cancelled,
-                'retender' => $retender
-
             ]);
         else {
             return response()->json([
@@ -405,6 +354,39 @@ class ULBDetailsController extends Controller
                 'in_fin_eval' => $in_fin_eval,  // Financial Evaluation process is in pending
                 'cancelled' => $cancelled, // Cancelled Tenders
                 'retender' => $retender, // Retender Tenders 
+
+                // 'awarded' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //year,month, state wise awarded tenders details
+                // 'bid_submitted' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //year,month, state wise bid_submitted tenders details
+                // 'to_be_opened' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ),  //year,month, state wise bid_submitted tenders details
+                // 'bid_details' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), //Totla bid count year,month, state wise bid_submitted tenders details
+                // 'in_tech_eval' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Technical Evaluation process is in pending
+                // 'in_fin_eval' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ),  // Financial Evaluation process is in pending
+                // 'cancelled' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Cancelled Tenders
+                // 'retender' => array(
+                //     array('count' => 2, 'year' => 2023, 'month' => 1, 'state' => 31),
+                //     array('count' => 1, 'year' => 2023, 'month' => 2, 'state' => 2)
+                // ), // Retender Tenders 
             ]);
         } catch (\Exception $ex) {
             return response()->json([
@@ -436,33 +418,30 @@ class ULBDetailsController extends Controller
 
 
         $tender = DB::table('tender_creations as t')
-        ->select(
-        't.organisation',
-        't.customername',
-        'c.customer_no',
-        'c.customer_category',
-        'c.customer_name',
-        'c.smart_city',
-        'c.customer_sub_category',
-        DB::raw('(SELECT COUNT(bs.bidCreationMainId) FROM bid_creation_bid_submitted_statuses bs WHERE bs.bidSubmittedStatus = "Yes" AND bs.bidCreationMainId = b.id) AS bid_submited_count'),
-        'c.state'
-        )
-        ->join('customer_creation_profiles as c', 'c.id', '=', 't.customername')
-        ->join('bid_creation_creations as b', 'b.tendercreation', '=', 't.id')
-        ->groupBy('c.state', 't.organisation', 't.customername', 't.tendertype', 'c.customer_sub_category');
+            ->select(
+                't.organisation',
+                't.customername',
+                'c.customer_no',
+                'c.customer_category',
+                'c.customer_name',
+                'c.smart_city',
+                'c.customer_sub_category',
+                DB::raw('(SELECT COUNT(bs.bidCreationMainId) FROM bid_creation_bid_submitted_statuses bs WHERE bs.bidSubmittedStatus = "Yes" AND bs.bidCreationMainId = b.id) AS bid_submited_count'),
+                'c.state'
+            )
+            ->join('customer_creation_profiles as c', 'c.id', '=', 't.customername')
+            ->join('bid_creation_creations as b', 'b.tendercreation', '=', 't.id')
+            ->groupBy('c.state', 't.organisation', 't.customername', 't.tendertype', 'c.customer_sub_category');
         // ->get();
 
 
 
 
-            // $tend = ;
-            $query = str_replace(array('?'), array('\'%s\''), $tender->toSql());
-            $query = vsprintf($query, $tender->getBindings());
-            
-            echo $query ;
+        // $tend = ;
+        $query = str_replace(array('?'), array('\'%s\''), $tender->toSql());
+        $query = vsprintf($query, $tender->getBindings());
 
-
-        
+        echo $query;
     }
 
     public function getulbpopulationdetails()
@@ -486,7 +465,7 @@ class ULBDetailsController extends Controller
                 'c.smart_city',
                 'csub.customersubcategory',
                 // DB::raw('COUNT(c.id) as count'),
-                 'u.population2011'
+                'u.population2011'
             )
             ->get();
 
@@ -508,6 +487,92 @@ class ULBDetailsController extends Controller
         }
     }
 
+    // public function getulbdashboarddetails()
+    public function getulbdashboarddetails()
+    {
+        //Return no of customers as in {id: stateid, year : tender_awarded_year, count : 'no_of_cusotmer's_contract_awarded', state_name: 'state Name'}
+
+        // Customer Means, Contract Awarded to zigma() and not been completed (in the form Bids Managemnet->Work Order - > Project Details ->Target Date For Completion field)
+
+        $UlbDetails = DB::table('customer_creation_profiles as c')
+            ->join("state_masters as s", "s.id", "c.state")
+            ->where("s.state_status", "Active")
+            ->select(
+                's.id',
+                's.state_name',
+                DB::raw('COUNT(c.id) as count'),
+                DB::raw('YEAR(c.created_at) year'),
+            )
+            ->groupBy('year', 'c.state', 's.id', 's.state_name')
+            ->orderBy("s.id", "asc")
+            ->get();
 
 
+        // $query = str_replace(array('?'), array('\'%s\''), $UlbDetails->toSql());
+        // $query = vsprintf($query, $UlbDetails->getBindings());
+        // // dump($query);
+
+        // return $query ;
+
+        //Query for customer count monthwise with year (excluted tender awarded status)
+        // $monthwise = DB::table('customer_creation_profiles')
+        // ->select(DB::raw('count(id) as `count`'),  DB::raw('YEAR(created_at) year, MONTH(created_at) month'))
+        // ->groupby('year', 'month')
+        // ->get();
+
+        // $awarded = DB::table('customer_creation_profiles as c')
+        //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
+        //     ->join('tender_status_contract_awarded as a', 'a.bidid', 'b.id')
+        //     ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
+        //     ->groupby('year', 'month', 'c.state')
+        //     ->get();
+
+        // $participated = DB::table('customer_creation_profiles as c')
+        //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
+        //     ->join('bid_creation_tender_participations as p', 'p.bidCreationMainId', 'b.id')
+        //     ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
+        //     ->groupby('year', 'month', 'c.state')
+        //     ->where('p.tenderparticipation', 'participating')
+        //     ->get();
+
+        // // $bid_submitted = DB::table('customer_creation_profiles as c')
+        // //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
+        // //     ->join('bid_creation_bid_submitted_statuses as s', 's.bidCreationMainId', 'b.id')
+        // //     ->select(DB::raw('count(c.id) as `count`'), DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
+        // //     ->groupby('year', 'month', 'c.state')
+        // //     ->get();
+
+        // $retender = DB::table('customer_creation_profiles as c')
+        //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
+        //     ->join('bid_management_tender_or_bid_stauses as a', 'a.bidid', 'b.id')
+        //     ->where('a.status', 'Retender')
+        //     ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
+        //     ->groupby('year', 'month', 'c.state')
+        //     ->get();
+
+        // $cancelled = DB::table('customer_creation_profiles as c')
+        //     ->join('bid_creation__creations as b', 'b.ulb', 'c.id')
+        //     ->join('bid_management_tender_or_bid_stauses as a', 'a.bidid', 'b.id')
+        //     ->select(DB::raw('count(c.id) as `count`'),  DB::raw('YEAR(c.created_at) year, MONTH(c.created_at) month'), 'c.state')
+        //     ->where('a.status', 'Cancel')
+        //     ->groupby('year', 'month', 'c.state')
+        //     ->get();
+
+        if ($UlbDetails)
+            return response()->json([
+                'status' => 200,
+                'list' => $UlbDetails, //statewise response ulb count, population count
+                // 'awarded' => $awarded, //year,month, state wise awarded tenders details
+                // 'bid_submitted' => $bid_submitted, //year,month, state wise bid_submitted tenders details
+                // 'participating' => $participated,  //year,month, state wise Partisipating tenders details
+                // 'cancelled' => $cancelled,
+                // 'retender' => $retender
+
+            ]);
+        else {
+            return response()->json([
+                'list' => "No content"
+            ], 204);
+        }
+    }
 }

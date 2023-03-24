@@ -54,9 +54,13 @@ use App\Http\Controllers\TenderStatusContractAwardedController;
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
+
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 use App\Models\CompetitorDetailsWorkOrder;
+
+use App\Http\Controllers\CallTypeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -211,7 +215,7 @@ Route::delete('communicationfilesmaster/deletedoc/{id}', [Communicationfilesmast
 Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
 
 
-Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbdashboarddetails']);//Dashborad contents based on ulbdetails
+Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbyearlydetails']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails
 Route::get('bidcreation/creation/projectstatus', [BidCreationCreationController::class, 'projectstatus']);// returns running  & completed projects count for dashboard
@@ -297,6 +301,7 @@ Route::resources([
     'attendanceTypeMaster' => AttendanceTypeMasterController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
+    'calltype' => CallTypeController::class,
 ]);
 
 
