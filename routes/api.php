@@ -235,6 +235,7 @@ Route::get('rolehaspermission/{tokenid}', [UserControllerTemp::class, 'getRoleha
 
 Route::post('setpermission', [PermissionController::class, 'store']);
 Route::get('userpermissions', [PermissionController::class, 'getPermissionList']);
+Route::delete('userpermission/{role_id}', [PermissionController::class, 'destroy']);
 Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData']);
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
