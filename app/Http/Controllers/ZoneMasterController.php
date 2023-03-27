@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ZoneMaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Token;
+use Illuminate\Support\Facades\Validator;
 
 class ZoneMasterController extends Controller
 {
@@ -15,59 +17,69 @@ class ZoneMasterController extends Controller
      */
     public function index()
     {
-        //
+        $zonemaster=ZoneMaster::select('*')->get();
+        return response()->json([
+            'status' => 200,
+            'zonemaster' => $zonemaster]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
-        //
+        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
-        //
+        $user = Token::where("tokenid", $request->tokenId)->first();
+        if($user['userid'])
+        {
+        $zone = ZoneMaster::where('zone_name', '=', $request->zonename)->exists();
+        if ($zone) {
+            return response()->json([
+                'status' => 400,
+                'errors' => 'Zone Name Already Exists'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), ['zonename' => 'required|string', 'status' => 'required|string']);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->messages(),
+            ]);
+        }
+        
+        $zone = new ZoneMaster;
+        $zone->zone_name = $request->zonename;
+        $zone->active_status=$request->status;
+        $zone->save();
+        
+        
+        if ($zone) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Tender Type Added Succssfully!'
+            ]);
+        }
+        }
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ZoneMaster  $zoneMaster
-     * @return \Illuminate\Http\Response
-     */
+    
     public function show(ZoneMaster $zoneMaster)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ZoneMaster  $zoneMaster
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit(ZoneMaster $zoneMaster)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ZoneMaster  $zoneMaster
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, ZoneMaster $zoneMaster)
     {
         //

@@ -60,7 +60,8 @@ use App\Http\Controllers\PermissionController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 use App\Http\Controllers\CallTypeController;
-
+use App\Http\Controllers\BusinessForecastController;
+use App\Http\Controllers\ZoneMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -238,9 +239,7 @@ Route::get('userpermissions', [PermissionController::class, 'getPermissionList']
 Route::delete('userpermission/{role_id}', [PermissionController::class, 'destroy']);
 Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData']);
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
-// Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
-//  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
-//  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
+Route::get('/calltype/list',[CallTypeController::class, 'getCallTypeList']);
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -302,6 +301,9 @@ Route::resources([
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
     'calltype' => CallTypeController::class,
+    'bizzforecast' => BusinessForecastController::class,
+    'zonemaster' => ZoneMasterController::class,
+    
 ]);
 
 

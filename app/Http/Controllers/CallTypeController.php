@@ -193,4 +193,18 @@ class CallTypeController extends Controller
             ]);
         }
     }
+    public function getCallTypeList()
+    {
+        $calltypes = CallType::where("activeStatus", "=", "Active")->get();
+
+        $callTypeList= [];
+        foreach($calltypes as $calltype){
+            $callTypeList[] = ["value" => $calltype['id'], "label" =>  $calltype['name']] ;
+        }
+        
+        return response()->json([
+            'calltype' =>  $callTypeList,
+
+        ]);
+    }
 }

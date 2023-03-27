@@ -14,11 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('business_forecasts', function (Blueprint $table) {
-            $table->integer('id')->autoIncrement();
+            $table->id()->unsigned();
             $table->integer('call_type_id');
             $table->foreign("call_type_id")->references("id")->on("call_types_mst")->restrictOnDelete()->onUpdate("NO ACTION");
-            $table->string('business_forecast_name');
-            $table->string('status');
+            $table->string('name');
+            $table->string('activeStatus');
+            $table->integer('created_by');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
