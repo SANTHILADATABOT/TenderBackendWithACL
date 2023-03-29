@@ -336,4 +336,18 @@ class CustomerCreationProfileController extends Controller
 
         ]);
     }
+
+    public function getOptions(){
+
+        $customers = CustomerCreationProfile::where("customer_name", "!=", "")->get();
+
+        $customerList= [];
+        foreach($customers as $customer){
+            $customerList[] = ['value' => $customer['id'], 'label' => $customer['customer_name']];
+        }
+
+        return  response()->json([
+            'customerList' =>  $customerList,
+        ]);
+    }
 }
