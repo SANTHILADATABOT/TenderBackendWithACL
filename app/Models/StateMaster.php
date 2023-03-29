@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class StateMaster extends Model
 {
     use HasFactory;
-    protected $fillable = ['state_name','state_status','country_id','state_code','category'];
+    protected $fillable = ['state_name','state_status','country_id','zone_id','state_code','category'];
 }
