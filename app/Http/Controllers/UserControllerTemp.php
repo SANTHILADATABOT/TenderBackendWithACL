@@ -12,6 +12,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
+
 use App\Models\role_has_permission;
 use App\Models\sub_module_menu;
 
@@ -119,6 +120,34 @@ class UserControllerTemp extends Controller
         return response()->json([
             "userlist" => $userlist
         ]);
+    }
+
+
+
+    public function getoptions()
+    {
+        //
+        $user = User::where('activeStatus', 'active')
+        ->whereIn('userType', function($query){
+            $query->select('id')
+                ->from(with(new Role)->getTable())
+                ->where('name','LIKE','%BDM%')
+                ->get();
+        })
+        ->orderBy('id', 'asc')->get();
+      
+    
+        if ($user)
+            return response()->json([
+                'status' => 200,
+                'user' => $user
+            ]);
+        else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
     }
 
     public function store(Request $request)

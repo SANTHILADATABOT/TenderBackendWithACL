@@ -60,6 +60,7 @@ use App\Http\Controllers\PermissionController;
 use App\Models\CompetitorDetailsWorkOrder;
 
 use App\Http\Controllers\CallTypeController;
+use App\Http\Controllers\CalltobdmController;
 
 
 /*
@@ -118,7 +119,7 @@ Route::get('customercreation/getcustno/{stateid}', [CustomerCreationProfileContr
 Route::get('customercreation/profile/getFormNo', [CustomerCreationProfileController::class, 'getFormNo']);
 Route::get('customer/list', [CustomerCreationProfileController::class, 'getList']);
 Route::get('tendercreation/list', [TenderTypeMasterController::class, 'getList']);
-
+Route::get('customerOptions', [CustomerCreationProfileController::class, 'getOptions']);
 
 // Route::get('customercreation/contact/getFormNo', [CustomerCreationContactPersonController::class, 'getFormNo']);
 Route::post('customercreationcontact/getlist', [CustomerCreationContactPersonController::class, 'getlist']);
@@ -224,6 +225,9 @@ Route::get('/dashboard/ulbpopdetails', [ULBDetailsController::class, 'getulbpopu
 Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
 Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
+Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
+
+
 
 Route::get('usertype/{id}', [UserTypeController::class, 'show']);
 Route::put('usertype/{id}', [UserTypeController::class, 'update']);
@@ -238,6 +242,8 @@ Route::get('userpermissions', [PermissionController::class, 'getPermissionList']
 Route::delete('userpermission/{role_id}', [PermissionController::class, 'destroy']);
 Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData']);
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
+
+
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
@@ -302,6 +308,7 @@ Route::resources([
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
     'calltype' => CallTypeController::class,
+    'calltobdm' => CalltobdmController::class,
 ]);
 
 
