@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StateMaster extends Model
+class ZoneHasState extends Model
 {
     use HasFactory;
-    protected $fillable = ['state_name','state_status','country_id','zone_id','state_code','category'];
+    protected $fillable = ['zone_id','state_id','created_at','updated_at'];
 }

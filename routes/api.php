@@ -42,25 +42,22 @@ use App\Http\Controllers\TenderStatusTechEvaluationController;
 use App\Http\Controllers\BidmanagementPreBidQueriesController;
 use App\Http\Controllers\BidmanagementCorrigendumPublishController;
 use App\Http\Controllers\BidCreationTenderParticipationController;
-
 use App\Http\Controllers\BidCreationTenderFeeController;
 use App\Http\Controllers\BidCreationEMDController;
 use App\Http\Controllers\BidCreationBidSubmittedStatusController;
-
 use App\Http\Controllers\FileDownloadHandlingController;
 use App\Http\Controllers\TenderStatusFinancialEvaluationsController;
 use App\Http\Controllers\TenderStatusContractAwardedController;
-
 use App\Http\Controllers\BidManagementTenderOrBidStausController;
 use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
-
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 use App\Models\CompetitorDetailsWorkOrder;
-
 use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\CalltobdmController;
+use App\Http\Controllers\ZoneMasterController;
+use App\Http\Controllers\BusinessForecastController;
 
 
 /*
@@ -242,11 +239,8 @@ Route::get('userpermissions', [PermissionController::class, 'getPermissionList']
 Route::delete('userpermission/{role_id}', [PermissionController::class, 'destroy']);
 Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData']);
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
+Route::get('/calltype/list',[CallTypeController::class, 'getCallTypeList']);
 
-
-// Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
-//  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
-//  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -309,6 +303,8 @@ Route::resources([
     'usercreation' => UserControllerTemp::class,
     'calltype' => CallTypeController::class,
     'calltobdm' => CalltobdmController::class,
+    'bizzforecast' => BusinessForecastController::class,
+    'zonemaster' => ZoneMasterController::class,
 ]);
 
 

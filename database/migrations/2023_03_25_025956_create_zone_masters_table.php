@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('business_forecasts', function (Blueprint $table) {
-            $table->id()->unsigned();
-            $table->integer('call_type_id');
-            $table->foreign("call_type_id")->references("id")->on("call_types_mst")->restrictOnDelete()->onUpdate("NO ACTION");
-            $table->string('name');
-            $table->string('activeStatus');
-            $table->integer('created_by');
+        Schema::create('zone_masters', function (Blueprint $table) {
+            $table->integer('id')->autoIncrement();
+            $table->integer('country_id')->default(105);
+            $table->string('zone_name');
+            $table->enum('active_status',['active','inactive']);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_forecasts');
+        Schema::dropIfExists('zone_masters');
     }
 };
