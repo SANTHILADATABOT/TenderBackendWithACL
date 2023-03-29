@@ -62,6 +62,8 @@ use App\Http\Controllers\BusinessForecastController;
 use App\Http\Controllers\ProcurementTypeController;
 use App\Http\Controllers\StatusController;
 
+use App\Http\Controllers\CallCreationController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -226,12 +228,37 @@ Route::get('usertype/{id}', [UserTypeController::class, 'show']);
 Route::put('usertype/{id}', [UserTypeController::class, 'update']);
 Route::delete('usertype/{id}', [UserTypeController::class, 'destroy']);
 
+Route::get('calltype/list', [CallTypeController::class, 'getCallTypeList']);
+
+Route::get('bizzlist/list/{id}', [CallCreationController::class, 'getBizzList']);
+Route::get('statuslist/list/{id}', [CallCreationController::class, 'getStatusList']);
+Route::get('procurementlist/list', [CallCreationController::class, 'getProcurementList']);
+
+Route::post('calllogfileUpload/', [CallCreationController::class, 'calllogfileUpload']);
+
+
+
+Route::get('calldownload/{id}/{fileName}', [CallCreationController::class, 'download']);
+
+// Route::get('calllog/list', [CallCreationController::class, 'index']);
+// Route::post('calllogadd/', [CallCreationController::class, 'store']);
+// Route::get('showcall/list/{id}', [CallCreationController::class, 'show']);
+// // Route::put('calllogupdate/{id}', [CallCreationController::class, 'update']);
+
+
+
+
+
+
+// Route::get('callTypeList/list/{savedcalltype}', [CallTypeController::class, 'getListofcalltype']);
+
 
 // Route::put('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'update']);
 //  Route::post('tenderstatus/awardcontract/store', [TenderStatusContractAwardedController::class, 'insert']);
 //  Route::get('tenderstatus/awardcontract/{id}', [TenderStatusContractAwardedController::class, 'getAwardContractList']);
 /*
 ## Resource Laravel Routes Example
+Route::get(['ulb',[UlbMasterController::class,'index']]);//
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
 Route::get(['ulb/{id}',[UlbMasterController::class,'show']]);
 Route::get(['ulb/edit/{id}',[UlbMasterController::class,'edit']]);//
@@ -292,9 +319,10 @@ Route::resources([
     'usercreation' => UserControllerTemp::class,
     
     'calltype' => CallTypeController::class,
-    'businessforecast' => BusinessForecastController::class,
+    'bizzforecast' => BusinessForecastController::class,
     'procurementtype' => ProcurementTypeController::class,
     'status' => StatusController::class,
+    'callcreation' => CallCreationController::class,
 ]);
 
 

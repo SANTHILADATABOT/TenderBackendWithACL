@@ -7,6 +7,7 @@ use App\Models\CallType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Token;
 
 class BusinessForecastController extends Controller
 {
@@ -17,18 +18,25 @@ class BusinessForecastController extends Controller
      */
     public function index()
     {
-        $business_forecast = DB::table('business_forecasts')
-        ->join('call_types_mst','call_types_mst.id','=','business_forecasts.call_type_id')
-        ->where('call_types_mst.activeStatus','=','Active')
-        ->select('call_types_mst.*','business_forecasts.*')
-        ->orderBy('call_types_mst.name', 'asc')
-        ->orderBy('business_forecasts.business_forecasts_name', 'asc')
-        ->get();
+        // $business_forecast = DB::table('business_forecasts')
+        // ->join('call_types_mst','call_types_mst.id','=','business_forecasts.call_type_id')
+        // ->where('call_types_mst.activeStatus','=','Active')
+        // ->select('call_types_mst.name','business_forecasts.*')
+        // ->orderBy('business_forecasts.name', 'asc')
+        //  ->get();
+ 
+         $business_forecast = BusinessForecast::select('business_forecasts.*','call_types_mst.name as calltype_name')
+         ->leftJoin('call_types_mst','call_types_mst.id','business_forecasts.call_type_id')
+         ->get();
+
+//         $query = str_replace(array('?'), array('\'%s\''), $business_forecast->toSql());
+// $query = vsprintf($query, $business_forecast->getBindings());
+// return $query;
 
         if ($business_forecast)
             return response()->json([
                 'status' => 200,
-                'business_forecast' => $business_forecast
+                'bizzforecast' => $business_forecast
             ]);
         else {
             return response()->json([
@@ -57,9 +65,10 @@ class BusinessForecastController extends Controller
     public function store(Request $request)
     {
         $user = Token::where('tokenid', $request->tokenId)->first();
+        
         if($user['userid'])
         {
-        $business_forecast = BusinessForecast::where('business_forecast_name', '=', $request->business_forecast_name)->exists();
+        $business_forecast = BusinessForecast::where('name', '=', $request->name)->exists();
         if ($business_forecast) {
             return response()->json([
                 'status' => 400,
@@ -76,7 +85,9 @@ class BusinessForecastController extends Controller
         //         'message' => $validator->messages(),
         //     ]);
         // }
+
         $request->request->remove('tokenId');
+       
         $business_forecast_add = BusinessForecast::firstOrCreate($request->all());
         if ($business_forecast_add) {
             return response()->json([
@@ -101,18 +112,74 @@ class BusinessForecastController extends Controller
      */
     public function show($id)
     {
-        $business_forecast = BusinessForecast::find($id);
+        //  $business_forecast1 = BusinessForecast::find($id);
+       //  $business_forecast = CallType::find($id);
+         //$business_forecast = DB::table('call_types_mst')->select('name')->get();
+
+
+        // // return "BB".$business_forecast;
+        //  if ($business_forecast)
+        //      return response()->json([
+        //          'status' => 200,
+        //          'bizzforecast' => $business_forecast
+        //      ]);
+        //  else {
+        //      return response()->json([
+        //          'status' => 404,
+        //          'message' => 'The provided credentials are Invalid'
+        //      ]);
+        //  }
+
+        $business_forecast = DB::table('business_forecasts as b')
+        ->join("call_types_mst as c", "c.id", "b.call_type_id")
+        ->where("b.id",$id)
+        ->select(
+            'b.name',
+            'b.activeStatus',
+            "c.id"
+        )
+        ->get();
+
+// return $business_forecast;
+//         foreach( $business_forecast as $row){
+//             echo "row --  $row   ---";
+//             // $calltype[] = ["value" => $row['id'], "label" =>  $row['callname']] ;
+//         }
+        
+  
         if ($business_forecast)
-            return response()->json([
-                'status' => 200,
-                'business_forecast' => $business_forecast
-            ]);
-        else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'The provided credentials are Invalid'
-            ]);
-        }
+             return response()->json([
+                 'status' => 200,
+                 'bizzforecast' => $business_forecast,
+                //  'bizzforecast1' => $business_forecast1,
+             ]);
+         else {
+             return response()->json([
+                 'status' => 404,
+                 'message' => 'The provided credentials are Invalid'
+             ]);
+         }
+
+            // $callTypeList= [];
+            //         foreach($business_forecast as $calltypes){
+            //             $callTypeList[] = ["value" => $calltypes['id'], "label" =>  $calltypes['name']];
+            //         }
+            //         return response()->json([
+            //             'bizzforecast' =>  $callTypeList,
+            //         ]);
+
+        
+        // $business_forecast_name = BusinessForecast::find($id);
+        // $business_forecast = BusinessForecast::where("id",$id)->get();
+    
+        // $callTypeList= [];
+        // foreach($business_forecast as $calltypes){
+        //     $callTypeList[] = ["value" => $calltypes['id'], "label" =>  $calltypes['name']];
+        // }
+        // return response()->json([
+        //     'bizzforecast1' => $business_forecast_name,
+        //     'bizzforecast' =>  $callTypeList,
+        // ]);
     }
 
     /**
@@ -139,8 +206,8 @@ class BusinessForecastController extends Controller
         if($user['userid'])
         {
         $business_forecast = BusinessForecast::where('call_type_id', '=', $request->call_type_id)
-        ->where('business_forecast_name', '=', $request->business_forecast_name)
-        ->where('status', '=', $request->status)
+        ->where('name', '=', $request->name)
+        ->where('activeStatus', '=', $request->activeStatus)
         ->where('id', '!=', $id)->exists();
     if ($business_forecast) {
         return response()->json([

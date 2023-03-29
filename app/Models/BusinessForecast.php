@@ -9,5 +9,5 @@ class BusinessForecast extends Model
 {
     use HasFactory;
     protected $table = 'business_forecasts';
-    protected $fillable = ['call_type_id','business_forecast_name','status'];
+    protected $fillable = ['call_type_id','name','activeStatus','created_by'];
 }

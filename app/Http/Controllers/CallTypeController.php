@@ -145,7 +145,7 @@ class CallTypeController extends Controller
         ]);
         }
         }
-    $request->request->add(['updated_by' => $user['userid']]);
+    $request->request->add(['created_by' => $user['userid']]);
     // $validator = Validator::make($request->all(), ['unit_name' => 'required|string', 'unit_status' => 'required']);
     // if ($validator->fails()) {
     //     return response()->json([
@@ -192,5 +192,20 @@ class CallTypeController extends Controller
                 'message' => 'The Provided Credentials are Incorrect.'
             ]);
         }
+    }
+
+    public function getCallTypeList()
+    {
+        $calltypes = CallType::where("activeStatus", "=", "Active")->get();
+
+        $callTypeList= [];
+        foreach($calltypes as $calltype){
+            $callTypeList[] = ["value" => $calltype['id'], "label" =>  $calltype['name']] ;
+        }
+        
+        return response()->json([
+            'calltype' =>  $callTypeList,
+
+        ]);
     }
 }

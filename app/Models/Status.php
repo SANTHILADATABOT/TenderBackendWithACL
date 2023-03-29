@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Status extends Model
 {
     use HasFactory;
-    protected $table = 'statuses';
-    protected $fillable = ['call_type_id','business_forecast_id','status_name','status'];
+    protected $table = 'business_forecast_statuses';
+    protected $fillable = ['status_name','bizz_forecast_id','active_status'];
 }

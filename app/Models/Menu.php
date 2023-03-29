@@ -5,9 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CallType extends Model
+class Menu extends Model
 {
     use HasFactory;
-    protected $table = 'call_types_mst';
-    protected $fillable = ['call_type_name','status','created_by'];
 }

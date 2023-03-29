@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class ProcurementType extends Model
 {
     use HasFactory;
-    protected $table = 'procurement_types';
-    protected $fillable = ['call_type_id','procurement_type_name','status'];
+    protected $table = 'call_procurement_types';
+    protected $fillable = ['name','active_status','created_userid','edited_userid'];
 }
