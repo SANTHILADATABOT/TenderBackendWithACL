@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Http\\Controllers\\AttendanceEntryController' => $baseDir . '/app/Http/Controllers/AttendanceEntryController.php',
     'App\\Http\\Controllers\\AttendanceTypeMasterController' => $baseDir . '/app/Http/Controllers/AttendanceTypeMasterController.php',
     'App\\Http\\Controllers\\BidCreationBidSubmittedStatusController' => $baseDir . '/app/Http/Controllers/BidCreationBidSubmittedStatusController.php',
     'App\\Http\\Controllers\\BidCreationCreationController' => $baseDir . '/app/Http/Controllers/BidCreationCreationController.php',
@@ -95,6 +96,8 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Middleware\\cors' => $baseDir . '/app/Http/Middleware/cors.php',
     'App\\Http\\Resources\\UserResource' => $baseDir . '/app/Http/Resources/UserResource.php',
+    'App\\Models\\AttendanceEntry' => $baseDir . '/app/Models/AttendanceEntry.php',
+    'App\\Models\\AttendanceType' => $baseDir . '/app/Models/AttendanceType.php',
     'App\\Models\\AttendanceTypeMaster' => $baseDir . '/app/Models/AttendanceTypeMaster.php',
     'App\\Models\\BidCreationBidSubmittedStatus' => $baseDir . '/app/Models/BidCreationBidSubmittedStatus.php',
     'App\\Models\\BidCreationEMD' => $baseDir . '/app/Models/BidCreationEMD.php',

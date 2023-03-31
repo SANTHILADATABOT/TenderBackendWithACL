@@ -59,17 +59,9 @@ use App\Http\Controllers\CalltobdmController;
 use App\Http\Controllers\ZoneMasterController;
 use App\Http\Controllers\BusinessForecastController;
 use App\Http\Controllers\ExpenseTypeController;
+use App\Http\Controllers\AttendanceEntryController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -294,12 +286,12 @@ Route::resources([
     'bidcreation/bidsubmission/bidsubmittedstatus' => BidCreationBidSubmittedStatusController::class,
     'letteracceptance/creation' => BidManagementWorkOrderLetterOfAcceptenceController::class,
     'tenderstatus/techevaluation' => TenderStatusTechEvaluationController::class,
-
     'financialevaluation' => TenderStatusFinancialEvaluationsController::class,
     'bigmanagement/tenderstatus/status' => BidManagementTenderOrBidStausController::class, 
     'tenderstatusbidders' => TenderStatusBiddersController::class,
     'tenderstatus/awardcontract' => TenderStatusContractAwardedController::class,
     'attendanceTypeMaster' => AttendanceTypeMasterController::class,
+    'attendanceentry' => AttendanceEntryController::class,
     'communicationfilesmaster' => CommunicationfilesmasterController::class,
     'usercreation' => UserControllerTemp::class,
     'calltype' => CallTypeController::class,
