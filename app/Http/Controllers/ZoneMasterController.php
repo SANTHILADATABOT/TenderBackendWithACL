@@ -147,58 +147,39 @@ class ZoneMasterController extends Controller
         $zone->zone_name = $request->zonename;
         $zone->active_status=$request->status;
         $zone->save();
-        // $zonehasstate = StateMaster::where('zone_id',$id)->get();
-        // return $zonehasstate;
-        foreach($request->statelist as $row)  //input
-        {      echo "Foreach 1 ***";
-            $state = StateMaster::get();
+        $state = DB::table('state_masters')->where('country_id','105')->get();
+            
             foreach($state as $zs) //state list which has zone id
             {  
-                $state_update =StateMaster::where('id',$zs->id)->firstOrFail();
-                // echo $zs;
-                // echo "      ";
-                // echo $zs->id.'=='.$row['value'].'  &&  '.$zs->zone_id.'=='. $id;
-              echo $state_update;
-                // if(($zs->id == $row['value']) && ($zs->zone_id == $id))
-                // {
-                // // echo " -- In IF --- ";
-                // // break;
-                // } 
-                 if($zs->id != $row['value'] && $zs->zone_id == $id){
-                    $state_update->zone_id= null;
-                    $state_update->save();
-                    // $update =  DB::table('state_masters')
-                    // ->where('id',$zs->id)  // find your user by their email
-                    // ->limit(1)  // optional - to ensure only one record is updated.
-                    // ->update(array('zone_id' => null)); 
-
-                    echo " --- In If  ---    ";               
-                    break;
-                    // $zone_delete = StateMaster::destroy($zs->id);
-                }
-                else if($zs->id == $row['value'] && $zs->zone_id != $id){
-                    echo "--  In Else IF 2  ---  ";
-                    $state_update->zone_id= $id;
-                    $state_update->save();
-
-
-                    // $state_update =StateMaster::where('id',$zs->id)->firstOrFail();
-                    // $state_update->zone_id = $id; 
-                    // $state_update->save();
-
-        //            $update =  DB::table('state_masters')
-        // ->where('id',$zs->id)  // find your user by their email
-        // ->limit(1)  // optional - to ensure only one record is updated.
-        // ->update(array('zone_id' => $id));  // update the record in the DB. 
-
-       
+                foreach($request->statelist as $row)  //input
+                {  
+                if($zs->id == $row['value'])
+                {
+                    if($zs->zone_id != $id)
+                    {
+                        $stateqry = StateMaster::findOrFail($zs->id);
+                        $stateqry->zone_id=$id;
+                        $stateqry->save();
+                    }
                     break;
                 }
-                // if($state_update){
-                //     echo "              ------     $state_update    ";
-                //     $state_update->save();
-                // }
-                // echo " **** ";
+                else if($zs->zone_id == $id)
+                {
+                    $isChecked=false;
+                    foreach($request->statelist as $list)
+                    {
+                        if($zs->id == $list['value'])
+                        {
+                            $isChecked=true;
+                        }
+                    }
+                    if(!$isChecked)
+                    {
+                    $stateqry = StateMaster::findOrFail($zs->id);
+                    $stateqry->zone_id=null;
+                    $stateqry->save();
+                }  
+                }              
             }
         }
         }
@@ -217,8 +198,12 @@ class ZoneMasterController extends Controller
      * @param  \App\Models\ZoneMaster  $zoneMaster
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ZoneMaster $zoneMaster)
+    public function destroy($id)
     {
-        //
+        $zone=ZoneMaster::destroy($id);
+        return response()->json([
+            'status' => 200,
+            'message' => 'Zone Has been Removed!'
+        ]);
     }
 }

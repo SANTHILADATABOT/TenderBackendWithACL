@@ -19,8 +19,11 @@ class NewsubmenuCreationSeeder extends Seeder
     {
         // menu_module::create(['role_id'=>1, 'name'=>'NewMenuName_With_Permission_Check', 'icoClass'=>'FontAwsome_calssname_for_this_menu','status'=>'0/1','menuLink'=>'#','aliasName'=>'MenuNameToDisplay','sorting_order'=>'MenuListingOrder' ]);
 
+        $menu=menu_module::create(['user_role_id'=>1, 'name'=>'HumanResource', 'icoClass'=>'fas fa-user-tie','status'=>1,'menuLink'=>'#','aliasName'=>'Human Resource','sorting_order'=>5]);
 
-        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'4', 'sorting_order'=>'2','name'=>'call_to_bdm','menuLink'=>'/tender/calllog/calltobdm/','aliasName'=>'Call to BDM','status'=>'1', 'createdby'=>'1' ]);
+        // $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'4', 'sorting_order'=>'2','name'=>'call_to_bdm','menuLink'=>'/tender/calllog/calltobdm/','aliasName'=>'Call to BDM','status'=>'1', 'createdby'=>'1' ]);
+
+        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>$menu->id, 'sorting_order'=>'1','name'=>'attendance_entry','menuLink'=>'/tender/hr/attendanceentry','aliasName'=>'Attendance Entry','status'=>'1', 'createdby'=>'1' ]);
 
         // $role_has_permission = role_has_permission::create(['permission_id' => 0,'role_id'=>1, 'menu_modules_id'=> 1,'submenu_modules_id'=> $submenuid->id, 'can_view'=> 1,'can_add'=> 1,'can_edit'=> 1,'can_delete'=> 1]);
 

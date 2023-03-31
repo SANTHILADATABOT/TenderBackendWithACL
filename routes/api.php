@@ -53,7 +53,7 @@ use App\Http\Controllers\CommunicationfilesmasterController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
-use App\Models\CompetitorDetailsWorkOrder;
+// use App\Models\CompetitorDetailsWorkOrder;
 use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\CalltobdmController;
 use App\Http\Controllers\ZoneMasterController;

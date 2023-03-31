@@ -40,5 +40,5 @@ class cors
 
     // return $response;
 
-    // }
+    }
 }
