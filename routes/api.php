@@ -58,7 +58,7 @@ use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\CalltobdmController;
 use App\Http\Controllers\ZoneMasterController;
 use App\Http\Controllers\BusinessForecastController;
-
+use App\Http\Controllers\ExpenseTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -241,6 +241,7 @@ Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData'
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
 Route::get('/calltype/list',[CallTypeController::class, 'getCallTypeList']);
 
+
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -305,6 +306,7 @@ Route::resources([
     'calltobdm' => CalltobdmController::class,
     'bizzforecast' => BusinessForecastController::class,
     'zonemaster' => ZoneMasterController::class,
+    'expensetype' => ExpenseTypeController::class,
 ]);
 
 
