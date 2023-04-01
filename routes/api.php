@@ -60,7 +60,7 @@ use App\Http\Controllers\ZoneMasterController;
 use App\Http\Controllers\BusinessForecastController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\AttendanceEntryController;
-
+use App\Http\Controllers\AttendanceTypeController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -299,6 +299,7 @@ Route::resources([
     'bizzforecast' => BusinessForecastController::class,
     'zonemaster' => ZoneMasterController::class,
     'expensetype' => ExpenseTypeController::class,
+    'attendancetype'=> AttendanceTypeController::class,
 ]);
 
 

@@ -6,12 +6,17 @@ use App\Models\AttendanceEntry;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceEntryController extends Controller
 {
     public function index()
     {
-        $attendance= AttendanceEntry::get();
+        $attendance= DB::table('attendance_entries as ae')
+        ->join('users as u','ae.userId','u.id')
+        ->join('attendance_types as a','ae.attendanceType','a.id')
+        ->select('u.userName','a.attendanceType as attendanceTypeName','ae.*')
+        ->get();
         if ($attendance) {
             return response()->json([
                 'status' => 200,

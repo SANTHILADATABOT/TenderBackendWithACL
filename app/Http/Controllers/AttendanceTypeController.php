@@ -6,6 +6,7 @@ use App\Models\AttendanceType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 class AttendanceTypeController extends Controller
 {
     public function index()
@@ -50,7 +51,12 @@ class AttendanceTypeController extends Controller
         //           'message' => $validator->messages(),
         //       ]);
         //   }
-          $attendanceType = AttendanceType::firstOrCreate($request->all());
+        //   $attendanceType = AttendanceType::firstOrCreate($request->all());
+        $attendanceType = new AttendanceType;
+        $attendanceType->attendanceType = $request->attendanceType;
+        $attendanceType->activeStatus = $request->activeStatus;
+        $attendanceType->created_by = $user['userid'];
+        $attendanceType->save();
           if ($attendanceType) {
               return response()->json([
                   'status' => 200,
@@ -80,6 +86,7 @@ class AttendanceTypeController extends Controller
     
     public function update(Request $request, $id)
     {
+        
         $user = Token::where("tokenid", $request->tokenId)->first();
         if($user['userid'])
         {
@@ -88,8 +95,7 @@ class AttendanceTypeController extends Controller
         //Here is no need of token id when insert $request into table, so remove it form $request
         $request->request->remove('tokenId');
 
-        $attendanceType = AttendanceType::where('compId',$request->compId)
-        ->where('attendanceType', $request->attendanceType)
+        $attendanceType = AttendanceType::where('attendanceType',$request->attendanceType)
         ->where('id', '!=', $id)
         ->exists();
         if ($attendanceType) {
@@ -106,8 +112,13 @@ class AttendanceTypeController extends Controller
         //     ]);
         // }
 
-
-        $attendanceType = AttendanceType::findOrFail($id)->update($request->all());
+    
+        $attendanceType = AttendanceType::findOrFail($id);
+        $attendanceType->attendanceType = $request->attendanceType;
+        $attendanceType->activeStatus = $request->activeStatus;
+        $attendanceType->edited_by = $user['userid'];
+        $attendanceType->save();
+    
         if ($attendanceType)
             return response()->json([
                 'status' => 200,
