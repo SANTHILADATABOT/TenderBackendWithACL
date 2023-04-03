@@ -61,6 +61,7 @@ use App\Http\Controllers\BusinessForecastController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\AttendanceEntryController;
 use App\Http\Controllers\AttendanceTypeController;
+use App\Http\Controllers\CallCreationController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -233,6 +234,12 @@ Route::get('permisions/{usertype}', [PermissionController::class, 'getSavedData'
 Route::get('usertypeOptionsForPermission', [PermissionController::class, 'getoptions']);
 Route::get('/calltype/list',[CallTypeController::class, 'getCallTypeList']);
 
+Route::get('bizzlist/list/{id}', [CallCreationController::class, 'getBizzList']);
+Route::get('statuslist/list/{id}', [CallCreationController::class, 'getStatusList']);
+Route::get('calldownload/{id}/{fileName}', [CallCreationController::class, 'download']);
+Route::post('callupload', [CallCreationController::class, 'callfileupload']);
+Route::get('user/list', [CallCreationController::class, 'getUserList']);
+Route::get('procurementlist/list', [CallCreationController::class, 'getProcurementList']);
 
 /*
 ## Resource Laravel Routes Example
@@ -300,6 +307,7 @@ Route::resources([
     'zonemaster' => ZoneMasterController::class,
     'expensetype' => ExpenseTypeController::class,
     'attendancetype'=> AttendanceTypeController::class,
+    'callcreation' => CallCreationController::class,
 ]);
 
 
