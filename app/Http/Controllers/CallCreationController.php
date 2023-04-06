@@ -98,8 +98,6 @@ class CallCreationController extends Controller
 
 // echo $query ;
 
-
-
                 $call_id=null;
             if ($calseq_qry->isEmpty()) {
                 // echo " - It is Empty - ";
@@ -131,10 +129,10 @@ class CallCreationController extends Controller
             $request->request->add(['callid' => $call_id]);
             $request->request->add(['created_by' => $user['userid']]);
             $request->request->remove('tokenid');
-            if (empty($request->nxtFollowupDate)) {
+            if (!empty($request->next_followup_date)) {
                 $request->request->add(['action' => 'next_followup']);
             }
-            if (empty($request->callcloseDate)) {
+            if (!empty($request->close_date)) {
                 $request->request->add(['action' => 'close']);
             }
             
@@ -207,21 +205,25 @@ class CallCreationController extends Controller
 
     public function update(Request $request, $id)
     {
-
-        $user = Token::where('tokenid', $request->tokenId)->first();
+        $user = Token::where('tokenid', $request->tokenid)->first();
         if ($user['userid']) {
-            $call_log = CallLog::where('customer_id', '=', $request->customer_id)
-                ->where('id', '!=', $id)->exists();
-            if ($call_log) {
+            $call_log = CallLog::findOrFail($id);
+            if (!$call_log) {  
                 return response()->json([
                     'status' => 400,
-                    'message' => 'Call Log Already Exists!'
+                    'message' => 'Invalid Credentials..!'
                 ]);
             }
         }
-        $request->request->add(['updated_by' => $user['userid']]);
-        $request->request->remove('tokenId');
-
+        $request->request->add(['edited_by' => $user['userid']]);
+        $request->request->remove('tokenid');
+        if (!empty($request->next_followup_date)){
+            $request->request->add(['action' => 'next_followup']);
+        }
+        if (!empty($request->close_date)) {
+            $request->request->add(['action' => 'close']);
+        }
+        
         $call_log_update = CallLog::findOrFail($id)->update($request->all());
 
         if ($call_log_update)
