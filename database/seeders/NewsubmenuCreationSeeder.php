@@ -20,9 +20,9 @@ class NewsubmenuCreationSeeder extends Seeder
         // menu_module::create(['role_id'=>1, 'name'=>'NewMenuName_With_Permission_Check', 'icoClass'=>'FontAwsome_calssname_for_this_menu','status'=>'0/1','menuLink'=>'#','aliasName'=>'MenuNameToDisplay','sorting_order'=>'MenuListingOrder' ]);
 
 
-        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'1', 'sorting_order'=>'17','name'=>'CallLogType','menuLink'=>'/tender/master/calltypemaster','aliasName'=>'CallLog Type','status'=>'1', 'createdby'=>'1' ]);
+        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'2', 'sorting_order'=>'5','name'=>'ULB Report','menuLink'=>'/tender/tender/UlbReport','aliasName'=>'ULB Report','status'=>'1', 'createdby'=>'1' ]);
 
-        $role_has_permission = role_has_permission::create(['permission_id' => 0,'role_id'=>1, 'menu_modules_id'=> 1,'submenu_modules_id'=> $submenuid->id, 'can_view'=> 1,'can_add'=> 1,'can_edit'=> 1,'can_delete'=> 1]);
+        // $role_has_permission = role_has_permission::create(['permission_id' => 0,'role_id'=>1, 'menu_modules_id'=> 1,'submenu_modules_id'=> $submenuid->id, 'can_view'=> 1,'can_add'=> 1,'can_edit'=> 1,'can_delete'=> 1]);
 
     }
 }
