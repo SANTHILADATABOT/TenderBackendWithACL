@@ -139,7 +139,7 @@ class PermissionController extends Controller
 
         try {
             $permissions = role_has_permission::where('role_id',  $role_id)->delete();
-            if ($permissions) {
+            if ($deleteuserCreation) {
                 return response()->json([
                     'status' => 200,
                     'message' => "Deleted Successfully!"

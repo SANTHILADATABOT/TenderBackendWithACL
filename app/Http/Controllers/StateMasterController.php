@@ -205,7 +205,7 @@ class StateMasterController extends Controller
         }
     }
 
-    public function getStateList($countryId){
+    public function getStateList($countryId=105){
 
         $states = StateMaster::where("country_id",$countryId)->where("state_status", "=", "Active")->get();
         //dd($states);

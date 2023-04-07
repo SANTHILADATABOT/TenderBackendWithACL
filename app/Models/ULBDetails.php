@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ULBDetails extends Model
 {
     use HasFactory;
+    
 
     protected $fillable = [
         'area',

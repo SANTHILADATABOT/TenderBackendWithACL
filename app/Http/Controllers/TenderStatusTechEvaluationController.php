@@ -110,7 +110,7 @@ class TenderStatusTechEvaluationController extends Controller
      */
     public function show(TenderStatusTechEvaluation $tenderStatusTechEvaluation)
     {
-        //
+        
     }
 
     /**

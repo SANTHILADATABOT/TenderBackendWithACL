@@ -21,5 +21,24 @@ class cors
       ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
       ->header('Access-Control-Allow-Headers',' Origin, Content-Type, Accept, Authorization, X-Request-With')
       ->header('Access-Control-Allow-Credentials',' true');
+      
+    //   $headers = [
+    //     'Access-Control-Allow-Origin' => '*',
+    //     'Access-Control-Allow-Methods' => 'POST, GET, PUT, DELETE, OPTIONS',
+    //     'Access-Control-Allow-Headers' => 'Authorization, Content-Type',
+    //     'Access-Control-Allow-Credentials' => 'true',
+    // ];
+
+    //   if ($request->getMethod() == 'OPTIONS') {
+    //     return response('', 200)->withHeaders($headers);
+    // }
+
+    // $response = $next($request);
+    // foreach ($headers as $key => $value) {
+    //     $response->header($key, $value);
+    // }
+
+    // return $response;
+
     }
 }
