@@ -8,13 +8,17 @@ use App\Models\CallType;
 use App\Models\BusinessForecast;
 use App\Models\Status;
 use App\Models\ProcurementType;
+use App\Models\User;
 use App\Models\CallLog;
+use App\Models\CallFileSub;
 use App\Models\CallLogFiles;
 use App\Models\CallLogFilesSub;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
+use Carbon\Carbon;
+
 
 
 class CallCreationController extends Controller
@@ -26,7 +30,6 @@ class CallCreationController extends Controller
      */
     public function index()
     {
-    
         $call_log = DB::table('call_log_creations as clc')
 					->join('customer_creation_profiles as cc','cc.id','clc.customer_id')
 					->join('call_types_mst as ct','ct.id','clc.call_type_id')
@@ -35,7 +38,6 @@ class CallCreationController extends Controller
                     ->join('users as u','u.id','clc.executive_id')
 					->join('call_procurement_types as pt','pt.id','clc.procurement_type_id')
 					->select(
-                            
                             'cc.id','cc.customer_name',
 							'ct.id','ct.name as callname',
 							'bf.id','bf.name as bizzname',
@@ -44,17 +46,9 @@ class CallCreationController extends Controller
 							'pt.id','pt.name as proname',
                              'clc.id',
 							'clc.call_date','clc.action','clc.next_followup_date',
-                            'clc.close_date','clc.additional_info','clc.remarks',
-							
+                            'clc.close_date','clc.additional_info','clc.remarks',	
 					)
 					->get();
-
-            
-// $query = str_replace(array('?'), array('\'%s\''), $call_log->toSql());
-// $query = vsprintf($query, $call_log->getBindings());
-// return $query;
-
-
         if ($call_log)
             return response()->json([
                 'status' => 200,
@@ -87,29 +81,7 @@ class CallCreationController extends Controller
     public function store(Request $request)
     {
 
-        if($request ->hasFile('filename')){
-            $file = $request->file('filename');
-            $fileExt = $file->getClientOriginalName();
-            $fileName1=$file->hashName();
-            $filenameSplited=explode(".",$fileName1);
-
-            if($filenameSplited[1]!=$fileExt)
-            {
-            $fileName=$filenameSplited[0]."".$fileExt;
-            }
-            else{
-                $fileName=$fileName1;   
-            }
-            //$file->storeAs('uploads/CallLogs/CallLogFiles/', $fileName, 'public');
-            $destinationPath = 'uploads/CallLogs/CallLogFiles/';
-
-           // return "ABC--".$destinationPath;
-            $result = $file->move($destinationPath, $fileName);
-
-
             $user = Token::where('tokenid', $request->tokenid)->first();  
-
-          //  return "USER:".$user;
             if($user['userid'])
             {
             $call_log = CallLog::where('customer_id', '=', $request->customer_id)->exists();
@@ -121,18 +93,14 @@ class CallCreationController extends Controller
             } 
 
             $request->request->add(['created_by' => $user['userid']]);
-        
             $request->request->remove('tokenid');
-            $request->request->add(['filename' => $fileName]);
-            $request->request->add(['filetype' => $fileExt]);
-           // $request->except(['filename']);
+              
             $call_log_add = CallLog::firstOrCreate($request->all());
-            if ($call_log_add) {
+            if($call_log_add) {
                 return response()->json([
                     'status' => 200,
                     'message' => 'Call Log Form Created Succssfully!'
                 ]);
-            }
             }
             }
             else{
@@ -141,51 +109,6 @@ class CallCreationController extends Controller
                 'message' => 'Provided Credentials are Incorrect!'
             ]);
             }
-
-    
-       // $last_id = $request->fbid;
-        // $file = $request->file('filename');
-        // $path = $request->file->getClientOriginalName();
-        // $slipt = explode('.', $path);
-        // $destinationPath = 'uploads/CallLogs/CallLogFiles/';
-        // $fileName = 'calllog' . time() . '.' . $slipt[1];
-        // $result = $file->move($destinationPath, $fileName);
-
-      
-        // return "FILENAME:".$fileName;
-
-        //return "hii123";
-    //     $user = Token::where('tokenid', $request->tokenId)->first();
-    //     if($user['userid'])
-    //     {
-    //         $call_log = CallLog::where('customer_id', '=', $request->customer_id)->exists();
-    //     if ($call_log) {
-    //         return response()->json([
-    //             'status' => 400,
-    //             'message' => 'call Log Already Exists!'
-    //         ]);
-
-    //     }
-       
-       
-    //     $request->request->add(['created_by' => $user['userid']]);
-    //     $request->request->add(['filename' => $fileName]);
-    //     $request->request->remove('tokenId');
-    //     $call_log_add = CallLog::firstOrCreate($request->all());
-    //     if ($call_log_add) {
-    //         return response()->json([
-    //             'status' => 200,
-    //             'message' => 'Call Log Form Created Succssfully!'
-    //         ]);
-    //     }
-    // }
-    // else{
-    //     return response()->json([
-    //         'status' => 400,
-    //         'message' => 'Provided Credentials are Incorrect!'
-    //     ]);
-    // }
-    // }
     }
 
     /**
@@ -196,6 +119,8 @@ class CallCreationController extends Controller
      */
     public function show($id)
     {
+
+       
 
         $show_call_log = DB::table('call_log_creations as clc')
 					->join('customer_creation_profiles as cc','cc.id','clc.customer_id')
@@ -213,7 +138,6 @@ class CallCreationController extends Controller
                         'clc.id',
                         'clc.call_date','clc.action','clc.next_followup_date',
                         'clc.close_date','clc.additional_info','clc.remarks',
-                        'clc.filename',
 					)
 					->get();
 
@@ -250,119 +174,35 @@ class CallCreationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        ////////////////////////////////////////////////
-        if($request->hasFile('filename')){
-            $file = $request->file('filename');
-            $fileExt = $file->getClientOriginalExtension();
-            $fileName1=$file->hashName();
-            //received File extentions sometimes converted by browsers
-            //Have to set orignal file extention before save
-            $filenameSplited=explode(".",$fileName1);
-            if($filenameSplited[1]!=$fileExt)
-            {
-            $fileName=$filenameSplited[0].".".$fileExt;
-            }
-            else{
-                $fileName=$fileName1;   
-            }
-            $file->storeAs('uploads/CallLogs/CallLogFiles/', $fileName, 'public');
-            
-            
-            //to delete Existing Image from storage
-            $data = CallLog::find($id);
-            $image_path = public_path('uploads/CallLogs/CallLogFiles/').'/'.$data->filepath;
-            unlink($image_path);
-           
-            $user = Token::where("tokenid", $request->tokenId)->first();   
-            $request->request->add(['created_by' => $user['userid']]);
-            $request->request->remove('tokenId');
-            $request->request->add(['filename' => $fileName]);
-           // $request->request->add(['filetype' => $fileExt]);
-           
-            $dataToUpdate = $request->except(['filename']);
-            $qcedit = CallLog::findOrFail($id)->update($dataToUpdate);
-        if ($qcedit)
+        
+        $user = Token::where('tokenid', $request->tokenId)->first();
+        if($user['userid'])
+        {
+        $call_log = CallLog::where('customer_id', '=', $request->customer_id)
+        ->where('id', '!=', $id)->exists();
+    if ($call_log) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Call Log Already Exists!'
+        ]);
+        }
+        }
+    $request->request->add(['updated_by' => $user['userid']]);
+    $request->request->remove('tokenId');
+    
+    $call_log_update = CallLog::findOrFail($id)->update($request->all());
+
+        if ($call_log_update)
             return response()->json([
                 'status' => 200,
-                'message' => "Updated Successfully!"
+                'message' => "Updated Successfully!",
             ]);
-        else {
+        else{
             return response()->json([
-                'status' => 404,
-                'message' => 'The provided credentials are incorrect.'
+                'status' => 400,
+                'message' => "Sorry, Failed to Update, Try again later"
             ]);
         }
-    }
-        else{
-            
-                $user = Token::where("tokenid", $request->tokenId)->first();  
-                
-                $request->request->add(['updated_by' => $user['userid']]);
-                // $request->request->add(['filepath' => $fileName]);
-                $request->request->remove('tokenId');
-            
-                
-            
-            $qcedit = CallLog::findOrFail($id)->update($request->all());
-            if ($qcedit)
-                return response()->json([
-                    'status' => 200,
-                    'message' => "Updated Successfully!"
-                ]);
-            else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'The provided credentials are incorrect.'
-                ]);
-            }
-            }
-        ///////////////////////////////////////////////
-    //     $file = $request->file('filename');
-    //     $path = $request->file->getClientOriginalName();
-    //     $slipt = explode('.', $path);
-    //     $destinationPath = 'uploads/CallLogs/CallLogFiles/';
-    //     $fileName = 'calllog' . time() . '.' . $slipt[1];
-    //     $result = $file->move($destinationPath, $fileName);
-
-    //     // return "Orignalname:".$path."--";
-
-    //     $data = CallLog::find($id);
-    //     $file_path = public_path('CallLogs/CallLogFiles/').'/'.$data->filename;
-    //     unlink($file_path);
-
-    //     // return "FPATH:".$file_path."---";
-
-    //     $user = Token::where('tokenid', $request->tokenId)->first();
-    //     if($user['userid'])
-    //     {
-    //     $call_log = CallLog::where('customer_id', '=', $request->customer_id)
-    //     ->where('id', '!=', $id)->exists();
-    // if ($call_log) {
-    //     return response()->json([
-    //         'status' => 400,
-    //         'message' => 'Call Log Already Exists!'
-    //     ]);
-    //     }
-    //     }
-
-    // $request->request->add(['updated_by' => $user['userid']]);
-    // $request->request->remove('tokenId');
-    // $request->request->add(['filepath' => $fileName]);
-    
-  
-
-    // $call_log_update = CallLog::findOrFail($id)->update($request->all());
-    //     if ($call_log_update)
-    //         return response()->json([
-    //             'status' => 200,
-    //             'message' => "Updated Successfully!",
-    //         ]);
-    //     else{
-    //         return response()->json([
-    //             'status' => 400,
-    //             'message' => "Sorry, Failed to Update, Try again later"
-    //         ]);
-    //     }
     }
 
     /**
@@ -427,98 +267,200 @@ class CallCreationController extends Controller
         ]);
     }
 
+
+    public function getUserList()
+    {
+        $user_list = User::get();
+        $userList = [];
+        foreach($user_list as $row){
+            $userList[] = ["value" => $row['id'], "label" =>  $row['name']] ;
+        }
+        return  response()->json([
+            'user' =>  $userList,
+        ]);
+    }
+
     public function calllogfileUpload(Request $request)
     {
 
-        $last_id = $request->fbid;
+        // $last_id = $request->fbid;
 
-        $file = $request->file('file');
-        $path = $request->file->getClientOriginalName();
-        $slipt = explode('.', $path);
-        $destinationPath = 'uploads/CallLogs/CallLogFiles/';
-        $new_file_name = 'calllog' . time() . '.' . $slipt[1];
-        $result = $file->move($destinationPath, $new_file_name);
-
-
-        $user = Token::where('tokenid', $request->tokenid)->first();
-        // $userid = $user['userid'];
-        $request->request->remove('tokenid');
+        // $file = $request->file('file');
+        // $path = $request->file->getClientOriginalName();
+        // $slipt = explode('.', $path);
+        // $destinationPath = 'uploads/CallLogs/CallLogFiles/';
+        // $new_file_name = 'calllog' . time() . '.' . $slipt[1];
+        // $result = $file->move($destinationPath, $new_file_name);
 
 
-        if ($user['userid']) {
-            $Find = CallLogFiles::where('randomno', '=', $request->sub_id)->get();
-            $count = $Find->count();
-            if ($count == 0) {
+        // $user = Token::where('tokenid', $request->tokenid)->first();
+        // // $userid = $user['userid'];
+        // $request->request->remove('tokenid');
 
-                $callLogFiles = new CallLogFiles;
-                $callLogFiles->cid = $request->cid;
-                $callLogFiles->date = $request->date;
-				$callLogFiles->randomno = $request->sub_id;
-                $callLogFiles->refrenceno = $request->refrenceno;
-                $callLogFiles->from = $request->from;
-                $callLogFiles->to = $request->to;
-				$callLogFiles->subject = $request->subject;
-                $callLogFiles->medium = $request->medium;
-                $callLogFiles->med_refrenceno = $request->medrefrenceno;
+
+        // if ($user['userid']) {
+        //     $Find = CallLogFiles::where('randomno', '=', $request->sub_id)->get();
+        //     $count = $Find->count();
+        //     if ($count == 0) {
+
+        //         $callLogFiles = new CallLogFiles;
+        //         $callLogFiles->cid = $request->cid;
+        //         $callLogFiles->date = $request->date;
+		// 		$callLogFiles->randomno = $request->sub_id;
+        //         $callLogFiles->refrenceno = $request->refrenceno;
+        //         $callLogFiles->from = $request->from;
+        //         $callLogFiles->to = $request->to;
+		// 		$callLogFiles->subject = $request->subject;
+        //         $callLogFiles->medium = $request->medium;
+        //         $callLogFiles->med_refrenceno = $request->medrefrenceno;
               
               
-                $callLogFiles->createdby_userid = $user['userid'];
-                $callLogFiles->save();
-                $get_id = CallLogFiles::orderBy('id', 'desc')
-                    ->first('id');
-                $last_id = $callLogFiles->id;
+        //         $callLogFiles->createdby_userid = $user['userid'];
+        //         $callLogFiles->save();
+        //         $get_id = CallLogFiles::orderBy('id', 'desc')
+        //             ->first('id');
+        //         $last_id = $callLogFiles->id;
 
 
-                $callLogFilesSub = new CallLogFilesSub;
-                $callLogFilesSub->randomno = $request->sub_id;
-                $callLogFilesSub->mainid = $last_id;
-                $callLogFilesSub->comfile = $new_file_name;
-                $callLogFilesSub->filetype = $slipt[1];
-                $callLogFilesSub->createdby_userid = $user['userid'];
-                $callLogFilesSub->save();
+        //         $callLogFilesSub = new CallLogFilesSub;
+        //         $callLogFilesSub->randomno = $request->sub_id;
+        //         $callLogFilesSub->mainid = $last_id;
+        //         $callLogFilesSub->comfile = $new_file_name;
+        //         $callLogFilesSub->filetype = $slipt[1];
+        //         $callLogFilesSub->createdby_userid = $user['userid'];
+        //         $callLogFilesSub->save();
 
 
-            } else {
-                foreach ($Find as $row) {
-                    $last_id = $row->id;
+        //     } else {
+        //         foreach ($Find as $row) {
+        //             $last_id = $row->id;
 
-                }
+        //         }
 
-                $callLogFilesSub = new CallLogFilesSub;
-                $callLogFilesSub->randomno = $request->sub_id;
-                $callLogFilesSub->mainid = $last_id;
-                $callLogFilesSub->comfile = $new_file_name;
-                $callLogFilesSub->filetype = $slipt[1];
-                $callLogFilesSub->createdby_userid = $user['userid'];
-                $callLogFilesSub->save();
-            }
-
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'Uploaded Succcessfully',
+        //         $callLogFilesSub = new CallLogFilesSub;
+        //         $callLogFilesSub->randomno = $request->sub_id;
+        //         $callLogFilesSub->mainid = $last_id;
+        //         $callLogFilesSub->comfile = $new_file_name;
+        //         $callLogFilesSub->filetype = $slipt[1];
+        //         $callLogFilesSub->createdby_userid = $user['userid'];
+        //         $callLogFilesSub->save();
+        //     }
 
 
-            ]);
-        } else {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Unable to save!'
-            ]);
-        }
+        //     return response()->json([
+        //         'status' => 200,
+        //         'message' => 'Uploaded Succcessfully',
+
+
+        //     ]);
+        // } else {
+        //     return response()->json([
+        //         'status' => 400,
+        //         'message' => 'Unable to save!'
+        //     ]);
+        // }
 
     }
 
     public function download($fileName){
 
-        $doc = CallLog::find($fileName);
-
+        $doc = CallFileSub::find($fileName);
+   
         if($doc){
-            $fileName = $doc['filename'];
+            $fileName = $doc['hasfilename'];
             //$file = public_path()."'uploads/CallLogs/CallLogFiles/'".$fileName;
             $file = public_path('uploads/CallLogs/CallLogFiles/'.$fileName);
            // return $file;
             return response()->download($file);
         }
     }
+
+    public function callfileupload(Request $request)
+    {
+
+
+        if($request ->hasFile('filename')){
+            $file = $request->file('filename');
+            $originalfileName = $file->getClientOriginalName();
+            $fileType = $file->getClientOriginalExtension();
+            $fileSize = $file->getSize();
+            $hasfileName=$file->hashName();
+            $filenameSplited=explode(".",$hasfileName);
+            $filename2 = 'calllog' . time() . '.' . $filenameSplited[1];
+            
+           // return $filenameSplited;
+
+                       
+            if($filenameSplited[1]!=$originalfileName)
+            {
+            $fileName=$filenameSplited[0]."".$originalfileName;
+            }
+            else{
+                $fileName=$hasfileName;
+            }
+            //$file->storeAs('uploads/CallLogs/CallLogFiles/', $fileName, 'public');
+            $destinationPath = 'uploads/CallLogs/CallLogFiles/';
+            $result = $file->move($destinationPath, $hasfileName);
+
+            $user = Token::where('tokenid', $request->tokenid)->first();  
+            $request->request->remove('tokenid');
+
+               
+                $get_id = CallLog::orderBy('id', 'desc')->first('id');
+
+                $get = $get_id->id;
+             
+                $last_id = $get;
+
+ 
+                $callFileSub = new CallFileSub;
+                $callFileSub->mainid = $last_id;
+                $callFileSub->filename = $filename2;
+                $callFileSub->originalfilename = $originalfileName;
+                $callFileSub->filetype = $fileType;
+                $callFileSub->filesize = $fileSize;
+                $callFileSub->hasfilename = $hasfileName;
+                $callFileSub->createdby_userid = $user['userid'];
+                $callFileSub->save();
+
+                
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Call Log Form Created Succssfully!'
+                ]);
+            }
+            else{
+            return response()->json([
+                'status' => 400,
+                'message' => 'Provided Credentials are Incorrect!'
+            ]);
+            }
+    }
+
+    ///////////////////////GET CALL LIST///////////////////
+    public function getTodayCalls()
+    {
+        $today = Carbon::today();
+        $today_calls = CallLog::where('call_date', '=' ,$today)->count();
+        return  response()->json([
+            'todaycalls' =>  $today_calls,
+        ]);
+    }
+
+    public function getPendingCalls()
+    {
+        $pending_calls = CallLog::where('action', '=' ,'next_followup')->count();
+        return  response()->json([
+            'pendingcalls' =>  $pending_calls,
+        ]);
+    }
+
+    public function getClosedCalls()
+    {
+        $closed_calls = CallLog::where('action', '=' ,'close')->count();
+        return  response()->json([
+            'closedcalls' =>  $closed_calls,
+        ]);
+    }
+
 }

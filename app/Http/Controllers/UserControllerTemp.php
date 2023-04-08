@@ -361,6 +361,17 @@ class UserControllerTemp extends Controller
 
     }
 
+    public function getUserList()
+    {
+        $user_list = User::get();
+        $userList = [];
+        foreach($user_list as $row){
+            $userList[] = ["value" => $row['id'], "label" =>  $row['name']] ;
+        }
+        return  response()->json([
+            'user' =>  $userList,
+        ]);
+    }
     
 }
 

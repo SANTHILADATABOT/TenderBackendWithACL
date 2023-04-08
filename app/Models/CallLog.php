@@ -25,8 +25,8 @@ class CallLog extends Model
         'additional_info',
         'remarks',
         'created_by',
-        'filename',
-        'filetype'
+        // 'filename',
+        // 'filetype'
     
     ];
 }
