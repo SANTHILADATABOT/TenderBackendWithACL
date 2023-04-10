@@ -29,7 +29,7 @@ class CallLogFilesController extends Controller
             $call_file_filesize = ($call_file->getSize()) / 1000;
             // $call_file_ext =  $call_file->extension();
 
-            // $data=(array) $request->all();   
+            // $data=(array) $request->all();
 
             $request->request->add(['createdby_userid' => $user['userid']]);
             $request->request->add(['hasfilename' => $call_file_fileName]);
@@ -38,7 +38,7 @@ class CallLogFilesController extends Controller
             $request->request->add(['filesize' => $call_file_filesize]);
 
             // return $request;
-            
+
             $call_log_add = CallLogFiles::firstOrCreate($request->except(['file','tokenId']));
             // $call_log_add->save();
             if ($call_log_add) {
@@ -68,9 +68,9 @@ class CallLogFilesController extends Controller
             if(File::exists($file_path)) {
                 File::delete($file_path);
             }
-            
+
             $doc = CallLogFiles::destroy($id);
-            if($doc)    
+            if($doc)
             {return response()->json([
                 'status' => 200,
                 'message' => "Deleted Successfully!"
@@ -82,8 +82,8 @@ class CallLogFilesController extends Controller
                 "errormessage" => "",
             ]);}
         }catch(\Illuminate\Database\QueryException $ex){
-            $error = $ex->getMessage(); 
-            
+            $error = $ex->getMessage();
+
             return response()->json([
                 'status' => 404,
                 'message' => 'Unable to delete! This data is used in another file/form/table.',
@@ -93,12 +93,12 @@ class CallLogFilesController extends Controller
     }
 
     public function getUplodedDocList($id){
-        
+
         $docs= CallLogFiles::where('mainid', $id)
-        ->select('*') 
-        ->orderBy('id', 'desc')       
+        ->select('*')
+        ->orderBy('id', 'desc')
         ->get();
-        
+
         if ($docs)
             return response()->json([
                 'status' => 200,
@@ -114,7 +114,7 @@ class CallLogFilesController extends Controller
 
     public function download($id){
         $doc = CallLogFiles::where('id',$id)->get();
-        
+
         if($doc){
             $file = public_path()."/uploads/CallCreation/CallLog/".$doc[0]->hasfilename;
             return response()->download($file);
@@ -123,6 +123,6 @@ class CallLogFilesController extends Controller
 
 
     public function getCallCounts(Request $request, $id){
-        return "getCallCounts - Request ".$request;
+        return "newly added getCallCounts - Request ".$request;
     }
 }
