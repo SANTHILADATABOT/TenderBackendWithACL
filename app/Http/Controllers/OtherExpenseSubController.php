@@ -6,7 +6,6 @@ use App\Models\OtherExpenseSub;
 use App\Models\OtherExpenses;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -23,12 +22,14 @@ class OtherExpenseSubController extends Controller
         $other_expense_sub = DB::table('other_expense_subs as oes')
 					->join('expense_types as et','et.id','oes.expense_type_id')
 					->select(
-                            //'oes.id as oesid',
+                            'oes.id as oesid',
                             'et.id as etid',
                             'et.expenseType',
 							'oes.amount',
                             'oes.description_sub',
                             'oes.originalfilename',
+                            'oes.filesize',
+                            'oes.hasfilename',
 					)
 					 ->get();
         if ($other_expense_sub)
@@ -66,17 +67,15 @@ class OtherExpenseSubController extends Controller
        // return "USER:".$user;
         $request->request->remove('tokenid');
         
-        if($request ->hasFile('filename')){
-            $file = $request->file('filename');
+        if($request ->hasFile('file')){
+            $file = $request->file('file');
+          
             $originalfileName = $file->getClientOriginalName();
             $fileType = $file->getClientOriginalExtension();
             $fileSize = $file->getSize();
             $hasfileName=$file->hashName();
             $filenameSplited=explode(".",$hasfileName);
-            $filename2 = 'otherexp' . time() . '.' . $filenameSplited[1];
-            
-           // return $filenameSplited;
-
+         
                        
             if($filenameSplited[1]!=$originalfileName)
             {
@@ -155,7 +154,6 @@ class OtherExpenseSubController extends Controller
                 $otherExpenseSub->expense_type_id = $request->expense_type_id;
                 $otherExpenseSub->amount = $request->amount;
                 $otherExpenseSub->description_sub = $request->description_sub;
-                $otherExpenseSub->filename = $filename2;
                 $otherExpenseSub->originalfilename = $originalfileName;
                 $otherExpenseSub->filetype = $fileType;
                 $otherExpenseSub->filesize = $fileSize;
@@ -329,26 +327,23 @@ class OtherExpenseSubController extends Controller
      */
     public function update(Request $request, $id)
     {
-    //   return "hii".$request->tokenid;
-          $user = Token::where('tokenid', $request->tokenid)->first();  
-          return "USER:".$user."-----";
-          $request->request->add(['edited_by' => $user['userid']]);
-    //     // //  if ($user['userid']) {
+       
+          $user = Token::where('tokenid', $request->tokenid)->first(); 
+         // return "TOKENSS:" .$user; 
+          $request->request->add(['created_by' => $user['userid']]);
+          if ($user['userid']) {
           $request->request->remove('tokenid');
     
 
-        if($request ->hasFile('filename')){
-            return "ghgh";
-            $file = $request->file('filename');
+            if($request ->hasFile('file')){
+        
+            $file = $request->file('file');
             $originalfileName = $file->getClientOriginalName();
             $fileType = $file->getClientOriginalExtension();
             $fileSize = $file->getSize();
             $hasfileName=$file->hashName();
             $filenameSplited=explode(".",$hasfileName);
-            $filename2 = 'otherexp' . time() . '.' . $filenameSplited[1];
-            
-           // return $filenameSplited;
-
+           
                        
             if($filenameSplited[1]!=$originalfileName)
             {
@@ -357,25 +352,22 @@ class OtherExpenseSubController extends Controller
             else{
                 $fileName=$hasfileName;
             }
-            //$file->storeAs('uploads/CallLogs/CallLogFiles/', $fileName, 'public');
-            $data = OtherExpenseSub::where("id", "=", $id)->select("*")->get();
-                // return "DATA:".$data;
-            $destinationPath = 'uploads/OtherExpenseSub/OtherExpSubFiles/'. '/' . $data[0]->filename;
-            $path = str_replace("\\", "/", $destinationPath);
-            unlink($path);
-            $file->storeAs('uploads/OtherExpenseSub/OtherExpSubFiles/', $fileName, 'public');
-
-
             
+            $data = OtherExpenseSub::where("id", "=", $id)->select("*")->get();
+            
+            $destinationPath = 'uploads/OtherExpenseSub/OtherExpSubFiles/'. $data[0]->hasfilename;
 
-                $request->request->add(['filename' => $filename2]);
+            unlink($destinationPath);
+          
+            $result = $file->move('uploads/OtherExpenseSub/OtherExpSubFiles/', $hasfileName);
+            
+               
                 $request->request->add(['originalfilename' => $originalfileName]);
                 $request->request->add(['filetype' => $fileType]);
                 $request->request->add(['filesize' => $fileSize]);
                 $request->request->add(['hasfilename' => $hasfileName]);
 
-            $result = $file->move($destinationPath, $hasfileName);
-        //}
+        }
     
         $otherExpense_sub_update = OtherExpenseSub::findOrFail($id)->update($request->all());
 
@@ -386,16 +378,13 @@ class OtherExpenseSubController extends Controller
                 'message' => "Updated Successfully!",
             ]);
         }
-     }
-    else{
+        else{
             return response()->json([
                 'status' => 400,
                 'message' => "Sorry, Failed to Update, Try again later"
             ]);
         }
-     //}
-      
-    //}
+    }
     }
 
     /**
@@ -429,7 +418,7 @@ class OtherExpenseSubController extends Controller
             $fileName = $doc['hasfilename'];
             //$file = public_path()."'uploads/CallLogs/CallLogFiles/'".$fileName;
             $file = public_path('uploads/OtherExpenseSub/OtherExpSubFiles/'.$fileName);
-           // return $file;
+            // return $file;
             return response()->download($file);
         }
     }

@@ -23,7 +23,7 @@ class OtherExpensesController extends Controller
     {
         $other_expense = DB::table('other_expenses as oe')
         ->join('users as u','u.id','oe.executive_id')
-        ->join('other_expense_subs as oes','oes.id','oe.sub_id')
+        ->join('other_expense_subs as oes','oes.mainid','oe.id')
         ->select(
                 'oe.id as oeid',
                 'oe.entry_date','oe.expense_no',
@@ -161,11 +161,7 @@ class OtherExpensesController extends Controller
     }
 
 
-    public function rand()
-    {
-       $str = Str::upper(Str::random(16));
-       return "RANDOM NO:".$str;
-    }
+  
 
 // public function test(Request $request)
 // {

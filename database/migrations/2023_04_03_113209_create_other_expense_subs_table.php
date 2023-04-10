@@ -25,7 +25,6 @@ return new class extends Migration
             $table->foreign ('expense_type_id')->references('id')->on('expense_types')->restrictOnDelete()->onUpdate("NO ACTION");
             $table->decimal('amount',10,2);
             $table->text("description_sub")->nullable();
-            $table->string('filename')->nullable();
             $table->string('originalfilename')->nullable();
             $table->string('filetype')->default('');
             $table->string('filesize')->default('');
