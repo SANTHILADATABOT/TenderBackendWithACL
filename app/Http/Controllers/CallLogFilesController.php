@@ -123,6 +123,6 @@ class CallLogFilesController extends Controller
 
 
     public function getCallCounts(Request $request, $id){
-        return "newly added getCallCounts - Request ".$request;
+        return "getCallCounts - Request ".$request;
     }
 }
