@@ -62,6 +62,7 @@ use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\AttendanceEntryController;
 use App\Http\Controllers\AttendanceTypeController;
 use App\Http\Controllers\CallCreationController;
+use App\Http\Controllers\CallLogFilesController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -244,6 +245,10 @@ Route::post('callupload', [CallCreationController::class, 'callfileupload']);
 Route::get('user/list', [CallCreationController::class, 'getUserList']);
 Route::get('procurementlist/list', [CallCreationController::class, 'getProcurementList']);
 
+Route::get('callcreation/doclist/{id}', [CallLogFilesController::class, 'getUplodedDocList']);
+Route::get('callcreation/docdownload/{id}', [CallLogFilesController::class, 'download']);
+Route::get('dashboard/callcount', [CallLogFilesController::class, 'getCallCounts']);
+
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -311,6 +316,7 @@ Route::resources([
     'expensetype' => ExpenseTypeController::class,
     'attendancetype'=> AttendanceTypeController::class,
     'callcreation' => CallCreationController::class,
+    'callfileupload'=> CallLogFilesController::class,
 ]);
 
 

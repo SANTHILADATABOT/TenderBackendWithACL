@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('mainid')->unsigned();
             $table->foreign('mainid')->references('id')->on('call_log_creations')->onDelete("cascade")->onUpdate("NO ACTION");
-            $table->string('filename');
             $table->string('originalfilename');
             $table->string('filetype')->default('');
             $table->string('filesize')->default('');

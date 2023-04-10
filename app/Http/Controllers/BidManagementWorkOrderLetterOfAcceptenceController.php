@@ -48,7 +48,6 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
             $wofile_filesize = ($wofile->getSize())/1000;
             $wofile_ext =  $wofile->extension();
         }
-   
             $data=(array) $request->all();   
 
         //     $validator = Validator::make($data, [
@@ -243,9 +242,9 @@ class BidManagementWorkOrderLetterOfAcceptenceController extends Controller
      * @param  \App\Models\BidManagementWorkOrderLetterOfAcceptence  $bidManagementWorkOrderLetterOfAcceptence
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BidManagementWorkOrderLetterOfAcceptence $bidManagementWorkOrderLetterOfAcceptence)
+    public function destroy($id)
     {
-        //
+        
     }
 
     public function wodownload($id){

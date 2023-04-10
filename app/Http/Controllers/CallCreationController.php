@@ -92,11 +92,6 @@ class CallCreationController extends Controller
             $currmonth = $calldate[1];
             $calseq_qry = CallLog::select('callid')->where('call_date','Like','%'.substr($calldate[0],2,2).'-'.$calldate[1].'%')->orderby('id', 'DESC')->limit(1)->get();
 
-//             $query = str_replace(array('?'), array('\'%s\''), $calseq_qry->toSql());
-// $query = vsprintf($query, $calseq_qry->getBindings());
-// // dump($query);
-
-// echo $query ;
 
                 $call_id=null;
             if ($calseq_qry->isEmpty()) {
@@ -142,7 +137,8 @@ class CallCreationController extends Controller
             if ($call_log_add) {
                 return response()->json([
                     'status' => 200,
-                    'message' => 'Call Log Form Created Succssfully!'
+                    'message' => 'Call Log Form Created Succssfully!',
+                    'mainid'=> $call_log_add->id,
                 ]);
             }
         } else {
@@ -471,4 +467,5 @@ class CallCreationController extends Controller
 
     // }
 
+    
 }
