@@ -66,11 +66,11 @@ class OtherExpensesController extends Controller
 
         //return "OTHER EXPENSE";
 
-                $get_id = OtherExpenses::orderBy('id', 'desc')->first('id');
+                // $get_id = OtherExpenses::orderBy('id', 'desc')->first('id');
                 
-                $otherExp = OtherExpenses::find($get_id->id);
-                $otherExp->description = $request->description;
-                $otherExp->save();
+                // $otherExp = OtherExpenses::find($get_id->id);
+                // $otherExp->description = $request->description;
+                // $otherExp->save();
             ///////////////////////////////    
     //     $randno = Str::upper(Str::random(16));
     //     $user = Token::where('tokenid', $request->tokenid)->first();   
@@ -163,83 +163,6 @@ class OtherExpensesController extends Controller
 
   
 
-// public function test(Request $request)
-// {
-//     if($request ->hasFile('filename')){
-//         $file = $request->file('filename');
-//         $originalfileName = $file->getClientOriginalName();
-//         $fileType = $file->getClientOriginalExtension();
-//         $fileSize = $file->getSize();
-//         $hasfileName=$file->hashName();
-//         $filenameSplited=explode(".",$hasfileName);
-//         $filename2 = 'otherexp' . time() . '.' . $filenameSplited[1];
-        
-//        // return $filenameSplited;
-
-                   
-//         if($filenameSplited[1]!=$originalfileName)
-//         {
-//         $fileName=$filenameSplited[0]."".$originalfileName;
-//         }
-//         else{
-//             $fileName=$hasfileName;
-//         }
-//         //$file->storeAs('uploads/CallLogs/CallLogFiles/', $fileName, 'public');
-//         $destinationPath = 'uploads/OtherExpenseSub/OtherExpSubFiles/';
-//         $result = $file->move($destinationPath, $hasfileName);
-
-//         $user = Token::where('tokenid', $request->tokenid)->first();  
-//         //return "USER:".$user;
-//         $request->request->remove('tokenid');
-
-           
-//             $otherExpenseSub = new OtherExpenseSub;
-//             $otherExpenseSub->action = $request->action;
-//             $otherExpenseSub->customer_id = $request->customer_id;
-//             $otherExpenseSub->call_no = $request->call_no;
-//             $otherExpenseSub->expense_type_id = $request->expense_type_id;
-//             $otherExpenseSub->amount = $request->amount;
-//             $otherExpenseSub->description_sub = $request->description_sub;
-//             $otherExpenseSub->filename = $filename2;
-//             $otherExpenseSub->originalfilename = $originalfileName;
-//             $otherExpenseSub->filetype = $fileType;
-//             $otherExpenseSub->filesize = $fileSize;
-//             $otherExpenseSub->hasfilename = $hasfileName;
-//             $otherExpenseSub->created_by = $user['userid'];
-//             $otherExpenseSub->save();
-
-//             $get_id = OtherExpenseSub::orderBy('id', 'desc')->first('id');
-//             $get = $get_id->id;
-//             $last_id = $get;
-
-//             $otherExp = new OtherExpenses;
-//             $otherExp->sub_id = $last_id;
-//             $otherExp->expense_no = $request->expense_no;
-//             $otherExp->entry_date = $request->entry_date;
-//             $otherExp->executive_id = $request->executive_id;
-//             $otherExp->description = $request->description;
-//             $otherExp->created_by = $user['userid'];
-//             $otherExp->save();
-
-//             if($otherExp){
-//                 return response()->json([
-//                     'status' => 200,
-//                     'message' => 'Other Expense Created Successfully!'
-//                 ]);
-//             }
-            
-//             else{
-//                 return response()->json([
-//                     'status' => 400,
-//                     'message' => 'Provided Credentials are Incorrect!'
-//                 ]);
-//                 }
-//         }
-//         else{
-//                 return "File isn't uploaded!!";
-//         }
-        
-// }
 
 
 }

@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class CallType extends Model
 {
     use HasFactory;
-    protected $table = 'call_types_mst';
-    protected $fillable = ['call_type_name','status','created_by'];
+    protected $table = 'call_types';
+    protected $fillable = ['name','status','created_by'];
 }

@@ -179,19 +179,43 @@ class CallTypeController extends Controller
      */
     public function destroy($id)
     {
-        $call = CallType::destroy($id);
-        if ($call)
-            return response()->json([
+          try{
+            $call = CallType::destroy($id);
+            if($call)
+            {
+                return response()->json([
                 'status' => 200,
-                'message' => "Deleted Successfully!"
-            ]);
+                'message' => "Deleted Successfully!",
+            ]);}
+            else
+            {return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect!?',
+                "errormessage" => "",
+            ]);}
+        }catch(\Illuminate\Database\QueryException $ex){
+            $error = $ex->getMessage();
 
-        else {
             return response()->json([
-                'status' => 400,
-                'message' => 'The Provided Credentials are Incorrect.'
+                'status' => 404,
+                'message' => 'Unable to delete! This data is used in another file/form/table.',
+                "errormessage" => $error,
             ]);
         }
+
+        // $call = CallType::destroy($id);
+        // if ($call)
+        //     return response()->json([
+        //         'status' => 200,
+        //         'message' => "Deleted Successfully!"
+        //     ]);
+
+        // else {
+        //     return response()->json([
+        //         'status' => 400,
+        //         'message' => 'The Provided Credentials are Incorrect.'
+        //     ]);
+        // }
     }
 
     public function getCallTypeList()

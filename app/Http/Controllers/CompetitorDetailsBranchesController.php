@@ -31,7 +31,7 @@ class CompetitorDetailsBranchesController extends Controller
 
       public function store(Request $request)
     {
-        
+        return "hii";
         // echo "token ID:" . $curr_token=$request->tokenId;
         $user = Token::where("tokenid", $request->tokenId)->first();
         //We doesn't have user id in $request, so we get by using tokenId, then add Userid to $request Insert into table directly without assigning variables       
