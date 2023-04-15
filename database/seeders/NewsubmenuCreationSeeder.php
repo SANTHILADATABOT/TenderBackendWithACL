@@ -19,10 +19,12 @@ class NewsubmenuCreationSeeder extends Seeder
     {
         // menu_module::create(['role_id'=>1, 'name'=>'NewMenuName_With_Permission_Check', 'icoClass'=>'FontAwsome_calssname_for_this_menu','status'=>'0/1','menuLink'=>'#','aliasName'=>'MenuNameToDisplay','sorting_order'=>'MenuListingOrder' ]);
 
-        // $menu=menu_module::create(['user_role_id'=>1, 'name'=>'HumanResource', 'icoClass'=>'fas fa-user-tie','status'=>1,'menuLink'=>'#','aliasName'=>'Human Resource','sorting_order'=>5]);
+        $menu=menu_module::create(['user_role_id'=>1, 'name'=>'Expenses', 'icoClass'=>'fas fa-money','status'=>1,'menuLink'=>'#','aliasName'=>'Expenses','sorting_order'=>6]);
 
 
-        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'2', 'sorting_order'=>'5','name'=>'ULB Report','menuLink'=>'/tender/tender/UlbReport','aliasName'=>'ULB Report','status'=>'1', 'createdby'=>'1' ]);
+        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>$menu->id, 'sorting_order'=>'1','name'=>'OtherExpenses','menuLink'=>'/tender/otherExpense','aliasName'=>'Other Expenses','status'=>'1', 'createdby'=>'1' ]);
+
+        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>$menu->id, 'sorting_order'=>'2','name'=>'Reimbursement','menuLink'=>'/tender/reimbursement','aliasName'=>'Reimbursement','status'=>'1', 'createdby'=>'1' ]);
 
         // $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'4', 'sorting_order'=>'2','name'=>'call_to_bdm','menuLink'=>'/tender/calllog/calltobdm/','aliasName'=>'Call to BDM','status'=>'1', 'createdby'=>'1' ]);
 

@@ -63,7 +63,8 @@ use App\Http\Controllers\AttendanceEntryController;
 use App\Http\Controllers\AttendanceTypeController;
 use App\Http\Controllers\CallCreationController;
 use App\Http\Controllers\CallLogFilesController;
-
+use App\Http\Controllers\OtherExpenseSubController;
+use App\Http\Controllers\OtherExpenseController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -83,7 +84,7 @@ Route::get('state/list/{id}', [StateMasterController::class, 'getStateList']);
 Route::get('state-list/{id}', [StateMasterController::class, 'getStates']);
 Route::get('state/list/{id}/{category}/{savedstate}', [StateMasterController::class, 'getStateListOptions']);
 Route::get('unit/list', [UnitMasterController::class, 'getunitList']);
-
+Route::get('state/zonefilteredlist/{cid}/{id}', [StateMasterController::class, 'getZoneFilteredStateList']);
 
 Route::get('tendercreation/list/{id}', [TenderCreationController::class, 'getTenderList']);
 Route::get('tendercreation-list/{id}', [TenderCreationController::class, 'getTender']);
@@ -108,7 +109,7 @@ Route::post('customercreationmain/getmainid', [CustomerCreationMainController::c
 Route::post('customercreation/profile', [CustomerCreationProfileController::class, 'getProfileFromData']);
 Route::get('customercreation/getcustno/{stateid}', [CustomerCreationProfileController::class, 'getCustNo']);
 Route::get('customercreation/profile/getFormNo', [CustomerCreationProfileController::class, 'getFormNo']);
-Route::get('customer/list', [CustomerCreationProfileController::class, 'getList']);
+Route::get('customer/list/{id}', [CustomerCreationProfileController::class, 'getList']);
 Route::get('tendercreation/list', [TenderTypeMasterController::class, 'getList']);
 Route::get('customerOptions', [CustomerCreationProfileController::class, 'getOptions']);
 
@@ -219,7 +220,8 @@ Route::post('ulbreport/populb', [ULBDetailsController::class, 'setpopupUlb']);//
 Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
 Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
-Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
+// Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
+Route::get('userOptions', [UserControllerTemp::class, 'getBdmUsersList']);
 
 
 
@@ -248,7 +250,11 @@ Route::get('procurementlist/list', [CallCreationController::class, 'getProcureme
 Route::get('callcreation/doclist/{id}', [CallLogFilesController::class, 'getUplodedDocList']);
 Route::get('callcreation/docdownload/{id}', [CallLogFilesController::class, 'download']);
 Route::get('dashboard/callcount', [CallLogFilesController::class, 'getCallCounts']);
+Route::post('callcreation/callnolist', [CallCreationController::class, 'usersCallList']);
+Route::get('expensetype/list', [ExpenseTypeController::class, 'getExpenseTypeList']);
 
+Route::get('otherexpsubfiledownload/{id}/{fileName}', [OtherExpenseSubController::class, 'download']);
+Route::get('callcreation/getCallMainList/{token}', [CallCreationController::class, 'getCallMainList']);
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -317,6 +323,8 @@ Route::resources([
     'attendancetype'=> AttendanceTypeController::class,
     'callcreation' => CallCreationController::class,
     'callfileupload'=> CallLogFilesController::class,
+    'otherexpense' => OtherExpensesController::class,
+    'otherexpensesub' => OtherExpenseSubController::class,
 ]);
 
 

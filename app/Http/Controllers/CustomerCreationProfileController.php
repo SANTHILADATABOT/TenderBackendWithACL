@@ -8,14 +8,10 @@ use App\Models\StateMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
+use App\Models\User;
 
 class CustomerCreationProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
@@ -42,22 +38,13 @@ class CustomerCreationProfileController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
     public function store(Request $request)
     {
         //get the user id
@@ -322,19 +309,28 @@ class CustomerCreationProfileController extends Controller
         ]);
     }
 
+//getList() - Used in all creation form - Don't use it form other forms 
+    public function getList($tokenid){
+        
+        $user = Token::where('tokenid', $tokenid)->first();
 
-    public function getList(){
-
-        $countrys = CustomerCreationProfile::where("customer_name", "!=", "")->get();
+        if($user['userid'])
+        {
+        $countrys = DB::table('calltobdm_has_customers as c')
+        ->join('customer_creation_profiles as a','c.customer_id','a.id')
+        ->join('calltobdms as b','c.calltobdm_id','b.id')
+        ->where("b.user_id",$user['userid'])
+        ->get();
 
         $customerList= [];
         foreach($countrys as $country){
-            $customerList[] = ["value" => $country['id'], "label" =>  $country['customer_name']] ;
+            $customerList[] = ["value" => $country->id, "label" =>  $country->customer_name] ;
         }
         return  response()->json([
             'customerList' =>  $customerList,
 
         ]);
+    }
     }
 
     public function getOptions(){

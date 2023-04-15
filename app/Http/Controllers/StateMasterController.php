@@ -291,4 +291,26 @@ class StateMasterController extends Controller
         // ]);
     }
 
+    public function getZoneFilteredStateList($countryId=105, $id=0){
+        // return "Country ID : $countryId, -- Id : $id";
+        $qry = StateMaster::where("country_id",$countryId)
+        ->where("state_status", "=", "Active")
+        ->where("zone_id", "=", null);
+        if($id!="undefined")
+        {
+            $qry->Orwhere("zone_id", "=", $id);
+        }
+        $states=$qry->get();
+       
+
+        $stateList = array();
+        foreach($states as $state){
+            $stateList[] = ["value" => $state['id'], "label" =>  $state['state_name']] ;
+        }
+        return  response()->json([
+            'stateList' =>  $stateList
+        ]);
+    }
+
+
 }

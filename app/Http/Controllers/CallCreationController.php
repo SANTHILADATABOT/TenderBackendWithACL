@@ -23,6 +23,7 @@ use App\Models\Token;
 class CallCreationController extends Controller
 {
 
+
     public function index()
     {
         $call_log = DB::table('call_log_creations as clc')
@@ -86,19 +87,18 @@ class CallCreationController extends Controller
 
             // $curryear = date('y');
             // $currmonth = date('m');
-            
-            $calldate=explode("-",$request->call_date);
-            $curryear = substr($calldate[0],2,4);
+
+            $calldate = explode("-", $request->call_date);
+            $curryear = substr($calldate[0], 2, 4);
             $currmonth = $calldate[1];
-            $calseq_qry = CallLog::select('callid')->where('call_date','Like','%'.substr($calldate[0],2,2).'-'.$calldate[1].'%')->orderby('id', 'DESC')->limit(1)->get();
+            $calseq_qry = CallLog::select('callid')->where('call_date', 'Like', '%' . substr($calldate[0], 2, 2) . '-' . $calldate[1] . '%')->orderby('id', 'DESC')->limit(1)->get();
 
 
-                $call_id=null;
+            $call_id = null;
             if ($calseq_qry->isEmpty()) {
                 // echo " - It is Empty - ";
                 // $request->request->add(['callid' => "CID-" . $curryear . $currmonth . "00001"]);
-                $call_id= "CID-" .substr($calldate[0],2,2).$calldate[1]. "00001";
-
+                $call_id = "CID-" . substr($calldate[0], 2, 2) . $calldate[1] . "00001";
             } else {
                 // echo " - It is in else - ";
                 $year = substr($calseq_qry[0]->callid, 4, 2);
@@ -108,21 +108,22 @@ class CallCreationController extends Controller
                     // echo " - It is in year == curryear - ";
                     if ($month == $currmonth) {
                         // echo " - It is in month == currmonth - ";
-                        $call_id= "CID-" . $curryear . $currmonth . str_pad(($lastid + 1), 5, '0', STR_PAD_LEFT);
+                        $call_id = "CID-" . $curryear . $currmonth . str_pad(($lastid + 1), 5, '0', STR_PAD_LEFT);
                         // $request->request->add(['callid' => "CID-" . $curryear . $currmonth . ($lastid + 1)]);
                     } else {
                         // echo " - It is in month == currmonth  Else - ";
-                        $call_id= "CID-" . $curryear . $currmonth . "00001";
+                        $call_id = "CID-" . $curryear . $currmonth . "00001";
                         // $request->request->add(['callid' => "CID-" . $curryear . $currmonth . "00001"]);
                     }
                 } else {
                     // echo " - It is in year == curryear Else - ";
-                    $call_id= "CID-" . substr($calldate[0],2,2).$calldate[1]. "00001";
+                    $call_id = "CID-" . substr($calldate[0], 2, 2) . $calldate[1] . "00001";
                     // $request->request->add(['callid' => "CID-" . $curryear . $currmonth . "00001"]);
                 }
             }
             $request->request->add(['callid' => $call_id]);
             $request->request->add(['created_by' => $user['userid']]);
+            $request->request->add(['executive_id' => $user['userid']]);
             $request->request->remove('tokenid');
             if (!empty($request->next_followup_date)) {
                 $request->request->add(['action' => 'next_followup']);
@@ -130,15 +131,15 @@ class CallCreationController extends Controller
             if (!empty($request->close_date)) {
                 $request->request->add(['action' => 'close']);
             }
-            
+
             $call_log_add = CallLog::firstOrCreate($request->all());
-            $call_log_add->callid= $call_id;
+            $call_log_add->callid = $call_id;
             $call_log_add->save();
             if ($call_log_add) {
                 return response()->json([
                     'status' => 200,
                     'message' => 'Call Log Form Created Succssfully!',
-                    'mainid'=> $call_log_add->id,
+                    'mainid' => $call_log_add->id,
                 ]);
             }
         } else {
@@ -159,7 +160,7 @@ class CallCreationController extends Controller
             ->join('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
             ->join('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
             ->join('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
-            ->join('users','clc.executive_id','users.id')
+            ->join('users', 'clc.executive_id', 'users.id')
             ->where("clc.id", $id)
             ->select(
                 'clc.executive_id as user_id',
@@ -204,7 +205,7 @@ class CallCreationController extends Controller
         $user = Token::where('tokenid', $request->tokenid)->first();
         if ($user['userid']) {
             $call_log = CallLog::findOrFail($id);
-            if (!$call_log) {  
+            if (!$call_log) {
                 return response()->json([
                     'status' => 400,
                     'message' => 'Invalid Credentials..!'
@@ -213,13 +214,13 @@ class CallCreationController extends Controller
         }
         $request->request->add(['edited_by' => $user['userid']]);
         $request->request->remove('tokenid');
-        if (!empty($request->next_followup_date)){
+        if (!empty($request->next_followup_date)) {
             $request->request->add(['action' => 'next_followup']);
         }
         if (!empty($request->close_date)) {
             $request->request->add(['action' => 'close']);
         }
-        
+
         $call_log_update = CallLog::findOrFail($id)->update($request->all());
 
         if ($call_log_update)
@@ -339,8 +340,6 @@ class CallCreationController extends Controller
             $filename2 = 'calllog' . time() . '.' . $filenameSplited[1];
 
             // return $filenameSplited;
-
-
             if ($filenameSplited[1] != $originalfileName) {
                 $fileName = $filenameSplited[0] . "" . $originalfileName;
             } else {
@@ -385,87 +384,87 @@ class CallCreationController extends Controller
     }
 
 
-    // public function calllogfileUpload(Request $request)
-    // {
+    //return call id list as value label object based on selected customer_id and user id
+    public function usersCallList(Request $request)
+    {
+        $user = Token::where('tokenid', $request->tokenid)->first();
+        if ($user['userid']) {
+            $docs = DB::table('call_log_creations')->where('customer_id', $request->id)->where('executive_id', $user['userid'])
+                ->select('callid', 'id')
+                ->orderBy('id', 'desc')
+                ->get();
 
-    //     $last_id = $request->fbid;
-
-    //     $file = $request->file('file');
-    //     $path = $request->file->getClientOriginalName();
-    //     $slipt = explode('.', $path);
-    //     $destinationPath = 'uploads/CallLogs/CallLogFiles/';
-    //     $new_file_name = 'calllog' . time() . '.' . $slipt[1];
-    //     $result = $file->move($destinationPath, $new_file_name);
-
-
-    //     $user = Token::where('tokenid', $request->tokenid)->first();
-    //     // $userid = $user['userid'];
-    //     $request->request->remove('tokenid');
-
-
-    //     if ($user['userid']) {
-    //         $Find = CallLogFiles::where('randomno', '=', $request->sub_id)->get();
-    //         $count = $Find->count();
-    //         if ($count == 0) {
-
-    //             $callLogFiles = new CallLogFiles;
-    //             $callLogFiles->cid = $request->cid;
-    //             $callLogFiles->date = $request->date;
-    // 			$callLogFiles->randomno = $request->sub_id;
-    //             $callLogFiles->refrenceno = $request->refrenceno;
-    //             $callLogFiles->from = $request->from;
-    //             $callLogFiles->to = $request->to;
-    // 			$callLogFiles->subject = $request->subject;
-    //             $callLogFiles->medium = $request->medium;
-    //             $callLogFiles->med_refrenceno = $request->medrefrenceno;
+            if ($docs)
+                return response()->json([
+                    'status' => 200,
+                    'docs' => $docs,
+                ]);
+            else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'The provided credentials are incorrect.'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
 
 
-    //             $callLogFiles->createdby_userid = $user['userid'];
-    //             $callLogFiles->save();
-    //             $get_id = CallLogFiles::orderBy('id', 'desc')
-    //                 ->first('id');
-    //             $last_id = $callLogFiles->id;
-
-
-    //             $callLogFilesSub = new CallLogFilesSub;
-    //             $callLogFilesSub->randomno = $request->sub_id;
-    //             $callLogFilesSub->mainid = $last_id;
-    //             $callLogFilesSub->comfile = $new_file_name;
-    //             $callLogFilesSub->filetype = $slipt[1];
-    //             $callLogFilesSub->createdby_userid = $user['userid'];
-    //             $callLogFilesSub->save();
-
-
-    //         } else {
-    //             foreach ($Find as $row) {
-    //                 $last_id = $row->id;
-
-    //             }
-
-    //             $callLogFilesSub = new CallLogFilesSub;
-    //             $callLogFilesSub->randomno = $request->sub_id;
-    //             $callLogFilesSub->mainid = $last_id;
-    //             $callLogFilesSub->comfile = $new_file_name;
-    //             $callLogFilesSub->filetype = $slipt[1];
-    //             $callLogFilesSub->createdby_userid = $user['userid'];
-    //             $callLogFilesSub->save();
-    //         }
-
-
-    //         return response()->json([
-    //             'status' => 200,
-    //             'message' => 'Uploaded Succcessfully',
-
-
-    //         ]);
-    //     } else {
-    //         return response()->json([
-    //             'status' => 400,
-    //             'message' => 'Unable to save!'
-    //         ]);
-    //     }
-
-    // }
-
-    
+    public function getCallMainList($token)
+    {
+        $user = Token::where("tokenid", $token)->first();
+        if ($user['userid']) {
+            $call_log = DB::table('call_log_creations as clc')
+                ->join('customer_creation_profiles as cc', 'cc.id', 'clc.customer_id')
+                ->join('call_types_mst as ct', 'ct.id', 'clc.call_type_id')
+                ->join('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
+                ->join('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
+                ->join('users as u', 'u.id', 'clc.executive_id')
+                ->join('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
+                ->select(
+                    'clc.callid',
+                    'cc.id',
+                    'cc.customer_name',
+                    'ct.id',
+                    'ct.name as callname',
+                    'bf.id',
+                    'bf.name as bizzname',
+                    'bfs.id',
+                    'bfs.status_name as bizzstatusname',
+                    'u.id',
+                    'u.name as username',
+                    'pt.id',
+                    'pt.name as proname',
+                    'clc.id',
+                    'clc.call_date',
+                    'clc.action',
+                    'clc.next_followup_date',
+                    'clc.close_date',
+                    'clc.additional_info',
+                    'clc.remarks',
+                )
+                ->where("clc.created_by",$user['userid'])
+                ->get();
+            if ($call_log)
+                return response()->json([
+                    'status' => 200,
+                    'calllog' => $call_log
+                ]);
+            else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'The provided credentials are incorrect.'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
 }

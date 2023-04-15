@@ -123,7 +123,35 @@ class UserControllerTemp extends Controller
     }
 
 
+//getBdmUsersList() - Used to list bdm users list alone
+    public function getBdmUsersList()
+    {
+        //
+        $user = User::where('activeStatus', 'active')
+        ->whereIn('userType', function($query){
+            $query->select('id')
+                ->from(with(new Role)->getTable())
+                ->where('name','LIKE','%BDM%')
+                ->get();
+        })
+        ->orderBy('id', 'asc')->get();
+      
+    
+        if ($user)
+            return response()->json([
+                'status' => 200,
+                'user' => $user
+            ]);
+        else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect.'
+            ]);
+        }
+    }
 
+
+    
     public function getoptions()
     {
         //

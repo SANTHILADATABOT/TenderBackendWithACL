@@ -9,6 +9,6 @@ class CallLogFiles extends Model
 {
     use HasFactory;
     protected $table = 'call_file_sub';
-    protected $fillable = ['mainid','originalfilename','filetype','filesize','hasfilename','createdby_userid','created_at','updated_at'];
+    protected $fillable = ['callid','mainid','originalfilename','filetype','filesize','hasfilename','createdby_userid','created_at','updated_at'];
     
 }
