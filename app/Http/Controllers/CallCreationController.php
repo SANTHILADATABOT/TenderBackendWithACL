@@ -17,7 +17,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Token;
-
+use Carbon\Carbon;
 
 
 class CallCreationController extends Controller
@@ -72,8 +72,6 @@ class CallCreationController extends Controller
 
     public function store(Request $request)
     {
-
-
         $user = Token::where('tokenid', $request->tokenid)->first();
         if ($user['userid']) {
             // $call_log = CallLog::where('customer_id', '=', $request->customer_id)->exists();
@@ -153,14 +151,13 @@ class CallCreationController extends Controller
 
     public function show($id)
     {
-
         $show_call_log = DB::table('call_log_creations as clc')
-            ->join('customer_creation_profiles as cc', 'cc.id', 'clc.customer_id')
-            ->join('call_types_mst as ct', 'ct.id', 'clc.call_type_id')
-            ->join('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
-            ->join('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
-            ->join('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
-            ->join('users', 'clc.executive_id', 'users.id')
+            ->leftjoin('customer_creation_profiles as cc', 'cc.id', 'clc.customer_id')
+            ->leftjoin('call_types_mst as ct', 'ct.id', 'clc.call_type_id')
+            ->leftjoin('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
+            ->leftjoin('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
+            ->leftjoin('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
+            ->leftjoin('users', 'clc.executive_id', 'users.id')
             ->where("clc.id", $id)
             ->select(
                 'clc.executive_id as user_id',
@@ -419,12 +416,12 @@ class CallCreationController extends Controller
         $user = Token::where("tokenid", $token)->first();
         if ($user['userid']) {
             $call_log = DB::table('call_log_creations as clc')
-                ->join('customer_creation_profiles as cc', 'cc.id', 'clc.customer_id')
-                ->join('call_types_mst as ct', 'ct.id', 'clc.call_type_id')
-                ->join('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
-                ->join('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
-                ->join('users as u', 'u.id', 'clc.executive_id')
-                ->join('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
+                ->leftjoin('customer_creation_profiles as cc', 'cc.id', 'clc.customer_id')
+                ->leftjoin('call_types_mst as ct', 'ct.id', 'clc.call_type_id')
+                ->leftjoin('business_forecasts as bf', 'bf.id', 'clc.bizz_forecast_id')
+                ->leftjoin('business_forecast_statuses as bfs', 'bfs.id', 'clc.bizz_forecast_status_id')
+                ->leftjoin('users as u', 'u.id', 'clc.executive_id')
+                ->leftjoin('call_procurement_types as pt', 'pt.id', 'clc.procurement_type_id')
                 ->select(
                     'clc.callid',
                     'cc.id',
@@ -449,10 +446,14 @@ class CallCreationController extends Controller
                 )
                 ->where("clc.created_by",$user['userid'])
                 ->get();
+
+                // $query = str_replace(array('?'), array('\'%s\''), $call_log->toSql());
+                // $query = vsprintf($query, $call_log->getBindings());
+                
             if ($call_log)
                 return response()->json([
                     'status' => 200,
-                    'calllog' => $call_log
+                    'calllog' =>$call_log
                 ]);
             else {
                 return response()->json([
@@ -466,5 +467,132 @@ class CallCreationController extends Controller
                 'message' => 'The provided credentials are incorrect.'
             ]);
         }
+    }
+
+    public function getCallCountAnalysis(Request $request)
+    {
+        // try {
+        $today = Carbon::now()->toDateString();
+
+            //$user = Token::where('tokenid', $request->tokenid)->firstOrFail();
+           // $userid = $user->userid;
+
+           $user = Token::where('tokenid', $request->tokenid)->first();
+           $userid = $user['userid'];
+           if($userid){
+        $currentDate = date('Y-m-d'); // Get the current date
+      //  $date = '2023-03-29';
+//$userId = 1;
+
+$todayCallsCount = DB::table('calltobdms AS a')
+        ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
+        ->where('a.created_at', 'LIKE', "%$today%")
+        ->where(function ($query) use ($userid) {
+            $query->where(function ($query) use ($userid) {
+                $query->where('a.created_userid', '<>', $userid)
+                      ->where('a.user_id', '=', $userid);
+            })
+            ->orWhere(function ($query) use ($userid) {
+                $query->where('a.user_id', '<>', $userid)
+                      ->where('a.created_userid', '=', $userid);
+            });
+        })
+        ->count();
+
+
+
+        $openingCallsCount =  DB::table('calltobdms as a')
+        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+        ->leftJoin('call_log_creations as c', function($join) {
+            $join->on('c.customer_id', '=', 'b.customer_id')
+                ->where('c.customer_id', '!=', '');
+        })
+        ->where(function ($query) use ($userid) {
+            $query->where('a.created_userid', '!=', $userid)
+                  ->where('a.user_id', '=', $userid);
+            })
+        ->orWhere(function ($query) use ($userid) {
+            $query->where('a.user_id', '!=', $userid)
+                  ->where('a.created_userid', '=', $userid);
+        })
+        ->where('c.call_date', 'NOT LIKE', '%2023-04-04 %')
+        ->where('c.action', '!=', 'close')
+        ->count('c.id');
+
+
+        $attendedCallsCount= DB::table('calltobdms as a')
+        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+        ->leftJoin('call_log_creations as c', function($join) {
+            $join->on('c.customer_id', '=', 'b.customer_id')
+                ->where('c.customer_id', '!=', '');
+        })
+        ->where(function ($query) use ($userid) {
+            $query->where('a.created_userid', '!=', $userid)
+                  ->where('a.user_id', '=', $userid);
+            })
+        ->orWhere(function ($query) use ($userid) {
+            $query->where('a.user_id', '!=', $userid)
+                  ->where('a.created_userid', '=', $userid);
+        })
+        ->where('c.call_date', 'LIKE', '%2023-04-04 %')
+        ->count('c.id');
+
+        $ClosedCallsCount = DB::table('calltobdms as a')
+        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+        ->leftJoin('call_log_creations as c', function($join) {
+            $join->on('c.customer_id', '=', 'b.customer_id')
+                ->where('c.customer_id', '!=', '');
+        })
+        ->select('c.customer_id', 'b.customer_id', 'a.id', 'b.calltobdm_id', 'a.created_userid', 'a.user_id')
+        ->where(function ($query) use ($userid) {
+            $query->where('a.created_userid', '!=', $userid)
+                  ->where('a.user_id', '=', $userid);
+            })
+        ->orWhere(function ($query) use ($userid) {
+            $query->where('a.user_id', '!=', $userid)
+                  ->where('a.created_userid', '=', $userid);
+        })
+        ->where('c.action', '=', 'close')
+        ->where('c.customer_id', '!=', '')
+        ->count('c.id');
+
+        $overduecallcount = DB::table('calltobdms as a')
+        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+        ->leftJoin('call_log_creations as c', function($join) {
+            $join->on('c.customer_id', '=', 'b.customer_id')
+                ->where('c.customer_id', '!=', '');
+        })
+        ->select('c.customer_id', 'b.customer_id', 'a.id', 'b.calltobdm_id', 'a.created_userid', 'a.user_id')
+        ->where(function ($query) use ($userid) {
+            $query->where('a.created_userid', '!=', $userid)
+                  ->where('a.user_id', '=', $userid); 
+            })
+        ->orWhere(function ($query) use ($userid) {
+            $query->where('a.user_id', '!=', $userid)
+                  ->where('a.created_userid', '=', $userid);
+        })
+        ->where('c.action', '=', 'next_followup')
+        ->where('c.customer_id', '!=', '')
+        ->count('c.id');
+
+
+            return response()->json([
+                'status' => 200,
+                'userid'=>$userid,
+                'todaycallCount' => $todayCallsCount, //how many calls assigned bdm to calltobdm-has_customers
+                'openingCallCount' => $openingCallsCount, //not closed calls except today
+                'completedCallCount' => $ClosedCallsCount,  //completed calls 
+                'attendedCallsCount' => $attendedCallsCount,//how many calls received as per today only
+                'overduecallcount' => $overduecallcount,//next foollow up calls 
+            ]);
+        }
+        // } catch (\Exception $ex) {
+
+        //     return response()->json([
+        //         'status' => 204,
+        //         'message' => "Somthing Wrong",
+        //         'error' => $ex
+        //     ]);
+        // }
     }
 }

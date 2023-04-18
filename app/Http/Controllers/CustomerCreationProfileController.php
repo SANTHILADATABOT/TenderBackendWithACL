@@ -324,10 +324,11 @@ class CustomerCreationProfileController extends Controller
 
         $customerList= [];
         foreach($countrys as $country){
-            $customerList[] = ["value" => $country->id, "label" =>  $country->customer_name] ;
+            $customerList[] = ["value" => $country->customer_id, "label" =>  $country->customer_name] ;
         }
         return  response()->json([
             'customerList' =>  $customerList,
+            'country' => $countrys
 
         ]);
     }

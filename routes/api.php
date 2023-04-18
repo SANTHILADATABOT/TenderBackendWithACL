@@ -207,7 +207,7 @@ Route::post('communicationfilesmaster/list', [CommunicationfilesmasterController
 Route::delete('communicationfilesmaster/deletedoc/{id}', [CommunicationfilesmasterController::class, 'deletefile']);
 Route::get('download/communicationfilesmaster/{id}', [CommunicationfilesmasterController::class, 'download']);
 
-
+Route::get('/dashboard/getCallCountAnalysis', [CallCreationController::class, 'getCallCountAnalysis']);//Dashborad contents based on bdmcalldetails
 Route::get('/dashboard/ulbdetails', [ULBDetailsController::class, 'getulbyearlydetails']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/bidanalysis', [ULBDetailsController::class, 'getbidanalysis']);//Dashborad contents based on ulbdetails
 Route::get('/dashboard/tenderanalysis', [ULBDetailsController::class, 'tenderanalysis']);//Dashborad contents based on ulbdetails

@@ -81,20 +81,85 @@ if($user['userid'])
             //         'error' => $validator->messages(),
             //     ]);
             // }
+            /***************variable assing* */
+
+if($request->projectName==null){
+    $projectName='';
+}
+else{
+    $projectName =$request->projectName;
+}
+if($request->tnederId==null){
+    $tnederId='';
+}
+else{
+    $tnederId =$request->tnederId;
+}
+if($request->state==null){
+    $state='0';
+}
+else{
+    $state =$request->state;
+}
+if($request->woDate==null){
+    $woDate=NULL;
+}
+else{
+    $woDate =$request->woDate;
+}
+if($request->quantity==null){
+    $quantity='';
+}
+else{
+    $quantity =$request->quantity;
+}
+if($request->unit==null){
+    $unit='0';
+}
+else{
+    $unit =$request->unit;
+}
+if($request->projectValue==null){
+    $projectValue='';
+}
+else{
+    $projectValue =$request->projectValue;
+}
+if($request->perTonRate==null){
+    $perTonRate='';
+}
+else{
+    $perTonRate =$request->perTonRate;
+}
+if($request->qualityCompleted==null){
+    $qualityCompleted='';
+}
+else{
+    $qualityCompleted =$request->qualityCompleted;
+}
+if($request->date==null){
+    $date=NULL;
+}
+else{
+    $date =$request->date;
+}
+
+            /************************************ */
+            
             $datatostore = new CompetitorDetailsWorkOrder;
             $datatostore->compId = $request->compId;
             $datatostore->compNo = $request->compNo;
-            $datatostore->projectName = $request->projectName;
+            $datatostore->projectName = $projectName;
             $datatostore->custName = $request->custName;
-            $datatostore->tnederId = $request->tnederId;
-            $datatostore->state = $request->state;
-            $datatostore->woDate = $request->woDate;
-            $datatostore->quantity = $request->quantity;
-            $datatostore->unit = $request->unit;
-            $datatostore->projectValue = $request->projectValue;
-            $datatostore->perTonRate = $request->perTonRate;
-            $datatostore->qualityCompleted = $request->qualityCompleted;
-            $datatostore->date = $request->date;
+            $datatostore->tnederId = $tnederId;
+            $datatostore->state = $state;
+            $datatostore->woDate = $woDate;
+            $datatostore->quantity = $quantity;
+            $datatostore->unit = $unit;
+            $datatostore->projectValue = $projectValue;
+            $datatostore->perTonRate = $perTonRate;
+            $datatostore->qualityCompleted = $qualityCompleted;
+            $datatostore->date = $date;
             $datatostore->cr_userid = $user['userid'];
             $datatostore->woFile = $woFileName;
             $datatostore->woFileType = $woFileExt;
@@ -224,30 +289,97 @@ if($user['userid'])
 
         $user = Token::where("tokenid", $request->tokenId)->first();
         $request->request->add(['edited_userid' => $user['userid']]);
-        $validator = Validator::make($request->all(), ['compId' => 'required|integer', 'compNo' => 'required|string', 'custName' => 'required|string', 'projectName' => 'required|string', 'tnederId' => 'required|string', 'state' => 'required|integer', 'woDate' => 'required|date', 'quantity' => 'required|string', 'unit' => 'required|integer', 'projectValue' => 'required|string', 'perTonRate' => 'required|string', 'qualityCompleted' => 'required|string', 'date' => 'required|date', 'edited_userid' => 'required|integer']);
+        // $validator = Validator::make($request->all(), ['compId' => 'required|integer', 'compNo' => 'required|string', 'custName' => 'required|string', 'projectName' => 'required|string', 'tnederId' => 'required|string', 'state' => 'required|integer', 'woDate' => 'required|date', 'quantity' => 'required|string', 'unit' => 'required|integer', 'projectValue' => 'required|string', 'perTonRate' => 'required|string', 'qualityCompleted' => 'required|string', 'date' => 'required|date', 'edited_userid' => 'required|integer']);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 404,
-                'message' => "Not able to update details now..!",
-                'error' => $validator->messages(),
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 404,
+        //         'message' => "Not able to update details now..!",
+        //         'error' => $validator->messages(),
+        //     ]);
+        // }
 
         // $datatostore =  CompetitorDetailsWorkOrder::findOrFail($id);  // declared at the top to set files
+ /***************variable assing* */
+
+ if($request->projectName==null){
+    $projectName='';
+}
+else{
+    $projectName =$request->projectName;
+}
+if($request->tnederId==null){
+    $tnederId='';
+}
+else{
+    $tnederId =$request->tnederId;
+}
+if($request->state==null){
+    $state='0';
+}
+else{
+    $state =$request->state;
+}
+if($request->woDate==null ||$request->woDate=='null'){
+    $woDate=NULL;
+}
+else{
+    $woDate =$request->woDate;
+}
+
+if($request->quantity==null){
+    $quantity='';
+}
+else{
+    $quantity =$request->quantity;
+}
+if($request->unit==null){
+    $unit='0';
+}
+else{
+    $unit =$request->unit;
+}
+if($request->projectValue==null){
+    $projectValue='';
+}
+else{
+    $projectValue =$request->projectValue;
+}
+if($request->perTonRate==null){
+    $perTonRate='';
+}
+else{
+    $perTonRate =$request->perTonRate;
+}
+if($request->qualityCompleted==null){
+    $qualityCompleted='';
+}
+else{
+    $qualityCompleted =$request->qualityCompleted;
+}
+if($request->date==null ||$request->date=='null'){
+    $date=NULL;
+}
+else{
+    $date =$request->date;
+}
+
+            /************************************ */
+
+
         $datatostore['compId'] = $request->compId;
         $datatostore['compNo'] = $request->compNo;
-        $datatostore['projectName'] = $request->projectName;
+        $datatostore['projectName'] = $projectName;
         $datatostore['custName'] = $request->custName;
-        $datatostore['tnederId'] = $request->tnederId;
-        $datatostore['state'] = $request->state;
-        $datatostore['woDate'] = $request->woDate;
-        $datatostore['quantity'] = $request->quantity;
-        $datatostore['unit'] = $request->unit;
-        $datatostore['projectValue'] = $request->projectValue;
-        $datatostore['perTonRate'] = $request->perTonRate;
-        $datatostore['qualityCompleted'] = $request->qualityCompleted;
-        $datatostore['date'] = $request->date;
+        $datatostore['tnederId'] = $tnederId;
+        $datatostore['state'] = $state;
+        $datatostore['woDate'] = $woDate;
+        $datatostore['quantity'] = $quantity;
+        $datatostore['unit'] = $unit;
+        $datatostore['projectValue'] = $projectValue;
+        $datatostore['perTonRate'] = $perTonRate;
+        $datatostore['qualityCompleted'] = $qualityCompleted;
+        $datatostore['date'] = $date;
         $datatostore['edited_userid'] = $user['userid'];
         $woedit = $datatostore->save();
 
@@ -274,11 +406,17 @@ if($user['userid'])
             $data = CompetitorDetailsWorkOrder::find($id);
             //to delete Existing Image from storage
             $data = CompetitorDetailsWorkOrder::find($id);
-            $image_path = public_path() . "/uploads/competitor/woCompletionFile/" . $data->completionFile;
-            unlink($image_path);
-
-            $image_path = public_path() . "/uploads/competitor/woFile/" . $data->woFile;
-            unlink($image_path);
+            if($data->completionFile){
+                $image_path = public_path() . "/uploads/competitor/woCompletionFile/" . $data->completionFile;
+                unlink($image_path);
+    
+            }
+            if($data->woFile){
+                $image_path = public_path() . "/uploads/competitor/woFile/" . $data->woFile;
+                unlink($image_path);
+            }
+            
+          
 
             $wo = CompetitorDetailsWorkOrder::destroy($id);
             if ($wo) {
@@ -309,8 +447,8 @@ if($user['userid'])
     {
         $wo = CompetitorDetailsWorkOrder::where("compId", $compid)
             ->select('competitor_details_work_orders.*', 'state_masters.state_name', 'unit_masters.unit_name')
-            ->join('state_masters', 'state_masters.id', 'competitor_details_work_orders.state')
-            ->join('unit_masters', 'unit_masters.id', 'competitor_details_work_orders.unit')
+            ->leftjoin('state_masters', 'state_masters.id', 'competitor_details_work_orders.state')
+            ->leftjoin('unit_masters', 'unit_masters.id', 'competitor_details_work_orders.unit')
             ->get();
         if ($wo) {
             return response()->json([

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Models\CompetitorDetailsBranches;
 use Illuminate\Http\Request;
 use App\Models\Token;
@@ -53,9 +54,16 @@ class CompetitorDetailsBranchesController extends Controller
                 'message' => 'Already Exists!'
             ]);
         }
-
-        $validator = Validator::make($request->all(), ['compNo' => 'required|string','country'=>'required|integer', 'state'=>'required|integer','district'=>'required|integer','city'=>'required|integer','cr_userid'=>'required|integer'
-    ]);
+       
+        try {
+            $validator = Validator::make($request->all(), ['compNo' => 'required|string','country'=>'required|integer', 'state'=>'required|integer','district'=>'required|integer','city'=>'required|integer','cr_userid'=>'required|integer'
+        ]);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+       
+    print_r( $validator->fails()); 
         if ($validator->fails()) {
             return response()->json([
                 'status' => 404,
