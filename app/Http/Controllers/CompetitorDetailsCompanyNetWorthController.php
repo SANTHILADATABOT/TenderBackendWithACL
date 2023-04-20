@@ -93,7 +93,6 @@ class CompetitorDetailsCompanyNetWorthController extends Controller
         $networth = CompetitorDetailsCompanyNetWorth::where([
             'compId' => $request->compId,
             'compNo' => $request->compNo,
-            'accValue'=> $request->accValue,
             'accountYear'=> $request->accountYear
         ])
         ->where('id', '!=', $id)

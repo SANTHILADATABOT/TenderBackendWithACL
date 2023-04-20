@@ -138,6 +138,7 @@ class CallCreationController extends Controller
                     'status' => 200,
                     'message' => 'Call Log Form Created Succssfully!',
                     'mainid' => $call_log_add->id,
+                    'callid' => $call_log_add->callid
                 ]);
             }
         } else {
@@ -161,6 +162,7 @@ class CallCreationController extends Controller
             ->where("clc.id", $id)
             ->select(
                 'clc.executive_id as user_id',
+                'clc.callid',
                 'users.userName',
                 'cc.id as cust_id',
                 'cc.customer_name',
@@ -469,111 +471,311 @@ class CallCreationController extends Controller
         }
     }
 
-    public function getCallCountAnalysis(Request $request)
+
+// callcount for dashboard and bdm users 
+// public function getCallCountAnalysis(Request $request)
+// {
+//    // try {
+//     $today = Carbon::now()->toDateString();
+
+//     $user = Token::where('tokenid', $request->tokenid)->first();
+//     $userid = $user['userid'];
+
+//     if ($userid) { 
+
+//         $role = DB::table('model_has_roles as m')
+//         ->leftJoin('roles as r', 'r.id', '=', 'm.role_id')
+//         ->where('m.model_id', $userid)
+//         ->select('r.id as id')
+//         ->first();
+
+// $roleid = $role->id;
+
+
+// if($roleid == 2) //for BDM Users
+// {  $todayCallsCount="hi";
+// $todayCallsCount = DB::table('calltobdms AS a')
+//        ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
+//        ->where('a.user_id', '=', $userid)
+//        ->where('a.created_at', 'LIKE', "%$today%")
+//        ->distinct()
+//        ->count();
+//  $openingCallsCount =  DB::table('calltobdms as a')
+//        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//        ->leftJoin('call_log_creations as c', function($join) {
+//            $join->on('c.customer_id', '=', 'b.customer_id')
+//             ->where('c.customer_id', '!=', ''); })
+//               ->where('a.user_id', '=', $userid)
+//                 ->where('c.call_date', 'NOT LIKE', "%$today%")
+//                 ->where('c.action', '!=', 'close')
+//               ->distinct()
+//                ->count('c.id');
+//  $attendedCallsCount= DB::table('calltobdms as a')
+//                ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//                ->leftJoin('call_log_creations as c', function($join) {
+//                    $join->on('c.customer_id', '=', 'b.customer_id')
+//                 ->where('c.customer_id', '!=', ''); })
+//                  ->where('a.user_id', '=', $userid)
+//                ->where('c.call_date', 'LIKE', "%$today%")
+//                 ->distinct()
+//                 ->count('c.id');
+//  $ClosedCallsCount = DB::table('calltobdms as a')
+//     ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//     ->leftJoin('call_log_creations as c', function($join) {
+//         $join->on('c.customer_id', '=', 'b.customer_id')
+//             ->where('c.customer_id', '!=', '');
+//     }) ->where('a.user_id', '=', $userid)
+//        ->where('c.action', '=', 'close')
+//          ->where('c.customer_id', '!=', '')
+//         ->distinct()
+//         ->count('c.id');
+//      $overduecallcount = DB::table('calltobdms as a')
+//         ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//         ->leftJoin('call_log_creations as c', function($join) {
+//             $join->on('c.customer_id', '=', 'b.customer_id')
+//                 ->where('c.customer_id', '!=', '');
+//         })->where('a.user_id', '=', $userid)
+//         ->where('c.action', '=', 'next_followup')
+//         ->where('c.customer_id', '!=', '')
+//         ->distinct()
+//         ->count('c.id');
+
+// }
+
+// else{//Other Users
+// //1.
+//     $todayCallsCount = DB::table('calltobdms AS a')
+//                  ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
+//                   ->where('a.created_userid', '=', $userid)
+//                   ->where('a.created_at', 'LIKE', "%$today%")
+//                   ->distinct()
+//                   ->count();
+//  //2.
+//     $openingCallsCount =  DB::table('calltobdms as a')
+//                   ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//                   ->leftJoin('call_log_creations as c', function($join) {
+//                       $join->on('c.customer_id', '=', 'b.customer_id')
+//                           ->where('c.customer_id', '!=', '');})
+//                   ->where('a.created_userid', '=', $userid)
+//                   ->where('c.call_date', 'NOT LIKE', "%$today%")
+//                   ->where('c.action', '!=', 'close')
+//                   ->distinct()
+//                   ->count('c.id');
+//   //3.
+//     $attendedCallsCount= DB::table('calltobdms as a')
+//                   ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//                   ->leftJoin('call_log_creations as c', function($join) {
+//                       $join->on('c.customer_id', '=', 'b.customer_id')
+//                           ->where('c.customer_id', '!=', ''); })
+//                             ->where('a.created_userid', '=', $userid)
+//                             ->where('c.call_date', 'LIKE', "%$today%")
+//                             ->distinct()
+//                              ->count('c.id');
+//     // 4.
+//      $ClosedCallsCount = DB::table('calltobdms as a')
+//     ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//     ->leftJoin('call_log_creations as c', function($join) {
+//         $join->on('c.customer_id', '=', 'b.customer_id')
+//             ->where('c.customer_id', '!=', ''); })
+//     ->where('a.created_userid', '=', $userid)
+//     ->where('c.action', '=', 'close')
+//     ->where('c.customer_id', '!=', '')
+//     ->distinct()
+//     ->count('c.id');
+//     // 5.
+//     $overduecallcount = DB::table('calltobdms as a')
+//     ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+//     ->leftJoin('call_log_creations as c', function($join) {
+//         $join->on('c.customer_id', '=', 'b.customer_id')
+//             ->where('c.customer_id', '!=', '');})
+//          ->where('a.created_userid', '=', $userid)
+//         ->where('c.action', '=', 'next_followup')
+//          ->where('c.customer_id', '!=', '')
+//       ->distinct()
+//          ->count('c.id');
+// }
+   
+//         return response()->json([
+//             'status' => 200,
+//             'userid'=>$userid,
+//             'todaycallCount' => $todayCallsCount, //how many calls assigned bdm to calltobdm-has_customers
+//             'openingCallCount' => $openingCallsCount, //not closed calls except today
+//             'completedCallCount' => $ClosedCallsCount,  //completed calls
+//             'attendedCallsCount' => $attendedCallsCount,//how many calls received as per today only
+//             'overduecallcount' => $overduecallcount,//next foollow up calls
+//            'query' => $roleid,
+//         ]);
+//    // }
+// }
+//   //  } catch (\Exception $ex) {
+
+//         // return response()->json([
+//         //     'status' => 204,
+//         //     'message' => "Somthing Wrong",
+//         //     'error' => $ex
+//         // ]);
+//    // }
+// }
+public function getCallCountAnalysis(Request $request)
     {
-        // try {
+       // try {
         $today = Carbon::now()->toDateString();
+       $currentDate = now()->format('Y-m-d');
 
-            //$user = Token::where('tokenid', $request->tokenid)->firstOrFail();
-           // $userid = $user->userid;
+        $user = Token::where('tokenid', $request->tokenid)->first();
+        $userid = $user['userid'];
 
-           $user = Token::where('tokenid', $request->tokenid)->first();
-           $userid = $user['userid'];
-           if($userid){
-        $currentDate = date('Y-m-d'); // Get the current date
-      //  $date = '2023-03-29';
-//$userId = 1;
+        if ($userid) {
 
-$todayCallsCount = DB::table('calltobdms AS a')
-        ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
-        ->where('a.created_at', 'LIKE', "%$today%")
-        ->where(function ($query) use ($userid) {
-            $query->where(function ($query) use ($userid) {
-                $query->where('a.created_userid', '<>', $userid)
-                      ->where('a.user_id', '=', $userid);
-            })
-            ->orWhere(function ($query) use ($userid) {
-                $query->where('a.user_id', '<>', $userid)
-                      ->where('a.created_userid', '=', $userid);
-            });
-        })
-        ->count();
+            $role = DB::table('model_has_roles as m')
+            ->leftJoin('roles as r', 'r.id', '=', 'm.role_id')
+            ->where('m.model_id', $userid)
+            ->select('r.id as id')
+            ->first();
+
+$roleid = $role->id;
 
 
+if($roleid == 2) //for BDM Users
+ {
+    $todayCallsCount = DB::table('calltobdms AS a')
+           ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
+           ->where('a.user_id', '=', $userid)
+           ->where('b.created_at', 'LIKE', '%' . date('Y-m-d') . '%')
+           ->distinct()
+           ->count();
+    $openingCallsCount1 = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->where(function($query) {
+        $query->where('b.created_at', 'LIKE', '%' . date('Y-m-d') . '%')
+            ->orWhere('b.created_at', '<=',  DB::raw('now()'));
+    })
+    ->where('a.user_id', '=', $userid)
+    ->distinct('b.id')
+    ->count();
 
-        $openingCallsCount =  DB::table('calltobdms as a')
-        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
-        ->leftJoin('call_log_creations as c', function($join) {
-            $join->on('c.customer_id', '=', 'b.customer_id')
-                ->where('c.customer_id', '!=', '');
-        })
-        ->where(function ($query) use ($userid) {
-            $query->where('a.created_userid', '!=', $userid)
-                  ->where('a.user_id', '=', $userid);
-            })
-        ->orWhere(function ($query) use ($userid) {
-            $query->where('a.user_id', '!=', $userid)
-                  ->where('a.created_userid', '=', $userid);
-        })
-        ->where('c.call_date', 'NOT LIKE', '%2023-04-04 %')
-        ->where('c.action', '!=', 'close')
-        ->count('c.id');
+    $attendedCallsCount = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('a.user_id', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.user_id', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=',  DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE', '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
+   $openingCallsCount= $openingCallsCount1-$attendedCallsCount;
+
+            $ClosedCallsCount = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('c.action', '=', 'close')
+             ->where('a.user_id', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.user_id', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=',  DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE',  '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
+
+$overduecallcount = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('c.action', '=', 'next_followup')
+             ->where('a.user_id', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.user_id', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=', DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE', '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
 
 
-        $attendedCallsCount= DB::table('calltobdms as a')
-        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
-        ->leftJoin('call_log_creations as c', function($join) {
-            $join->on('c.customer_id', '=', 'b.customer_id')
-                ->where('c.customer_id', '!=', '');
-        })
-        ->where(function ($query) use ($userid) {
-            $query->where('a.created_userid', '!=', $userid)
-                  ->where('a.user_id', '=', $userid);
-            })
-        ->orWhere(function ($query) use ($userid) {
-            $query->where('a.user_id', '!=', $userid)
-                  ->where('a.created_userid', '=', $userid);
-        })
-        ->where('c.call_date', 'LIKE', '%2023-04-04 %')
-        ->count('c.id');
+ }
+
+else{//Other Users
+   //1.
+        $todayCallsCount = DB::table('calltobdms AS a')
+                     ->leftJoin('calltobdm_has_customers AS b', 'b.calltobdm_id', '=', 'a.id')
+                      ->where('a.created_userid', '=', $userid)
+                      ->where('b.created_at', 'LIKE', '%' . date('Y-m-d') . '%')
+                      ->distinct()
+                      ->count();
+
+        $openingCallsCount1 = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->where(function($query) {
+        $query->where('b.created_at', 'LIKE', '%' . date('Y-m-d') . '%')
+            ->orWhere('b.created_at', '<=', DB::raw('now()'));
+    })
+    ->where('a.created_userid', '=', $userid)
+    ->distinct('b.id')
+    ->count();
+
+        $attendedCallsCount = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('a.created_userid', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.created_userid', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=',  DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE', '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
+   $openingCallsCount= $openingCallsCount1- $attendedCallsCount;
 
         $ClosedCallsCount = DB::table('calltobdms as a')
-        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
-        ->leftJoin('call_log_creations as c', function($join) {
-            $join->on('c.customer_id', '=', 'b.customer_id')
-                ->where('c.customer_id', '!=', '');
-        })
-        ->select('c.customer_id', 'b.customer_id', 'a.id', 'b.calltobdm_id', 'a.created_userid', 'a.user_id')
-        ->where(function ($query) use ($userid) {
-            $query->where('a.created_userid', '!=', $userid)
-                  ->where('a.user_id', '=', $userid);
-            })
-        ->orWhere(function ($query) use ($userid) {
-            $query->where('a.user_id', '!=', $userid)
-                  ->where('a.created_userid', '=', $userid);
-        })
-        ->where('c.action', '=', 'close')
-        ->where('c.customer_id', '!=', '')
-        ->count('c.id');
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('c.action', '=', 'close')
+             ->where('a.created_userid', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.created_userid', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=',  DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE', '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
 
-        $overduecallcount = DB::table('calltobdms as a')
-        ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
-        ->leftJoin('call_log_creations as c', function($join) {
-            $join->on('c.customer_id', '=', 'b.customer_id')
-                ->where('c.customer_id', '!=', '');
-        })
-        ->select('c.customer_id', 'b.customer_id', 'a.id', 'b.calltobdm_id', 'a.created_userid', 'a.user_id')
-        ->where(function ($query) use ($userid) {
-            $query->where('a.created_userid', '!=', $userid)
-                  ->where('a.user_id', '=', $userid); 
-            })
-        ->orWhere(function ($query) use ($userid) {
-            $query->where('a.user_id', '!=', $userid)
-                  ->where('a.created_userid', '=', $userid);
-        })
-        ->where('c.action', '=', 'next_followup')
-        ->where('c.customer_id', '!=', '')
-        ->count('c.id');
+
+$overduecallcount = DB::table('calltobdms as a')
+    ->leftJoin('calltobdm_has_customers as b', 'b.calltobdm_id', '=', 'a.id')
+    ->leftJoin('call_log_creations as c', function($join) use ($userid) {
+        $join->on('c.customer_id', '=', 'b.customer_id')
+             ->where('c.action', '=', 'next_followup')
+             ->where('a.created_userid', '=', DB::raw("c.executive_id"));
+    })
+    ->where('a.created_userid', '=', $userid)
+    ->where('c.customer_id', '!=', '')
+    ->where(function ($query) {
+        $query->where('c.call_date', '<=',  DB::raw('now()'))
+              ->orWhere('c.call_date', 'LIKE', '%' . date('Y-m-d') . '%');
+    })
+    ->distinct()
+    ->count('c.id');
+
+}
+
+
 
 
             return response()->json([
@@ -581,18 +783,22 @@ $todayCallsCount = DB::table('calltobdms AS a')
                 'userid'=>$userid,
                 'todaycallCount' => $todayCallsCount, //how many calls assigned bdm to calltobdm-has_customers
                 'openingCallCount' => $openingCallsCount, //not closed calls except today
-                'completedCallCount' => $ClosedCallsCount,  //completed calls 
+                'completedCallCount' => $ClosedCallsCount,  //completed calls
                 'attendedCallsCount' => $attendedCallsCount,//how many calls received as per today only
-                'overduecallcount' => $overduecallcount,//next foollow up calls 
+                'overduecallcount' => $overduecallcount,//next foollow up calls
+               'query' => $roleid,
+               'today' =>$currentDate,
             ]);
-        }
-        // } catch (\Exception $ex) {
-
-        //     return response()->json([
-        //         'status' => 204,
-        //         'message' => "Somthing Wrong",
-        //         'error' => $ex
-        //     ]);
-        // }
+       // }
     }
+      //  } catch (\Exception $ex) {
+
+            // return response()->json([
+            //     'status' => 204,
+            //     'message' => "Somthing Wrong",
+            //     'error' => $ex
+            // ]);
+       // }
+    }
+
 }

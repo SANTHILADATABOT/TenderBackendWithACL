@@ -41,7 +41,7 @@ class ZoneMasterController extends Controller
         if ($zone) {
             return response()->json([
                 'status' => 400,
-                'errors' => 'Zone Name Already Exists'
+                'errors' => 'Zone Already Exists'
             ]);
         }
 
@@ -70,7 +70,7 @@ class ZoneMasterController extends Controller
         if ($zone && $zonehasstate) {
             return response()->json([
                 'status' => 200,
-                'message' => 'Tender Type Added Succssfully!'
+                'message' => 'Zone Added Succssfully!'
             ]);
         }
         }
@@ -127,11 +127,21 @@ class ZoneMasterController extends Controller
         $user = Token::where("tokenid", $request->tokenId)->first();
         if($user['userid'])
         {
+            $zone_name = ZoneMaster::where('zone_name', '=', $request->zonename)
+                                    ->where('id','!=',$id)                        
+            ->exists();
+            if ($zone_name) {
+                return response()->json([
+                    'status' => 400,
+                    'errors' => 'Zone Name Already Exists'
+                ]);
+            }
+
         $zone = ZoneMaster::find($id);
         if (!$zone) {
             return response()->json([
                 'status' => 400,
-                'errors' => 'Somthing Wenr Wrong'
+                'errors' => 'Somthing Went Wrong'
             ]);
         }
 
@@ -187,7 +197,7 @@ class ZoneMasterController extends Controller
         if ($zone ) {
             return response()->json([
                 'status' => 200,
-                'message' => 'Zone Master Update Succssfully!'
+                'message' => 'Zone Update Succssfully!'
             ]);
         }
     }

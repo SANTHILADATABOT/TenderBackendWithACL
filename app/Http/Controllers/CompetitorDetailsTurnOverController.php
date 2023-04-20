@@ -89,11 +89,10 @@ class CompetitorDetailsTurnOverController extends Controller
         $request->request->add(['edited_userid' => $user['userid']]);
         //Here is no need of token id when insert $request into table, so remove it form $request
         $request->request->remove('tokenId');
-
+       
         $turn_over = CompetitorDetailsTurnOver::where([
             'compId' => $request->compId,
             'compNo' => $request->compNo,
-            'accValue'=> $request->accValue,
             'accountYear'=> $request->accountYear
         ])
         ->where('id', '!=', $id)

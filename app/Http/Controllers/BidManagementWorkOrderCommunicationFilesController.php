@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Token;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
-use File;
+// use File;
+use Illuminate\Support\Facades\File;
 
 class BidManagementWorkOrderCommunicationFilesController extends Controller
 {
@@ -95,7 +96,7 @@ class BidManagementWorkOrderCommunicationFilesController extends Controller
                             'refrenceno' => $request->refrenceno,
                             'from' => $request->from,
                             'to' => $request->to,
-                            'subject' => $request->bidid,
+                            'subject' => $request->subject,
                             'medium' => $request->medium,
                             'med_refrenceno' => $request->medrefrenceno,
                             'randomno' => $request->random,

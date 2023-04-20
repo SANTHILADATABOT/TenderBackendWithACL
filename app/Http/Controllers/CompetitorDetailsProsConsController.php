@@ -106,13 +106,13 @@ class CompetitorDetailsProsConsController extends Controller
         //         'errors' => 'Strength/Weakness Already Exists'
         //     ]);
         // }
-        $validator = Validator::make($request->all(), ['compId' => 'required|integer','compNo' => 'required|string','strength'=>'string','weakness'=>'string', 'edited_userid'=>'required|integer']);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 404,
-                'errors' => $validator->messages(),
-            ]);
-        }
+        // $validator = Validator::make($request->all(), ['compId' => 'required|integer','compNo' => 'required|string','strength'=>'string','edited_userid'=>'required|integer']);
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 404,
+        //         'errors' => $validator->messages(),
+        //     ]);
+        // }
 
 
         $pros_cons = CompetitorDetailsProsCons::findOrFail($id)->update($request->all());

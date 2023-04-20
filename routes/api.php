@@ -174,8 +174,8 @@ Route::get('download/letterofacceptance/workorderimage/{woid}', [BidManagementWo
 Route::post('letteracceptance/creation/update/{id}', [BidManagementWorkOrderLetterOfAcceptenceController::class, 'update']);
 
 Route::post('/workorder/creation/communicationfiles/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'store']);
-Route::post('/workorder/creation/communicationfileUpload/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
-Route::post('/workorder/creation/communicationfileUploadlist/', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUploadlist']);
+Route::post('/workorder/creation/communicationfileUpload', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUpload']);
+Route::post('/workorder/creation/communicationfileUploadlist', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfileUploadlist']);
 Route::get('/workorder/creation/communicationfiledelete/{id}', [BidManagementWorkOrderCommunicationFilesController::class, 'communicationfiledelete']);
 
 Route::get('/competitorprofile/getlastcompno/{id}', [CompetitorProfileCreationController::class, 'getLastCompno']);

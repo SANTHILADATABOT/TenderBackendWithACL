@@ -250,7 +250,7 @@ else{
         }
         //Update completionFile
         if ($request->hasFile('completionFile') && !empty($request->completionFile)){
-            // echo "Has WoCompletion FIle   ---  ";
+            // return "Has WoCompletion FIle   ---  ";
             $completionFile = $request->completionFile;
             $completionFileExt = $completionFile->getClientOriginalExtension();
             //received File extentions sometimes converted by browsers
@@ -276,14 +276,50 @@ else{
             $datatostore['completionFileType'] = $completionFileExt;
            
         } else {
-            // echo "Not have WoCompletion FIle  ----    ";    
-            if($request->completionFile != null && $request->woFile== "")
+            // echo "Not have WoCompletion FIle  ----    ";
+            //  echo "Not have WoCompletion FIle  ----    ".$request->completionFile != null ." ---"; 
+            //  echo "Not have WoCompletion FIle  ----    ". $request->completionFile =="". " ---";    
+            // if($request->completionFile != null && $request->woFile== "") 
+            if($request->completionFile != "null" && $request->completionFile =="") 
             {  
+                // return "Reached Here";
                 $image_path = public_path() . "/uploads/competitor/woCompletionFile/" . $data->completionFile;
                 unlink($image_path);
                 $datatostore['completionFile'] = "";
                 $datatostore['completionFileType'] = "";
             }
+            // else{
+            //     if($request->completionFile =="null")
+            //     {
+            //         echo "null  --";
+            //     }
+            //     else{
+            //         echo "Not Null  --- ";
+            //     }
+            //     if($request->completionFile =="")
+            //     {
+            //         echo "Empty -----";
+            //     }
+            //     else{
+            //         echo "Not Empty -- ";
+            //     }
+
+            //     if($request->woFile == "null")
+            //     {
+            //         echo "woFile null  --";
+            //     }
+            //     else{
+            //         echo "woFile Not Null  --- ";
+            //     }
+            //     if($request->woFile ==="")
+            //     {
+            //         echo "woFile Empty -----";
+            //     }
+            //     else{
+            //         echo "woFile Not Empty -- ";
+            //     }
+            //     return " -- ";
+            // }
            
         }
 
