@@ -15,6 +15,7 @@ class CallLogFilesController extends Controller
 {
     public function store(Request $request)
     {
+        
         $user = Token::where('tokenid', $request->tokenId)->first();
         // echo "User Id - $user[userid]";
         // echo "Has File -".$request->hasFile('file')." --";
@@ -56,6 +57,54 @@ class CallLogFilesController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        // return "TOKEN".$request->tokenid;
+    
+        // $user = Token::where('tokenid', $request->tokenid)->first();
+        // return "TOKEN:--". $user;
+
+    
+        // if ($user['userid'] && $request->hasFile('file')) {
+         
+        //     $call_file = $request->file('file');
+        //     $call_file_original = $call_file->getClientOriginalName();
+        //     $call_file_fileName = intval(microtime(true) * 1000) . $call_file_original;
+        //     $path =  $call_file->storeAs('CallCreation/CallLog/', $call_file_fileName, 'public');
+        //     $call_file_mimeType =  $call_file->getMimeType();
+        //     $call_file_filesize = ($call_file->getSize()) / 1000;
+           
+           
+
+        //     unlink($path);
+          
+        //     $result = $file->move($path,$call_file_fileName);
+            
+
+        //     $request->request->add(['createdby_userid' => $user['userid']]);
+        //     $request->request->remove('tokenid');
+        //     $request->request->add(['hasfilename' => $call_file_fileName]);
+        //     $request->request->add(['originalfilename' => $call_file_original]);
+        //     $request->request->add(['filetype' => $call_file_mimeType]);
+        //     $request->request->add(['filesize' => $call_file_filesize]);
+
+            
+            
+        //     $call_log_update = CallLogFiles::findorfail($request->except(['file','tokenId']));
+        //     if ($call_log_update) {
+        //         return response()->json([
+        //             'status' => 200,
+        //             'message' => 'Call Log Form Uploaded Succssfully!',
+        //             'subid' => $call_log_add->id,
+        //         ]);
+        //     } else {
+        //         return response()->json([
+        //             'status' => 400,
+        //             'message' => 'Provided Credentials are Incorrect!'
+        //         ]);
+        //     }
+        // }
+    }
 
     public function destroy($id)
     {
@@ -93,12 +142,15 @@ class CallLogFilesController extends Controller
     }
 
     public function getUplodedDocList($id){
+     //   return "GETDOC". $id;
         
         $docs= CallLogFiles::where('mainid', $id)
         ->select('*') 
         ->orderBy('id', 'desc')       
         ->get();
+      
         
+     
         if ($docs)
             return response()->json([
                 'status' => 200,
@@ -118,6 +170,7 @@ class CallLogFilesController extends Controller
         if($doc){
             $file = public_path()."/uploads/CallCreation/CallLog/".$doc[0]->hasfilename;
             return response()->download($file);
+           
         }
     }
 

@@ -65,6 +65,7 @@ use App\Http\Controllers\CallCreationController;
 use App\Http\Controllers\CallLogFilesController;
 use App\Http\Controllers\OtherExpenseSubController;
 use App\Http\Controllers\OtherExpenseController;
+use App\Http\Controllers\CallHistoryController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -221,8 +222,8 @@ Route::post('usertype', [UserTypeController::class, 'store']);
 Route::get('usertype', [UserTypeController::class, 'index']);
 Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
 // Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
-Route::get('userOptions', [UserControllerTemp::class, 'getBdmUsersList']);
-
+Route::get('bdmoptions', [UserControllerTemp::class, 'getBdmUsersList']);
+Route::post('filteredcustomerlist', [CustomerCreationProfileController::class, 'getFilteredCustomerList']);
 
 
 Route::get('usertype/{id}', [UserTypeController::class, 'show']);
@@ -255,6 +256,8 @@ Route::get('expensetype/list', [ExpenseTypeController::class, 'getExpenseTypeLis
 
 Route::get('otherexpsubfiledownload/{id}/{fileName}', [OtherExpenseSubController::class, 'download']);
 Route::get('callcreation/getCallMainList/{token}', [CallCreationController::class, 'getCallMainList']);
+Route::get("getcallhistory/list/{id}",[CallHistoryController::class,'getCallHistory']);
+
 /*
 ## Resource Laravel Routes Example
 Route::post(['ulb',[UlbMasterController::class,'store']]);//
@@ -323,6 +326,7 @@ Route::resources([
     'attendancetype'=> AttendanceTypeController::class,
     'callcreation' => CallCreationController::class,
     'callfileupload'=> CallLogFilesController::class,
+    'callhistory'=> CallHistoryController::class,
     'otherexpense' => OtherExpensesController::class,
     'otherexpensesub' => OtherExpenseSubController::class,
 ]);

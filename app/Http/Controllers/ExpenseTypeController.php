@@ -210,6 +210,8 @@ class ExpenseTypeController extends Controller
             ]);
         }
     }
+    
+    //Get
     public function getExpenseTypeList()
     {
         $expense_list = ExpenseType::where("active_status", "=", "active")->get();

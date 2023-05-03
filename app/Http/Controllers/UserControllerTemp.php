@@ -134,6 +134,7 @@ class UserControllerTemp extends Controller
                 ->where('name','LIKE','%BDM%')
                 ->get();
         })
+        ->select('id', 'userName')
         ->orderBy('id', 'asc')->get();
       
     
