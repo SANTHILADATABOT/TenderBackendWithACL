@@ -66,6 +66,9 @@ use App\Http\Controllers\CallLogFilesController;
 use App\Http\Controllers\OtherExpenseSubController;
 use App\Http\Controllers\OtherExpenseController;
 use App\Http\Controllers\CallHistoryController;
+use App\Http\Controllers\DayWiseReportController;
+
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -223,6 +226,8 @@ Route::get('usertype', [UserTypeController::class, 'index']);
 Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
 // Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
 Route::get('bdmoptions', [UserControllerTemp::class, 'getBdmUsersList']);
+Route::get('bdmlist', [UserControllerTemp::class, 'getBdmList']);
+Route::post('getbdmdetails', [UserControllerTemp::class, 'getbdmdetails']); // Collecting particular BDM User details, to dispaly BDM name and All
 Route::post('filteredcustomerlist', [CustomerCreationProfileController::class, 'getFilteredCustomerList']);
 
 
@@ -257,6 +262,9 @@ Route::get('expensetype/list', [ExpenseTypeController::class, 'getExpenseTypeLis
 Route::get('otherexpsubfiledownload/{id}/{fileName}', [OtherExpenseSubController::class, 'download']);
 Route::get('callcreation/getCallMainList/{token}', [CallCreationController::class, 'getCallMainList']);
 Route::get("getcallhistory/list/{id}",[CallHistoryController::class,'getCallHistory']);
+Route::POST("calltobdm/updateAssignedCustomer",[CalltobdmController::class,'updateAssignedCustomer']);
+Route::post('getdaywisereport/list',[DayWiseReportController::class,'getDayWiseReport']);
+
 
 /*
 ## Resource Laravel Routes Example

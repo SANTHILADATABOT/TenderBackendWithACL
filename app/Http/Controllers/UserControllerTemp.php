@@ -151,7 +151,9 @@ class UserControllerTemp extends Controller
         }
     }
 
-
+    
+    
+    
     
     public function getoptions()
     {
@@ -159,26 +161,26 @@ class UserControllerTemp extends Controller
         $user = User::where('activeStatus', 'active')
         ->whereIn('userType', function($query){
             $query->select('id')
-                ->from(with(new Role)->getTable())
-                ->where('name','LIKE','%BDM%')
+            ->from(with(new Role)->getTable())
+            ->where('name','LIKE','%BDM%')
                 ->get();
         })
         ->orderBy('id', 'asc')->get();
-      
-    
+        
+        
         if ($user)
-            return response()->json([
+        return response()->json([
                 'status' => 200,
                 'user' => $user
             ]);
-        else {
-            return response()->json([
+            else {
+                return response()->json([
                 'status' => 404,
                 'message' => 'The provided credentials are incorrect.'
             ]);
         }
     }
-
+    
     public function store(Request $request)
     {
         //name in DB               --    Name in API payload
@@ -249,20 +251,20 @@ class UserControllerTemp extends Controller
             ]);
         }
     }
-
+    
     public function show($id)
     {
-
+        
         $userCreation = User::find($id);
         if ($userCreation) {
 
             $userType = Role::find($userCreation->userType);
-
+            
             $userCreation['userType'] = [
                 'value' => $userType -> id,
                 'label' => $userType -> name
             ];
-
+            
             return response()->json([
                 'status' => 200,
                 'user' => $userCreation
@@ -291,7 +293,7 @@ class UserControllerTemp extends Controller
             }
         }
     }
-
+    
     public function update(Request $request,  $id)
     {
         
@@ -306,7 +308,7 @@ class UserControllerTemp extends Controller
                 //     'password' => ['required'],
                 //     'phone' => ['required', 'regex:/[0-9]{10}/'],
                 //     'photo' => ['required']
-
+                
                 // ]);
 
                 $validate = $request->validate([
@@ -356,9 +358,9 @@ class UserControllerTemp extends Controller
                 $userCreation->fileext = $ext;
                 $userCreation->updatedby = $userid;
                 $userCreation->save();
-
+                
                 if ($userCreation) {
-
+                    
                     $role = Role::find($request->userType);
                     $userCreation->syncRoles($role);
 
@@ -377,18 +379,18 @@ class UserControllerTemp extends Controller
         } catch (\Illuminate\Database\QueryException $ex) {
 
             $errors = $ex->getMessage();
-
+            
             return response()->json([
                 "satatus" => 404,
                 "message" => $errors
             ]);
         }
     }
-
-
+    
+    
     public function destroy($id)
     {
-
+        
         try {
             $deleteuserCreation = User::destroy($id);
             if ($deleteuserCreation) {
@@ -414,25 +416,25 @@ class UserControllerTemp extends Controller
         }
     }
 
-
+    
     function getRolesAndPermissions(Request $request)
     {
         $token = Token::where('tokenid', '=', $request->tokenid)->first();
-
+        
         $userid = $token->userid;
-
+        
         $user = User::find($userid);
-
+        
         if ($user) {
             $roles = $user->roles->pluck('name');
-
+            
             $userType = $user['userType'];
             // $permissions = role_has_permission::where('role_id', $userType)->get();
-          
-
+            
+            
             $p = $this->getAllPermissions($userType);
 
-
+            
             // $permission = $user->getPermissionsViaRoles()->pluck('name');
             return response()->json([
                 'role' => $roles,
@@ -465,9 +467,9 @@ class UserControllerTemp extends Controller
                 'isValid' => false
             ], 401);
         }
-
+        
     }
-
+    
     public function getAllPermissions($role){
         $userType = $role;
         // $permissions = role_has_permission::where('role_id', $userType)->get();
@@ -476,7 +478,7 @@ class UserControllerTemp extends Controller
         }])
         ->select('id', 'name', 'aliasName')
         ->get();
-
+        
         $p = [];
         foreach($permissions as $permission){
             if(count($permission['permissions'])){
@@ -498,5 +500,66 @@ class UserControllerTemp extends Controller
 
         return $p;
     }
+
+/*****************BDM LIST ONLY****************/
+//This function is uesed to get BDM users only!!
+
+    public function getBdmList()
+    {
+        
+        $bdm_list = User::where("activeStatus", "=", "active")
+        ->where('userType','2')
+        ->get();
+        $bdmList = [];
+        foreach ($bdm_list as $row) {
+            $bdmList[] = ["value" => $row['id'], "label" =>  $row['name']];
+        }
+        return  response()->json([
+            'bdmlist' =>  $bdmList,
+        ]);
+    }
+/****************************************************/  
     
+//getbdmdetails() - Collect particular bdm user details
+    public function getbdmdetails(Request $request)
+    {
+
+        try{
+        $userid = Token::where('tokenid', $request->tokenid)->first()->select('userid');
+
+        $userdetails = User::where('activeStatus', 'active')
+        ->whereIn('userType', function($query){
+            $query->select('id')
+                ->from(with(new Role)->getTable())
+                ->where('name','LIKE','%BDM%')
+                ->get();
+        })
+        ->select('*')
+        ->where('id',$request->id)
+        ->orderBy('id', 'asc')->first();
+      
+    
+        if ($userdetails)
+        {
+            return response()->json([
+                'status' => 200,
+                'user' => $userdetails
+            ]);
+        }
+        else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'The provided credentials are incorrect..!'
+            ]);
+        }
+    }
+    catch(\Exception $ex){
+        return response()->json([
+            'status' => 404,
+            'message' => 'The provided credentials are incorrect..!',
+            'err'=> $ex->getMessage()
+        ]);
+    }
+
+}
 }
