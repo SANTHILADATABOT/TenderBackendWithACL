@@ -67,6 +67,7 @@ use App\Http\Controllers\OtherExpenseSubController;
 use App\Http\Controllers\OtherExpenseController;
 use App\Http\Controllers\CallHistoryController;
 use App\Http\Controllers\DayWiseReportController;
+use App\Http\Controllers\AttendanceRegisterController;
 
 
 
@@ -227,6 +228,8 @@ Route::get('usertype/options', [UserTypeController::class, 'getoptions']);
 // Route::get('userOptions', [UserControllerTemp::class, 'getoptions']);
 Route::get('bdmoptions', [UserControllerTemp::class, 'getBdmUsersList']);
 Route::get('bdmlist', [UserControllerTemp::class, 'getBdmList']);
+
+Route::get('employeelist', [UserControllerTemp::class, 'getEmployeeList']);
 Route::post('getbdmdetails', [UserControllerTemp::class, 'getbdmdetails']); // Collecting particular BDM User details, to dispaly BDM name and All
 Route::post('filteredcustomerlist', [CustomerCreationProfileController::class, 'getFilteredCustomerList']);
 
@@ -264,6 +267,17 @@ Route::get('callcreation/getCallMainList/{token}', [CallCreationController::clas
 Route::get("getcallhistory/list/{id}",[CallHistoryController::class,'getCallHistory']);
 Route::POST("calltobdm/updateAssignedCustomer",[CalltobdmController::class,'updateAssignedCustomer']);
 Route::post('getdaywisereport/list',[DayWiseReportController::class,'getDayWiseReport']);
+
+//attendanceregisterroutes
+Route::post('attendanceregister',[AttendanceRegisterController::class,'store']);
+Route::get('attendanceregister/{id}',[AttendanceRegisterController::class,'show']);
+Route::put('attendanceregister/{id}', [AttendanceRegisterController::class,'update']);
+Route::delete('attendanceregister/{id}',[AttendanceRegisterController::class,'destroy']);
+Route::get('userlist', [AttendanceRegisterController::class,'UserList']);
+Route::get('attendancetypelist', [AttendanceTypeController::class,'getAttendanceTypeList']);
+Route::get('attendancefile/{id}/{fileName}', [AttendanceRegisterController::class, 'download']);
+Route::delete('destroyfile/{id}',[AttendanceRegisterController::class,'destroyFile']);
+
 
 
 /*
@@ -337,6 +351,7 @@ Route::resources([
     'callhistory'=> CallHistoryController::class,
     'otherexpense' => OtherExpensesController::class,
     'otherexpensesub' => OtherExpenseSubController::class,
+    'attendanceregister'=>AttendanceRegisterController::class,
 ]);
 
 
