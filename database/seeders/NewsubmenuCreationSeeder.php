@@ -24,8 +24,10 @@ class NewsubmenuCreationSeeder extends Seeder
 
         // $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>$menu->id, 'sorting_order'=>'1','name'=>'OtherExpenses','menuLink'=>'/tender/otherExpense','aliasName'=>'Other Expenses','status'=>'1', 'createdby'=>'1' ]);
 
-        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'4', 'sorting_order'=>'3','name'=>'CallReport','menuLink'=>'/tender/calllog/callReport','aliasName'=>'Call Report','status'=>'1', 'createdby'=>'1' ]);
+        $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'5', 'sorting_order'=>'3','name'=>'HolidayMaster','menuLink'=>'/tender/hr/holidays','aliasName'=>'Holiday Master','status'=>'1', 'createdby'=>'1' ]);
 
+        // $menu2=menu_module::create(['user_role_id'=>1, 'name'=>'Expenses', 'icoClass'=>'fas fa-user-tie','status'=>1,'menuLink'=>'#','aliasName'=>'Expenses','sorting_order'=>6]);
+//  $submenuid1 = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>6, 'sorting_order'=>'2','name'=>'ReimbursementForm','menuLink'=>'/tender/expenses/Reimbursement','aliasName'=>'Reimbursement Form','status'=>'1', 'createdby'=>'1' ]);
         // $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>'4', 'sorting_order'=>'2','name'=>'call_to_bdm','menuLink'=>'/tender/calllog/calltobdm/','aliasName'=>'Call to BDM','status'=>'1', 'createdby'=>'1' ]);
 
         // $submenuid = sub_module_menu::create(['user_role_id'=>1, 'parentModuleID'=>1, 'sorting_order'=>'16','name'=>'expense_type','menuLink'=>'/tender/master/expensetype/','aliasName'=>'Expense Type','status'=>'1', 'createdby'=>'1' ]);

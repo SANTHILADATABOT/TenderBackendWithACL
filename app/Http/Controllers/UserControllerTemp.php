@@ -519,7 +519,22 @@ class UserControllerTemp extends Controller
         ]);
     }
 /****************************************************/  
+/********************EMP LIST***************************** */
+public function getEmployeeList()
+{
     
+    $employee_list = User::where("activeStatus", "=", "active")
+                ->where('userType','!=','1')
+                ->get();
+    $empList = [];
+    foreach ($employee_list as $row) {
+        $empList[] = ["value" => $row['id'], "label" =>  $row['name']];
+    }
+    return  response()->json([
+        'employeelist' =>  $empList,
+    ]);
+}
+  /***********************************************************/ 
 //getbdmdetails() - Collect particular bdm user details
     public function getbdmdetails(Request $request)
     {

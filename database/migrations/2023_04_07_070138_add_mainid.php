@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('day_wise_reports', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('expenses_approvals', function (Blueprint $table) {
+            //
+            $table->integer('mainid')->unsigned();
+            $table->foreign('mainid')->references('id')->on('other_expenses')->onDelete('restrict')->onUpdate('NO ACTION')->default(null);
         });
     }
 
@@ -26,6 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('day_wise_reports');
+        Schema::table('expenses+approvals', function (Blueprint $table) {
+            //
+        });
     }
 };

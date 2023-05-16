@@ -158,4 +158,19 @@ class AttendanceTypeController extends Controller
             ]);
         }
     }
+
+    public function getAttendanceTypeList()
+    {
+        $attendancetype = AttendanceType::where("activeStatus", "=", "Active")->get();
+
+        $attendancetypeList= [];
+        foreach($attendancetype as $row){
+            $attendancetypeList[] = ["value" => $row['id'], "label" =>  $row['attendanceType']] ;
+        }
+        
+        return response()->json([
+            'attendancetypelist' =>  $attendancetypeList,
+
+        ]);
+    }
 }

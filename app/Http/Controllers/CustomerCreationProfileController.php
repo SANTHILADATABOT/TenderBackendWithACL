@@ -318,17 +318,17 @@ class CustomerCreationProfileController extends Controller
         ]);
     }
 
-    //getList() - Used in all creation form - Don't use it form other forms 
-    public function getList($tokenid)
+    //getList() - Used in call creation form - Don't use it form other forms 
+    public function getList(Request $request)
     {
 
-        $user = Token::where('tokenid', $tokenid)->first();
+        $user = Token::where('tokenid', $request->tokenid)->first();
 
         if ($user['userid']) {
-            $countrys = DB::table('calltobdm_has_customers as c')
+            $countrys = DB::table('bdm_has_customers as c')
                 ->join('customer_creation_profiles as a', 'c.customer_id', 'a.id')
-                ->join('calltobdms as b', 'c.calltobdm_id', 'b.id')
-                ->where("b.user_id", $user['userid'])
+                ->where("c.bdm_id", $user['userid'])
+                ->where("c.assign_status", '1')
                 ->get();
 
             $customerList = [];
@@ -337,7 +337,7 @@ class CustomerCreationProfileController extends Controller
             }
             return  response()->json([
                 'customerList' =>  $customerList,
-                'country' => $countrys
+                // 'country' => $countrys
 
             ]);
         }
@@ -369,15 +369,77 @@ class CustomerCreationProfileController extends Controller
         if ($user['userid']) {
             $userID = $request->bdm_id;
 
-            // if(empty($request->country) || empty($request->state) || empty($request->district))
-            // {
-             
-            // }
-            // else{
+            if(empty($request->country) && empty($request->state) && empty($request->district))
+            {
+                
+                $customers = DB::table('customer_creation_profiles as a')
+                ->where('b.bdm_id', $userID)
+                ->where('b.assign_status', '1')
+                ->select(
+                    'a.id',
+                    'a.customer_name',
+                    'b.id as rowid',
+                    'b.customer_id',
+                    'b.bdm_id',
+                    'a.country',
+                    'c.country_name',
+                    'a.state',
+                    's.state_name',
+                    'd.district_name',
+                    'a.district',
+                    'a.city',
+                    'ct.city_name',
+                    'a.mobile_no',
+                    'b.assign_status'
+                )
+                ->join('bdm_has_customers as b', 'a.id', 'b.customer_id')
+               
+                ->join('country_masters as c','a.country','c.id')
+                ->join('state_masters as s','a.state','s.id')
+                ->join('district_masters as d','a.district','d.id')
+                ->join('city_masters as ct','a.city','ct.id');
 
-            // }
+                // $query = str_replace(array('?'), array('\'%s\''), $customers->toSql());
+                // $query = vsprintf($query, $customers->getBindings());
+                // echo $query; 
+               $results = $customers->get();
+               $resultsSelected = [];
+            }
+            else{
+                //get Assigned Customers of all location
 
-            $customers = DB::table('customer_creation_profiles as a')
+                $customersSelected = DB::table('customer_creation_profiles as a')
+                ->where('b.bdm_id', $userID)
+                ->where('b.assign_status', '1')
+                ->select(
+                    'a.id',
+                    'a.customer_name',
+                    'b.id as rowid',
+                    'b.customer_id',
+                    'b.bdm_id',
+                    'a.country',
+                    'c.country_name',
+                    'a.state',
+                    's.state_name',
+                    'd.district_name',
+                    'a.district',
+                    'a.city',
+                    'ct.city_name',
+                    'a.mobile_no',
+                    'b.assign_status'
+                )
+                ->join('bdm_has_customers as b', 'a.id', 'b.customer_id')
+               
+                ->join('country_masters as c','a.country','c.id')
+                ->join('state_masters as s','a.state','s.id')
+                ->join('district_masters as d','a.district','d.id')
+                ->join('city_masters as ct','a.city','ct.id');
+
+               $resultsSelected = $customersSelected->get();
+
+
+
+                $customers = DB::table('customer_creation_profiles as a')
                 ->select(
                     'a.id',
                     'a.customer_name',
@@ -396,15 +458,13 @@ class CustomerCreationProfileController extends Controller
                     'b.assign_status'
                 )
                 ->leftjoin('bdm_has_customers as b', 'a.id', 'b.customer_id')
-                ->where('b.bdm_id', $userID)
-                ->orWhereNotIn('a.id', function ($query) use ($userID) {
+    
+                ->whereNotIn('a.id', function ($query) use ($userID) {
                     $query->select('customer_id')
-                        ->from('bdm_has_customers')->where('bdm_id', '!=', $userID)->where('assign_status', '0');
+                        ->from('bdm_has_customers')->where('assign_status', '1');
                 })
                 
-                // ->when(`'b.bdm_id' != $userID  && 'assign_status'=1`, function ($query) use ($request) {
-                //     return $query->where('role', $request->role);
-                // })
+                
                 ->join('country_masters as c','a.country','c.id')
                 ->join('state_masters as s','a.state','s.id')
                 ->join('district_masters as d','a.district','d.id')
@@ -413,12 +473,7 @@ class CustomerCreationProfileController extends Controller
 
                 if(!empty($request->country))
                 {
-                    $country = $request->country;
-                    $customers->where('a.country', $request->country)
-                    ->orWhereIn('a.country', function ($query) use ($country) {
-                        $query->select('country')
-                            ->from('customer_creation_profiles')->where('country', $country);
-                    });
+                $customers->where('a.country',$request->country);
                 }
                 if(!empty($request->state))
                 {
@@ -429,15 +484,76 @@ class CustomerCreationProfileController extends Controller
                     $customers->where('a.district', $request->district);
                 }
 
-
+                
                 // $query = str_replace(array('?'), array('\'%s\''), $customers->toSql());
                 // $query = vsprintf($query, $customers->getBindings());
                 // echo $query; 
                $results = $customers->get();
 
+            }
+
+        //Craeted initaly
+            // $customers = DB::table('customer_creation_profiles as a')
+            //     ->select(
+            //         'a.id',
+            //         'a.customer_name',
+            //         'b.id as rowid',
+            //         'b.customer_id',
+            //         'b.bdm_id',
+            //         'a.country',
+            //         'c.country_name',
+            //         'a.state',
+            //         's.state_name',
+            //         'd.district_name',
+            //         'a.district',
+            //         'a.city',
+            //         'ct.city_name',
+            //         'a.mobile_no',
+            //         'b.assign_status'
+            //     )
+            //     ->leftjoin('bdm_has_customers as b', 'a.id', 'b.customer_id')
+            //     ->where('b.bdm_id', $userID)
+            //     ->orWhereNotIn('a.id', function ($query) use ($userID) {
+            //         $query->select('customer_id')
+            //             ->from('bdm_has_customers')->where('bdm_id', '!=', $userID)->where('assign_status', '0');
+            //     })
+                
+            //     // ->when(`'b.bdm_id' != $userID  && 'assign_status'=1`, function ($query) use ($request) {
+            //     //     return $query->where('role', $request->role);
+            //     // })
+            //     ->join('country_masters as c','a.country','c.id')
+            //     ->join('state_masters as s','a.state','s.id')
+            //     ->join('district_masters as d','a.district','d.id')
+            //     ->join('city_masters as ct','a.city','ct.id');
+
+
+            //     if(!empty($request->country))
+            //     {
+            //         $country = $request->country;
+            //         $customers->where('a.country', $request->country)
+            //         ->orWhereIn('a.country', function ($query) use ($country) {
+            //             $query->select('country')
+            //                 ->from('customer_creation_profiles')->where('country', $country);
+            //         });
+            //     }
+            //     if(!empty($request->state))
+            //     {
+            //         $customers->where('a.state',$request->state);
+            //     }
+            //     if(!empty($request->district))
+            //     {
+            //         $customers->where('a.district', $request->district);
+            //     }
+
+
+            //     // $query = str_replace(array('?'), array('\'%s\''), $customers->toSql());
+            //     // $query = vsprintf($query, $customers->getBindings());
+            //     // echo $query; 
+            //    $results = $customers->get();
 
 
 
+//2nd attenmpt
             // $results = DB::table('customer_creation_profiles as a')
             //     ->leftJoin('bdm_has_customers as b', 'a.id', '=', 'b.customer_id')
             //     ->select(
@@ -494,9 +610,18 @@ class CustomerCreationProfileController extends Controller
             //     return $query; 
             //     $results=$results->get();
 
+        if(count($resultsSelected)>0){
+          $list =  array_merge(json_decode($resultsSelected),json_decode($results));
+        }
+        else{
+            $list =$results;
+        }
+
         if($results){
             return  response()->json([
-                'customerList' =>  $results,
+                'customerList' =>   $list,
+                'result' =>  $results,
+                'selectedList' => $resultsSelected,
             ], 200);
         } else {
             return  response()->json([
